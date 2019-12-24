@@ -1,6 +1,17 @@
 # LpfRenewed
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.21.
+This is a "v2" of my original Launchpad Frame (LPF) project. I felt I had enough new information/skills and that I was early enough in the project that a fresh rewrite was warranted (classic).
+
+## Idea
+
+This project is aimed at being a "collaborative digital picture frame." Friends can be a part of "frames" where they can all upload photos. The frame has a "view" mode where a fullscreen slideshow of the pictures are shown. This will all be real time meaning new photos will show up in the rotation as they are uploaded by new users.
+
+## Technology
+
+Firebase, Angular 8, NgRx 8, Angular Material 8, AngularFire (wrapper around the firebase SDK for Angular)
+
+
 
 ## Development server
 
