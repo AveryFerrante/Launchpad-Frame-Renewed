@@ -5,6 +5,7 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { featureKey } from './state';
 import { reducer } from './reducer';
+import { AuthenticationEffects } from './effects';
 
 
 
@@ -13,8 +14,8 @@ import { reducer } from './reducer';
   imports: [
     CommonModule,
     StoreModule.forFeature(featureKey, reducer),
-    EffectsModule.forFeature([])
+    EffectsModule.forFeature([AuthenticationEffects])
   ],
-  providers: []
+  providers: [AuthenticationEffects]
 })
 export class AuthenticationStateModule { }
