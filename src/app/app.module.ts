@@ -9,6 +9,7 @@ import { AngularFireModule } from '@angular/fire';
 import { FirebaseConfig } from '../environments/firebaseConfig';
 import { RootStoreModule } from './root-store';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { AppRoutingModule } from './app-routing.module';
     AngularFireModule.initializeApp(FirebaseConfig),
     MatSliderModule,
     RootStoreModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AuthenticationModule
   ],
   providers: [],
   bootstrap: [AppComponent]
