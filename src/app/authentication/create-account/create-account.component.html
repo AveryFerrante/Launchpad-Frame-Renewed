@@ -1,0 +1,54 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            Launchpad Frame
+        </mat-card-title>
+        <mat-card-subtitle>
+            Create Account
+        </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+        <form [formGroup]="createAccountFormGroup">
+            <div fxLayout="column">
+                <mat-form-field>
+                    <input matInput placeholder="First Name" formControlName="firstName">
+                    <mat-error *ngIf="firstName.invalid">{{ getFirstNameError() }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <input matInput placeholder="Last Name" formControlName="lastName">
+                    <mat-error *ngIf="lastName.invalid">{{ getLastNameError() }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <input matInput placeholder="Email" formControlName="email">
+                    <mat-error *ngIf="email.invalid">{{ getEmailError() }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <input matInput placeholder="Username" formControlName="username">
+                    <mat-error *ngIf="username.invalid">{{ 'Username Error Here?' }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <input type="password" matInput placeholder="Password" formControlName="password">
+                    <mat-error *ngIf="password.invalid">{{ getPasswordError() }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <input type="password" matInput placeholder="Confirm Password" formControlName="passwordConfirm">
+                    <mat-error *ngIf="passwordConfirm.invalid">{{ getPasswordConfirmError() }}</mat-error>
+                </mat-form-field>
+            </div>
+        </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+        <button mat-raised-button color="primary" (click)="onCreateAccount()"
+            [disabled]="this.createAccountFormGroup.invalid || this.createAccountFormGroup.untouched">CREATE ACCOUNT</button>
+      </mat-card-actions>
+      <mat-card-footer>
+          {{ (createAccountLoading | async | json) }}
+      </mat-card-footer>
+</mat-card>

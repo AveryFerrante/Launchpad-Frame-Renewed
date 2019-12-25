@@ -1,4 +1,4 @@
-import { User } from 'src/app/shared/models/User';
+import { User } from 'src/app/shared/models/user';
 
 export interface State {
     currentUser: User,

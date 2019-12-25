@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';
 import * as AuthenticationActions from './actions';
 import {  map, catchError, exhaustMap } from 'rxjs/operators';
-import { User } from 'src/app/shared/models/User';
+import { User } from 'src/app/shared/models/user';
 import { of } from 'rxjs';
 
 @Injectable()

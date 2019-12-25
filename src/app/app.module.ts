@@ -9,7 +9,9 @@ import { AngularFireModule } from '@angular/fire';
 import { FirebaseConfig } from '../environments/firebaseConfig';
 import { RootStoreModule } from './root-store';
 import { AppRoutingModule } from './app-routing.module';
-import { AuthenticationModule } from './authentication/authentication.module';
+import { AuthenticationService } from './shared/services/authentication/authentication.service';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 
 @NgModule({
@@ -22,10 +24,9 @@ import { AuthenticationModule } from './authentication/authentication.module';
     AngularFireModule.initializeApp(FirebaseConfig),
     MatSliderModule,
     RootStoreModule,
-    AppRoutingModule,
-    AuthenticationModule
+    AppRoutingModule
   ],
-  providers: [],
+  providers: [AuthenticationService, AngularFirestore, AngularFireAuth],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
