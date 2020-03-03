@@ -1,9 +1,9 @@
 import { User } from 'src/app/shared/models/user';
 
 export interface State {
-    currentUser: User,
-    isLoading: boolean,
-    error: Error
+    currentUser: User;
+    isLoading: boolean;
+    error: Error;
 }
 
 export const initialState: State = {

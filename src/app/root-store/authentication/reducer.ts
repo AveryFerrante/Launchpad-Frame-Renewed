@@ -7,8 +7,8 @@ const r = createReducer(
     on(Actions.CreateEmailUserRequest, (state: State) => ({ ...state, isLoading: true })),
     on(Actions.CreateEmailUserRequestSuccess, (state: State, { user }) => ({ ...state, currentUser: user, isLoading: false })),
     on(Actions.CreateEmailUserRequestFailure, (state: State, { error }) => ({ ...state, currentUser: null, isLoading: false, error }))
-)
+);
 
 export function reducer(state: State, action: Action ) {
-    r(state, action);
+    return r(state, action);
 }

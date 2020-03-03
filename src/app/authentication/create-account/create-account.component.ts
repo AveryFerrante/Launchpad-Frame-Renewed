@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from
 import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
 import { Store, select } from '@ngrx/store';
 import { AuthenticationSelectors, RootState } from '../../root-store';
+import { map, filter } from 'rxjs/operators';
+import { pipe } from 'rxjs';
 
 @Component({
   selector: 'authentication-create-account',
@@ -17,22 +19,20 @@ export class CreateAccountComponent implements OnInit {
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl(''),
     password: new FormControl('', [Validators.required, Validators.minLength(8)]),
-    passwordConfirm: new FormControl('')
-
-  });
-  get firstName(): FormControl { return this.createAccountFormGroup.controls['firstName'] as FormControl; }
-  get lastName(): FormControl { return this.createAccountFormGroup.controls['lastName'] as FormControl; }
-  get email(): FormControl { return this.createAccountFormGroup.controls['email'] as FormControl; }
-  get username(): FormControl { return this.createAccountFormGroup.controls['username'] as FormControl; }
-  get password(): FormControl { return this.createAccountFormGroup.controls['password'] as FormControl; }
-  get passwordConfirm(): FormControl { return this.createAccountFormGroup.controls['passwordConfirm'] as FormControl; }
+    passwordConfirm: new FormControl('', [Validators.required])
+  }, { validators: [this.passwordMatchValidator('password', 'passwordConfirm')] });
+  get firstName(): FormControl { return this.createAccountFormGroup.controls.firstName as FormControl; }
+  get lastName(): FormControl { return this.createAccountFormGroup.controls.lastName as FormControl; }
+  get email(): FormControl { return this.createAccountFormGroup.controls.email as FormControl; }
+  get username(): FormControl { return this.createAccountFormGroup.controls.username as FormControl; }
+  get password(): FormControl { return this.createAccountFormGroup.controls.password as FormControl; }
+  get passwordConfirm(): FormControl { return this.createAccountFormGroup.controls.passwordConfirm as FormControl; }
   @Output() createAccount = new EventEmitter<NewUserRequest>();
-  createAccountLoading$ = this.store$.select(AuthenticationSelectors.SelectAuthenticationIsLoading);
+  createAccountLoading$ = this.store$.pipe(select(AuthenticationSelectors.SelectAuthenticationIsLoading));
+  createAccountError$ = this.store$.pipe(this.getCreateAccountErrorMessage());
   constructor(public store$: Store<RootState>) { }
 
-  ngOnInit() {
-    this.initializePasswordMatchValidator();
-  }
+  ngOnInit() { }
 
   getFirstNameError() {
     return this.firstName.hasError('required') ? 'First Name is required' : '';
@@ -67,15 +67,22 @@ export class CreateAccountComponent implements OnInit {
     this.createAccount.emit(request);
   }
 
-  private initializePasswordMatchValidator() {
-    const passwordsMatch: ValidatorFn = (control: AbstractControl) => {
-      if (this.password.value === control.value) {
-        return null;
-      } else {
-        return { 'passwordMismatch': { value: true } }
+  private passwordMatchValidator(primaryPasswordControlName: string, confirmPasswordControlName: string): ValidatorFn {
+    return (group: FormGroup) => {
+      const password = group.controls[primaryPasswordControlName];
+      const confirmPassword = group.controls[confirmPasswordControlName];
+      if (password.value !== confirmPassword.value) {
+        confirmPassword.setErrors({ passwordMismatch: true });
       }
-    }
+      return null;
+    };
+  }
 
-    this.passwordConfirm.setValidators(passwordsMatch);
+  private getCreateAccountErrorMessage() {
+    return pipe(
+      select(AuthenticationSelectors.SelectAuthenticationError),
+      filter((e: Error) => e !== null),
+      map((e: Error) => `ERROR: ${e.message}`)
+    );
   }
 }
