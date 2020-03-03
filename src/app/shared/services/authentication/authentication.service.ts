@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../../models/user';
 import { Observable, from } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators'
+import { switchMap, map } from 'rxjs/operators';
 import { NewUserRequest } from '../../models/requests/NewUserRequest';
 import { environment } from '../../../../environments/environment';
 
@@ -17,15 +17,15 @@ export class AuthenticationService {
   createEmailUser(request: NewUserRequest): Observable<User> {
     return from(this.afAuth.auth.createUserWithEmailAndPassword(request.email, request.password)).pipe(
       this.createNewUser(request)
-    )
+    );
   }
 
 
   private createNewUser(request: NewUserRequest) {
     return switchMap((credentials: firebase.auth.UserCredential) => {
-      let user = this.createUserFromNewUserRequest(request);
-      return this.createNewUserDocument(user, credentials)
-    })
+      const user = this.createUserFromNewUserRequest(request);
+      return this.createNewUserDocument(user, credentials);
+    });
   }
 
   private createNewUserDocument(user: User, credentials: firebase.auth.UserCredential): Observable<User> {
@@ -42,7 +42,7 @@ export class AuthenticationService {
   }
 
   private createUserFromNewUserRequest(request: NewUserRequest) {
-    let user: User = {
+    const user: User = {
       firstName: request.firstName,
       lastName: request.lastName,
       email: request.email,
