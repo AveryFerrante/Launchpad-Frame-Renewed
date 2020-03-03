@@ -6,7 +6,7 @@ import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
 @Component({
   selector: 'app-entry',
   templateUrl: './entry.component.html',
-  styleUrls: ['./entry.component.css']
+  styleUrls: ['./entry.component.scss']
 })
 export class EntryComponent implements OnInit {
 
