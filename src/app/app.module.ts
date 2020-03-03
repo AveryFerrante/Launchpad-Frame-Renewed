@@ -9,6 +9,9 @@ import { AngularFireModule } from '@angular/fire';
 import { FirebaseConfig } from '../environments/firebaseConfig';
 import { RootStoreModule } from './root-store';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthenticationService } from './shared/services/authentication/authentication.service';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 
 @NgModule({
@@ -23,7 +26,7 @@ import { AppRoutingModule } from './app-routing.module';
     RootStoreModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [AuthenticationService, AngularFirestore, AngularFireAuth],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
