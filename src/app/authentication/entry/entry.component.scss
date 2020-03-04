@@ -1,0 +1,14 @@
+@import '../../../variables.scss';
+
+@include media($tablet-size...) {
+  .test-class {
+    color: $secondary;
+  }
+}
+
+@include media($desktop-size...) {
+  .test-class {
+    color: $primary;
+    font-weight: bold;
+  }
+}
