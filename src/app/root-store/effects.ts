@@ -7,7 +7,7 @@ import { User } from 'src/app/shared/models/user';
 import { of } from 'rxjs';
 
 @Injectable()
-export class AuthenticationEffects {
+export class RootEffects {
     constructor(private actions$: Actions, private authenticationService: AuthenticationService) { }
 
     createEmailUser$ = createEffect(() => this.actions$.pipe(

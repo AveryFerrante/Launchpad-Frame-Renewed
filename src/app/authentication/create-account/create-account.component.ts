@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
 import { Store, select } from '@ngrx/store';
-import { AuthenticationSelectors, RootState } from '../../root-store';
+import { RootState, RootSelectors } from '../../root-store';
 import { map, filter } from 'rxjs/operators';
 import { pipe } from 'rxjs';
 
@@ -28,7 +28,7 @@ export class CreateAccountComponent implements OnInit {
   get password(): FormControl { return this.createAccountFormGroup.controls.password as FormControl; }
   get passwordConfirm(): FormControl { return this.createAccountFormGroup.controls.passwordConfirm as FormControl; }
   @Output() createAccount = new EventEmitter<NewUserRequest>();
-  createAccountLoading$ = this.store$.pipe(select(AuthenticationSelectors.SelectAuthenticationIsLoading));
+  createAccountLoading$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationIsLoading));
   createAccountError$ = this.store$.pipe(this.getCreateAccountErrorMessage());
   constructor(public store$: Store<RootState>) { }
 
@@ -80,7 +80,7 @@ export class CreateAccountComponent implements OnInit {
 
   private getCreateAccountErrorMessage() {
     return pipe(
-      select(AuthenticationSelectors.SelectAuthenticationError),
+      select(RootSelectors.SelectAuthenticationError),
       filter((e: Error) => e !== null),
       map((e: Error) => `ERROR: ${e.message}`)
     );

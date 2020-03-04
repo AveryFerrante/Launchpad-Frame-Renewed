@@ -1,16 +1,16 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { State, featureKey } from './state';
+import { authenticationPropertyKey, AuthenticationState } from './state';
 
-const SelectAuthenticationState = createFeatureSelector<State>(featureKey);
+const SelectAuthenticationState = createFeatureSelector<AuthenticationState>(authenticationPropertyKey);
 export const SelectAuthenticationIsLoading = createSelector(
     SelectAuthenticationState,
-    (s: State) => s.isLoading
+    (s: AuthenticationState) => s.isLoading
 );
 export const SelectAuthenticationUser = createSelector(
     SelectAuthenticationState,
-    (s: State) => s.currentUser
+    (s: AuthenticationState) => s.currentUser
 );
 export const SelectAuthenticationError = createSelector(
     SelectAuthenticationState,
-    (s: State) => s.error
+    (s: AuthenticationState) => s.error
 );

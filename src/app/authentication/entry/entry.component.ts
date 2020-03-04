@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { RootState, AuthenticationActions } from '../../root-store';
+import { RootState, RootActions } from '../../root-store';
 import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
 
 @Component({
@@ -16,7 +16,7 @@ export class EntryComponent implements OnInit {
   }
 
   onCreateAccount(request: NewUserRequest) {
-    this.store$.dispatch(AuthenticationActions.CreateEmailUserRequest({ newUserRequest: request }));
+    this.store$.dispatch(RootActions.CreateEmailUserRequest({ newUserRequest: request }));
   }
 
 }
