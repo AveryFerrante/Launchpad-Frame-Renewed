@@ -1,3 +1,24 @@
-<div class="full-screen-height" fxLayout="row" fxLayoutAlign="center start">
-  <span class="test-class">This is text on my entry component!</span>
+<div class="layout">
+  <div class="authentication-card">
+
+    <div class="information-section">
+      <h3>Launchpad Frame</h3>
+      <h2 class="subtitle">Welcome to the Launchpad Frame!</h2>
+      <span>A collaborative digital picture frame</span>
+      <span>IMAGE THING GOES HERE</span>
+      <span>Start building memories</span>
+    </div>
+    <div class="form-section">
+
+      <div class="navigation-buttons">
+        <div class="clickable" (click)="setMode('login')" [ngClass]="{ active: mode === 'login' }">Login</div>
+        <div class="clickable" (click)="setMode('register')" [ngClass]="{ active: mode === 'register' }">Register</div>
+      </div>
+
+      <div class="form-content-section">
+        <authentication-create-account *ngIf="mode === 'register'"></authentication-create-account>
+      </div>
+    </div>
+
+  </div>
 </div>

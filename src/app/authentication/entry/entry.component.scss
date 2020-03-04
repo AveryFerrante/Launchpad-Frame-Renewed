@@ -1,14 +1,78 @@
 @import '../../../variables.scss';
 
-@include media($tablet-size...) {
-  .test-class {
-    color: $secondary;
+.layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.authentication-card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+}
+
+.information-section {
+  background-color: $primary;
+  color: $light;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 33%;
+
+  span {
+    margin-bottom: .5rem;
   }
 }
 
-@include media($desktop-size...) {
-  .test-class {
-    color: $primary;
-    font-weight: bold;
+.form-section {
+  background-color: $light;
+  width: 33%;
+
+  .navigation-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+
+    div {
+      padding: .75rem 0;
+      width: 50%;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .active {
+      border-bottom: 1px solid black;
+    }
+  }
+}
+
+@include media($phone-size...) {
+  .layout {
+    align-items: start;
+  }
+
+  .authentication-card {
+    flex-direction: column;
+    margin: 10px;
+
+    .subtitle {
+      display: none;
+    }
+  }
+
+  .information-section {
+    padding: 1rem;
+    width: auto;
+  }
+
+  .form-section {
+    width: auto;
   }
 }

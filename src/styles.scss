@@ -12,3 +12,21 @@ body {
 .full-screen-height {
   height: 100vh;
 }
+
+.clickable {
+  cursor: pointer;
+}
+
+.btn {
+  text-align: center;
+  border: 0;
+  border-radius: 0;
+  padding: .375rem .75rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.btn-light {
+  background-color: $light;
+  color: black;
+}
