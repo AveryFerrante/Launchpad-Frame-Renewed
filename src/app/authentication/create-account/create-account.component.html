@@ -1,3 +1,21 @@
+<form [formGroup]="createAccountFormGroup">
+
+  <span>Email:</span>
+  <input formControlName="email" />
+  <span class="error" *ngIf="email.invalid">{{ getEmailError() }}</span>
+
+  <span>Username:</span>
+  <input formControlName="username" />
+
+  <span>Password:</span>
+  <input type="password" formControlName="password" />
+
+  <button class="btn btn-primary">CREATE</button>
+
+</form>
+
+
+
 <!-- <mat-card>
   <mat-card-header>
     <mat-card-title>
@@ -52,4 +70,3 @@
     <mat-error *ngIf="createAccountError$ | async; let errorMessage">{{ errorMessage }}</mat-error>
   </mat-card-footer>
 </mat-card> -->
-<div>CREATE ACCOUNT WORKS!</div>

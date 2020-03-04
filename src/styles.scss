@@ -9,8 +9,12 @@ body {
   background-color: $secondary;
 }
 
-.full-screen-height {
-  height: 100vh;
+input {
+  font: inherit;
+  font-size: inherit;
+  text-indent: 2px;
+  padding: .5rem;
+  border: 1px solid lightgray;
 }
 
 .clickable {
@@ -26,7 +30,7 @@ body {
   font: inherit;
 }
 
-.btn-light {
-  background-color: $light;
-  color: black;
+.btn-primary {
+  background-color: $primary;
+  color: $light;
 }
