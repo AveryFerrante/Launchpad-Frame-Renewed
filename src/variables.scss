@@ -1,8 +1,14 @@
+@import 'include-media/dist/_include-media.scss';
+
+// Colors
 $font-stack: 'Ubuntu', sans-serif;
 $primary: #2B4162;
 $secondary: #385F71;
 $light: #F5F0F6;
 
 
-// Extend
+// Screen Sizing
+$phone-size: '>=phone', '<tablet';
+$tablet-size: '>=tablet', '<desktop';
+$desktop-size: '>=desktop';
 

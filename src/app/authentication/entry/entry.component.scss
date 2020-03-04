@@ -1,8 +1,14 @@
-.card-top-margin {
-    margin-top: 3rem;
+@import '../../../variables.scss';
+
+@include media($tablet-size...) {
+  .test-class {
+    color: $secondary;
+  }
 }
 
-.authentication-page {
-    height: 100%;
-    background-color: mediumpurple;
+@include media($desktop-size...) {
+  .test-class {
+    color: $primary;
+    font-weight: bold;
+  }
 }
