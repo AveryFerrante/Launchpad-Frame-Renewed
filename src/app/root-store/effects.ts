@@ -15,7 +15,7 @@ export class RootEffects {
         exhaustMap((action) => {
             return this.authenticationService.createEmailUser(action.newUserRequest).pipe(
                 map((user: User) => AuthenticationActions.CreateEmailUserRequestSuccess({ user })),
-                catchError((error: Error) => of(AuthenticationActions.CreateEmailUserRequestFailure({ error })))
+                catchError((error: Error) => of(AuthenticationActions.CreateEmailUserRequestFailure({ errorMessage: error.message })))
             );
         })
     ));

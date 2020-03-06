@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { User } from '../../models/user';
-import { Observable, from } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
-import { NewUserRequest } from '../../models/requests/NewUserRequest';
+import { from, Observable } from 'rxjs';
+import { mapTo, switchMap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { NewUserRequest } from '../../models/requests/NewUserRequest';
+import { User } from '../../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -23,28 +23,20 @@ export class AuthenticationService {
 
   private createNewUser(request: NewUserRequest) {
     return switchMap((credentials: firebase.auth.UserCredential) => {
-      const user = this.createUserFromNewUserRequest(request);
+      const user = this.createUserFromNewUserRequest(request, credentials.user.uid);
       return this.createNewUserDocument(user, credentials);
     });
   }
 
   private createNewUserDocument(user: User, credentials: firebase.auth.UserCredential): Observable<User> {
     return from(this.afStore.collection(environment.firebaseCollections.users.name).doc(credentials.user.uid).set(user)).pipe(
-      this.mapToUserWithUserId(user, credentials.user.uid)
+      mapTo(user)
     );
   }
 
-  private mapToUserWithUserId(user: User, uid: string) {
-    return map(() => {
-      user.id = uid;
-      return user;
-    });
-  }
-
-  private createUserFromNewUserRequest(request: NewUserRequest) {
+  private createUserFromNewUserRequest(request: NewUserRequest, uid: string) {
     const user: User = {
-      firstName: request.firstName,
-      lastName: request.lastName,
+      id: uid,
       email: request.email,
       username: request.username,
       imageUploadCount: 0

@@ -1,14 +1,17 @@
 import { createReducer, on, Action } from '@ngrx/store';
-import { State, initialState } from './state';
+import { State, initialState, AuthenticationState } from './state';
 import * as Actions from './actions';
 
 const r = createReducer(
     initialState,
-    on(Actions.CreateEmailUserRequest, (state: State) => ({ ...state, isLoading: true })),
-    on(Actions.CreateEmailUserRequestSuccess, (state: State, { user }) => ({ ...state, currentUser: user, isLoading: false })),
-    on(Actions.CreateEmailUserRequestFailure, (state: State, { error }) => ({ ...state, currentUser: null, isLoading: false, error }))
+    on(Actions.CreateEmailUserRequest, (state: AuthenticationState) =>
+      ({ ...state, isLoading: true })),
+    on(Actions.CreateEmailUserRequestSuccess, (state: AuthenticationState, { user }) =>
+      ({ ...state, currentUser: user, isLoading: false, errorMessage: null })),
+    on(Actions.CreateEmailUserRequestFailure, (state: AuthenticationState, { errorMessage }) =>
+      ({ ...state, currentUser: null, isLoading: false, errorMessage }))
 );
 
-export function reducer(state: State, action: Action ) {
+export function reducer(state: AuthenticationState, action: Action ) {
     return r(state, action);
 }

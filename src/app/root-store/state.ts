@@ -5,16 +5,14 @@ export const authenticationPropertyKey = 'authentication';
 export interface State {
     [authenticationPropertyKey]: AuthenticationState;
 }
-export const initialState: State = {
-  [authenticationPropertyKey]: {
-    currentUser: null,
-    isLoading: false,
-    error: null
-  }
+export const initialState: AuthenticationState = {
+  currentUser: null,
+  isLoading: false,
+  errorMessage: null
 };
 
 export interface AuthenticationState {
   currentUser: User;
   isLoading: boolean;
-  error: Error;
+  errorMessage: string;
 }

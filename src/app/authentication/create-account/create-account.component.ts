@@ -1,10 +1,10 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
-import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
-import { Store, select } from '@ngrx/store';
-import { RootState, RootSelectors } from '../../root-store';
-import { map, filter } from 'rxjs/operators';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { select, Store } from '@ngrx/store';
 import { pipe } from 'rxjs';
+import { filter, mapTo } from 'rxjs/operators';
+import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
+import { RootSelectors, RootState } from '../../root-store';
 
 @Component({
   selector: 'authentication-create-account',
@@ -14,32 +14,27 @@ import { pipe } from 'rxjs';
 export class CreateAccountComponent implements OnInit {
 
   createAccountFormGroup = new FormGroup({
-    firstName: new FormControl('', [Validators.required]),
-    lastName: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl(''),
-    password: new FormControl('', [Validators.required, Validators.minLength(8)]),
-    passwordConfirm: new FormControl('', [Validators.required])
-  }, { validators: [this.passwordMatchValidator('password', 'passwordConfirm')] });
-  get firstName(): FormControl { return this.createAccountFormGroup.controls.firstName as FormControl; }
-  get lastName(): FormControl { return this.createAccountFormGroup.controls.lastName as FormControl; }
+    password: new FormControl('', [Validators.required, Validators.minLength(8)])
+  });
   get email(): FormControl { return this.createAccountFormGroup.controls.email as FormControl; }
   get username(): FormControl { return this.createAccountFormGroup.controls.username as FormControl; }
   get password(): FormControl { return this.createAccountFormGroup.controls.password as FormControl; }
-  get passwordConfirm(): FormControl { return this.createAccountFormGroup.controls.passwordConfirm as FormControl; }
   @Output() createAccount = new EventEmitter<NewUserRequest>();
   createAccountLoading$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationIsLoading));
-  createAccountError$ = this.store$.pipe(this.getCreateAccountErrorMessage());
+  createAccountError$ = this.store$.pipe(this.filterNullErrorMessages());
   constructor(public store$: Store<RootState>) { }
 
   ngOnInit() { }
 
-  getFirstNameError() {
-    return this.firstName.hasError('required') ? 'First Name is required' : '';
-  }
-
-  getLastNameError() {
-    return this.lastName.hasError('required') ? 'Last Name is required' : '';
+  onCreateAccount() {
+    const request: NewUserRequest = {
+      username: this.username.value,
+      email: this.email.value,
+      password: this.password.value
+    };
+    this.createAccount.emit(request);
   }
 
   getEmailError() {
@@ -52,37 +47,10 @@ export class CreateAccountComponent implements OnInit {
       this.password.hasError('minlength') ? 'Password must be atleast 8 characters' : '';
   }
 
-  getPasswordConfirmError() {
-    return this.passwordConfirm.hasError('passwordMismatch') ? 'Passwords must match' : '';
-  }
-
-  onCreateAccount() {
-    const request: NewUserRequest = {
-      firstName: this.firstName.value,
-      lastName: this.lastName.value,
-      username: this.username.value,
-      email: this.email.value,
-      password: this.password.value
-    };
-    this.createAccount.emit(request);
-  }
-
-  private passwordMatchValidator(primaryPasswordControlName: string, confirmPasswordControlName: string): ValidatorFn {
-    return (group: FormGroup) => {
-      const password = group.controls[primaryPasswordControlName];
-      const confirmPassword = group.controls[confirmPasswordControlName];
-      if (password.value !== confirmPassword.value) {
-        confirmPassword.setErrors({ passwordMismatch: true });
-      }
-      return null;
-    };
-  }
-
-  private getCreateAccountErrorMessage() {
+  private filterNullErrorMessages() {
     return pipe(
-      select(RootSelectors.SelectAuthenticationError),
-      filter((e: Error) => e !== null),
-      map((e: Error) => `ERROR: ${e.message}`)
+      select(RootSelectors.SelectAuthenticationErrorMessage),
+      filter((e: string) => e !== null)
     );
   }
 }

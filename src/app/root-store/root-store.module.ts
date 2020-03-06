@@ -5,16 +5,16 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
-import { authenticationPropertyKey } from './state';
 import { reducer } from './reducer';
 import { RootEffects } from './effects';
+import { authenticationPropertyKey } from './state';
 
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    StoreModule.forRoot({ authenticationPropertyKey: reducer }, {
+    StoreModule.forRoot({ [authenticationPropertyKey]: reducer }, {
       runtimeChecks: {
         strictStateImmutability: true,
         strictActionImmutability: true,

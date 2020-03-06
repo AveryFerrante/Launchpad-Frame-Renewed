@@ -43,7 +43,7 @@
       </div>
 
       <div class="form-content-section">
-        <authentication-create-account *ngIf="mode === 'register'"></authentication-create-account>
+        <authentication-create-account *ngIf="mode === 'register'" (createAccount)="onCreateAccount($event)"></authentication-create-account>
       </div>
     </div>
 
