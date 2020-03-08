@@ -7,11 +7,13 @@ import { User } from 'src/app/shared/models/user';
 import { of } from 'rxjs';
 import { BatchHelperService } from '../shared/services/helpers/batch-helper.service';
 import { BatchAction } from '../shared/models/batchAction';
+import { UsernameService } from '../shared/services/username/username.service';
 
 @Injectable()
 export class RootEffects {
     constructor(private actions$: Actions,
                 private authenticationService: AuthenticationService,
+                private usernameService: UsernameService,
                 private batchHelper: BatchHelperService) { }
 
     createEmailUser$ = createEffect(() => this.actions$.pipe(
@@ -20,7 +22,8 @@ export class RootEffects {
             return this.authenticationService.createEmailUser(action.newUserRequest).pipe(
                 switchMap((user: User) => {
                   const batchActions: BatchAction[] = [
-                    this.authenticationService.createUserDocumentBatchAction(user.id, action.newUserRequest)
+                    this.authenticationService.createUserDocumentBatchAction(user.id, action.newUserRequest),
+                    this.usernameService.createUsernameDocumentBatchAction(user.id, action.newUserRequest.username)
                   ];
                   return this.batchHelper.executeBatch(batchActions).pipe(mapTo(user));
                 }),

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { BatchAction, SetBatchAction, UpdateBatchAction, DeleteBatchAction } from '../../models/batchAction';
+import { BatchAction, isDeleteAction, isUpdateAction } from '../../models/batchAction';
 import { Observable, from } from 'rxjs';
 
 @Injectable({
@@ -13,7 +13,13 @@ export class BatchHelperService {
   executeBatch(batchActions: BatchAction[]): Observable<void> {
     const batch = this.afStore.firestore.batch();
     batchActions.forEach((action: BatchAction) => {
-      // HOW DO I RESOLVE THE TYPE HERE?
+       if (isDeleteAction(action)) {
+         batch.delete(action.documentReference);
+       } else if (isUpdateAction(action)) {
+         batch.update(action.documentReference, action.data);
+       } else {
+         batch.set(action.documentReference, action.data, action.options);
+       }
     });
     return from(batch.commit());
   }

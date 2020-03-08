@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
-import { mapTo, switchMap, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { BatchAction, getSetBatchAction } from '../../models/batchAction';
 import { NewUserRequest } from '../../models/requests/NewUserRequest';
 import { User } from '../../models/user';
-import { BatchAction, SetBatchAction } from '../../models/batchAction';
 
 @Injectable({
   providedIn: 'root'
@@ -22,11 +22,7 @@ export class AuthenticationService {
   }
 
   createUserDocumentBatchAction(userId: string, newUserRequest: NewUserRequest): BatchAction {
-    const returnAction: SetBatchAction = {
-      documentReference: this.getUserDocumentReference(userId),
-      data: newUserRequest
-    };
-    return returnAction;
+    return getSetBatchAction(this.getUserDocumentReference(userId), newUserRequest);
   }
 
   private getUserDocumentReference(docId: string) {
