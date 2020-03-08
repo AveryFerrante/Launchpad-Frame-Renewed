@@ -6,6 +6,9 @@ import { filter, mapTo } from 'rxjs/operators';
 import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
 import { RootSelectors, RootState } from '../../root-store';
 
+const USERNAME_MIN_LENGTH = 3;
+const PASSWORD_MIN_LENGTH = 8;
+
 @Component({
   selector: 'authentication-create-account',
   templateUrl: './create-account.component.html',
@@ -15,8 +18,8 @@ export class CreateAccountComponent implements OnInit {
 
   createAccountFormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    username: new FormControl(''),
-    password: new FormControl('', [Validators.required, Validators.minLength(8)])
+    username: new FormControl('', [Validators.required, Validators.minLength(USERNAME_MIN_LENGTH)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)])
   });
   get email(): FormControl { return this.createAccountFormGroup.controls.email as FormControl; }
   get username(): FormControl { return this.createAccountFormGroup.controls.username as FormControl; }
@@ -44,7 +47,12 @@ export class CreateAccountComponent implements OnInit {
 
   getPasswordError() {
     return this.password.hasError('required') ? 'Password is required' :
-      this.password.hasError('minlength') ? 'Password must be atleast 8 characters' : '';
+      this.password.hasError('minlength') ? `Password must be atleast ${PASSWORD_MIN_LENGTH} characters` : '';
+  }
+
+  getUsernameError() {
+    return this.username.hasError('required') ? 'Username is required' :
+      this.username.hasError('minlength') ? `Username must be atleast ${USERNAME_MIN_LENGTH} characters` : '';
   }
 
   private filterNullErrorMessages() {

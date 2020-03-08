@@ -21,7 +21,8 @@
 
   <div class="form-footer">
     <span class="error" *ngIf="createAccountError$ | async; let message">ERROR: {{ message }}</span>
-    <button class="btn btn-primary" (click)="onCreateAccount()">CREATE</button>
+    <button class="btn btn-primary" [disabled]="!createAccountFormGroup.valid || !createAccountFormGroup.touched"
+      (click)="onCreateAccount()">CREATE</button>
   </div>
 
 </form>
