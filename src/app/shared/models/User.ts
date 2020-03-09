@@ -1,6 +1,5 @@
-export interface User {
+import { NewUserRequest } from './requests/NewUserRequest';
+
+export interface User extends NewUserRequest {
     id: string;
-    email: string;
-    username: string;
-    imageUploadCount: number;
 }

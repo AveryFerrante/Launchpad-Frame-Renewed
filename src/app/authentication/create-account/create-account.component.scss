@@ -16,6 +16,12 @@ form {
     color: $error;
   }
 
+  .inline-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
   .form-footer {
     display: flex;
     align-items: center;

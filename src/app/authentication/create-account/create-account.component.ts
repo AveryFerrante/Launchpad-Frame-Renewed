@@ -1,13 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
-import { pipe } from 'rxjs';
-import { filter, mapTo } from 'rxjs/operators';
+import { Observable, pipe, timer } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
+import { UsernameService } from 'src/app/shared/services/username/username.service';
 import { RootSelectors, RootState } from '../../root-store';
 
 const USERNAME_MIN_LENGTH = 3;
 const PASSWORD_MIN_LENGTH = 8;
+const UNIQUE_USERNAME_ERROR = 'notUnique';
 
 @Component({
   selector: 'authentication-create-account',
@@ -18,16 +20,19 @@ export class CreateAccountComponent implements OnInit {
 
   createAccountFormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    username: new FormControl('', [Validators.required, Validators.minLength(USERNAME_MIN_LENGTH)]),
+    username: new FormControl('', [Validators.required, Validators.minLength(USERNAME_MIN_LENGTH)],
+      this.usernameIsUniqueValidator.bind(this)),
     password: new FormControl('', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)])
   });
   get email(): FormControl { return this.createAccountFormGroup.controls.email as FormControl; }
   get username(): FormControl { return this.createAccountFormGroup.controls.username as FormControl; }
   get password(): FormControl { return this.createAccountFormGroup.controls.password as FormControl; }
+  checkingUsernameLoading = false;
+  passwordView: 'password' | 'text' = 'password';
   @Output() createAccount = new EventEmitter<NewUserRequest>();
   createAccountLoading$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationIsLoading));
   createAccountError$ = this.store$.pipe(this.filterNullErrorMessages());
-  constructor(public store$: Store<RootState>) { }
+  constructor(private store$: Store<RootState>, private usernameService: UsernameService) { }
 
   ngOnInit() { }
 
@@ -35,9 +40,15 @@ export class CreateAccountComponent implements OnInit {
     const request: NewUserRequest = {
       username: this.username.value,
       email: this.email.value,
-      password: this.password.value
+      password: this.password.value,
+      imageUploadCount: 0,
+      frames: []
     };
     this.createAccount.emit(request);
+  }
+
+  togglePasswordView() {
+    this.passwordView = this.passwordView === 'text' ? 'password' : 'text';
   }
 
   getEmailError() {
@@ -52,7 +63,18 @@ export class CreateAccountComponent implements OnInit {
 
   getUsernameError() {
     return this.username.hasError('required') ? 'Username is required' :
-      this.username.hasError('minlength') ? `Username must be atleast ${USERNAME_MIN_LENGTH} characters` : '';
+      this.username.hasError('minlength') ? `Username must be atleast ${USERNAME_MIN_LENGTH} characters` :
+      this.username.hasError(UNIQUE_USERNAME_ERROR) ? 'Username already exists, please choose another' : '';
+  }
+
+  private usernameIsUniqueValidator(control: AbstractControl): Observable<ValidationErrors | null> {
+    // The async validator automatically unsubscribes if the control recieves a new value before the observable emits
+    return timer(500).pipe(
+      tap(() => this.checkingUsernameLoading = true),
+      switchMap(() => this.usernameService.usernameExists(control.value as string)),
+      tap(() => this.checkingUsernameLoading = false),
+      map(exists => exists ? { [UNIQUE_USERNAME_ERROR]: true } : null)
+    );
   }
 
   private filterNullErrorMessages() {

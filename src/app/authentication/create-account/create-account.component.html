@@ -8,14 +8,20 @@
 
 
   <div class="form-control-section">
-    <span>Username:</span>
+    <div class="inline-label">
+      <span>Username:</span>
+      <span class="error" *ngIf="checkingUsernameLoading">Checing Username...</span>
+    </div>
     <input formControlName="username" />
     <span class="error" *ngIf="username.touched && username.invalid">{{ getUsernameError() }}</span>
   </div>
 
   <div class="form-control-section">
-    <span>Password:</span>
-    <input type="password" formControlName="password" />
+    <div class="inline-label">
+      <span>Password:</span>
+      <span class="clickable" (click)="togglePasswordView()">(o)View Password</span>
+    </div>
+    <input [type]="passwordView" formControlName="password" />
     <span class="error" *ngIf="password.touched && password.invalid">{{ getPasswordError() }}</span>
   </div>
 

@@ -33,9 +33,7 @@ export class AuthenticationService {
     return map((credentials: firebase.auth.UserCredential) => {
       const user: User = {
         id: credentials.user.uid,
-        email: request.email,
-        username: request.username,
-        imageUploadCount: 0
+        ...request
       };
       return user;
     });

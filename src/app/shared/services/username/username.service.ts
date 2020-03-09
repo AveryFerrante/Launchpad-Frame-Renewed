@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, QueryFn, CollectionReference } from '@angular/fire/firestore';
 import { BatchAction, getSetBatchAction } from '../../models/batchAction';
 import { environment } from 'src/environments/environment';
 import { NewUsernameRequest } from '../../models/requests/newUsernameRequest';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,14 @@ export class UsernameService {
       usernamePermutations: this.getPermutations(username)
     };
     return getSetBatchAction(this.getUsernameDocumentReference(), data);
+  }
+
+  usernameExists(username: string): Observable<boolean> {
+    username = this.trimUsername(username);
+    const query: QueryFn = (ref: CollectionReference) => ref.where('usernameTrimmed', '==', username).limit(1);
+    return this.afStore.collection(environment.firebaseCollections.usernames.name, query).get().pipe(
+      map(data => !data.empty)
+    );
   }
 
   private getUsernameDocumentReference(): firebase.firestore.DocumentReference {
