@@ -15,7 +15,7 @@ export class UsernameService {
 
   getUsernameDocumentSetBatchAction(userId: string, username: string): SetBatchAction {
     const documentData = this.initializeUsernameDocumentData(userId, username);
-    return new SetBatchAction(this.getUsernameDocumentReference(), documentData);
+    return { documentReference: this.getUsernameDocumentReference(), data: documentData };
   }
 
   usernameExists(username: string): Observable<boolean> {

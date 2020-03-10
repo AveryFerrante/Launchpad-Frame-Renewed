@@ -22,7 +22,7 @@ export class AuthenticationService {
   }
 
   getUserDocumentSetBatchAction(user: User): SetBatchAction {
-    return new SetBatchAction(this.getUserDocumentReference(user.id), user);
+    return { documentReference: this.getUserDocumentReference(user.id), data: user };
   }
 
   private getUserDocumentReference(docId: string) {

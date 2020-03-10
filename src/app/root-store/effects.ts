@@ -4,18 +4,16 @@ import { AuthenticationService } from 'src/app/shared/services/authentication/au
 import * as AuthenticationActions from './actions';
 import {  map, catchError, exhaustMap, switchMap, mapTo, mergeMap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/firebase-collections/user';
-import { of, pipe, OperatorFunction } from 'rxjs';
-import { BatchHelperService } from '../shared/services/helpers/batch-helper.service';
+import { of, pipe, OperatorFunction, Observable } from 'rxjs';
 import { UsernameService } from '../shared/services/username/username.service';
-import { BaseBatchAction } from '../shared/models/baseBatchAction';
 import { NewUserRequest } from '../shared/models/requests/NewUserRequest';
+import { BatchActionOrchestrator } from '../shared/models/batchActionOrchestrator';
 
 @Injectable()
 export class RootEffects {
     constructor(private actions$: Actions,
                 private authenticationService: AuthenticationService,
-                private usernameService: UsernameService,
-                private batchHelper: BatchHelperService) { }
+                private usernameService: UsernameService) { }
 
     createEmailUser$ = createEffect(() => this.actions$.pipe(
         ofType(AuthenticationActions.CreateEmailUserRequest),
@@ -44,14 +42,19 @@ export class RootEffects {
 
     private initializeNewUserRecords(): OperatorFunction<User, User> {
       return mergeMap((user: User) => {
-        const actions = this.getCreateActionsForNewUserRecords(user);
-        return this.batchHelper.executeBatchActionsWithDefinedReturnType<User>(actions, user);
+        const userRecordsCreation$ = this.orchestrateCreationOfNewUserRecords(user).pipe(mapTo(user));
+        return this.mapObservableTo<User>(userRecordsCreation$, user);
       });
     }
 
-    private getCreateActionsForNewUserRecords(user: User): BaseBatchAction[] {
-        const createUserAction = this.authenticationService.getUserDocumentSetBatchAction(user);
-        const createUsernameAction = this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username);
-        return [createUserAction, createUsernameAction];
+    private orchestrateCreationOfNewUserRecords(user: User) {
+        const batchOrchestrator = new BatchActionOrchestrator();
+        batchOrchestrator.appendSetAction(this.authenticationService.getUserDocumentSetBatchAction(user));
+        batchOrchestrator.appendSetAction(this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username));
+        return batchOrchestrator.executeActions();
+    }
+
+    private mapObservableTo<T>(observable: Observable<any>, mapToValue: T) {
+      return observable.pipe(mapTo(mapToValue));
     }
 }
