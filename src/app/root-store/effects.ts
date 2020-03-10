@@ -20,26 +20,36 @@ export class RootEffects {
     createEmailUser$ = createEffect(() => this.actions$.pipe(
         ofType(AuthenticationActions.CreateEmailUserRequest),
         map((action) => action.newUserRequest),
-        this.createNewUserFromEmail(),
-        map((user: User) => AuthenticationActions.CreateEmailUserRequestSuccess({ user })),
-        catchError((error: Error) => of(AuthenticationActions.CreateEmailUserRequestFailure({ errorMessage: error.message })))
+        this.createNewEmailUserFlow(),
+        this.handleNewEmailUserFlowOutcomes()
     ));
 
-    private createNewUserFromEmail() {
+    private handleNewEmailUserFlowOutcomes() {
       return pipe(
-        exhaustMap((request: NewUserRequest) => this.authenticationService.createEmailUser(request)),
-        this.createUserAndUsernameRecords()
+        map((user: User) => AuthenticationActions.CreateEmailUserRequestSuccess({ user })),
+        catchError((error: Error) => of(AuthenticationActions.CreateEmailUserRequestFailure({ errorMessage: error.message })))
       );
     }
 
-    private createUserAndUsernameRecords(): OperatorFunction<User, User> {
+    private createNewEmailUserFlow() {
+      return pipe(
+        this.createNewUserFromEmail(),
+        this.initializeNewUserRecords(),
+      );
+    }
+
+    private createNewUserFromEmail() {
+      return exhaustMap((request: NewUserRequest) => this.authenticationService.createEmailUser(request));
+    }
+
+    private initializeNewUserRecords(): OperatorFunction<User, User> {
       return mergeMap((user: User) => {
-        const actions = this.getCreateUserAndUsernameActions(user);
-        return this.batchHelper.executeBatchActions(actions).pipe(mapTo(user));
+        const actions = this.getCreateActionsForNewUserRecords(user);
+        return this.batchHelper.executeBatchActionsWithDefinedReturnType<User>(actions, user);
       });
     }
 
-    private getCreateUserAndUsernameActions(user: User): BaseBatchAction[] {
+    private getCreateActionsForNewUserRecords(user: User): BaseBatchAction[] {
         const createUserAction = this.authenticationService.getUserDocumentSetBatchAction(user);
         const createUsernameAction = this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username);
         return [createUserAction, createUsernameAction];
