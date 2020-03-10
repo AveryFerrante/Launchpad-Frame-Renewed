@@ -4,9 +4,9 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { BatchAction, getSetBatchAction } from '../../models/batchAction';
+import { User } from '../../models/firebase-collections/user';
+import { SetBatchAction } from '../../models/setBatchAction';
 import { NewUserRequest } from '../../models/requests/NewUserRequest';
-import { User } from '../../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +21,8 @@ export class AuthenticationService {
     );
   }
 
-  createUserDocumentBatchAction(userId: string, newUserRequest: NewUserRequest): BatchAction {
-    return getSetBatchAction(this.getUserDocumentReference(userId), newUserRequest);
+  getUserDocumentSetBatchAction(user: User): SetBatchAction {
+    return new SetBatchAction(this.getUserDocumentReference(user.id), user);
   }
 
   private getUserDocumentReference(docId: string) {

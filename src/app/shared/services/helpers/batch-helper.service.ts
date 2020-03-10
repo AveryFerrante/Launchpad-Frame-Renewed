@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { BatchAction, isDeleteAction, isUpdateAction } from '../../models/batchAction';
-import { Observable, from } from 'rxjs';
+import { from, Observable } from 'rxjs';
+import { BaseBatchAction } from '../../models/baseBatchAction';
 
 @Injectable({
   providedIn: 'root'
@@ -10,17 +10,9 @@ export class BatchHelperService {
 
   constructor(private afStore: AngularFirestore) { }
 
-  executeBatch(batchActions: BatchAction[]): Observable<void> {
+  executeBatchActions(batchActions: BaseBatchAction[]): Observable<void> {
     const batch = this.afStore.firestore.batch();
-    batchActions.forEach((action: BatchAction) => {
-       if (isDeleteAction(action)) {
-         batch.delete(action.documentReference);
-       } else if (isUpdateAction(action)) {
-         batch.update(action.documentReference, action.data);
-       } else {
-         batch.set(action.documentReference, action.data, action.options);
-       }
-    });
+    batchActions.forEach(action => action.attachActionToBatch(batch));
     return from(batch.commit());
   }
 }

@@ -1,4 +1,4 @@
-import { User } from '../shared/models/user';
+import { User } from '../shared/models/firebase-collections/user';
 
 
 export const authenticationPropertyKey = 'authentication';

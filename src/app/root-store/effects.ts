@@ -2,12 +2,13 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';
 import * as AuthenticationActions from './actions';
-import {  map, catchError, exhaustMap, switchMap, mapTo } from 'rxjs/operators';
-import { User } from 'src/app/shared/models/user';
-import { of } from 'rxjs';
+import {  map, catchError, exhaustMap, switchMap, mapTo, mergeMap } from 'rxjs/operators';
+import { User } from 'src/app/shared/models/firebase-collections/user';
+import { of, pipe, OperatorFunction } from 'rxjs';
 import { BatchHelperService } from '../shared/services/helpers/batch-helper.service';
-import { BatchAction } from '../shared/models/batchAction';
 import { UsernameService } from '../shared/services/username/username.service';
+import { BaseBatchAction } from '../shared/models/baseBatchAction';
+import { NewUserRequest } from '../shared/models/requests/NewUserRequest';
 
 @Injectable()
 export class RootEffects {
@@ -18,18 +19,29 @@ export class RootEffects {
 
     createEmailUser$ = createEffect(() => this.actions$.pipe(
         ofType(AuthenticationActions.CreateEmailUserRequest),
-        exhaustMap((action) => {
-            return this.authenticationService.createEmailUser(action.newUserRequest).pipe(
-                switchMap((user: User) => {
-                  const batchActions: BatchAction[] = [
-                    this.authenticationService.createUserDocumentBatchAction(user.id, action.newUserRequest),
-                    this.usernameService.createUsernameDocumentBatchAction(user.id, action.newUserRequest.username)
-                  ];
-                  return this.batchHelper.executeBatch(batchActions).pipe(mapTo(user));
-                }),
-                map((user: User) => AuthenticationActions.CreateEmailUserRequestSuccess({ user })),
-                catchError((error: Error) => of(AuthenticationActions.CreateEmailUserRequestFailure({ errorMessage: error.message })))
-            );
-        })
+        map((action) => action.newUserRequest),
+        this.createNewUserFromEmail(),
+        map((user: User) => AuthenticationActions.CreateEmailUserRequestSuccess({ user })),
+        catchError((error: Error) => of(AuthenticationActions.CreateEmailUserRequestFailure({ errorMessage: error.message })))
     ));
+
+    private createNewUserFromEmail() {
+      return pipe(
+        exhaustMap((request: NewUserRequest) => this.authenticationService.createEmailUser(request)),
+        this.createUserAndUsernameRecords()
+      );
+    }
+
+    private createUserAndUsernameRecords(): OperatorFunction<User, User> {
+      return mergeMap((user: User) => {
+        const actions = this.getCreateUserAndUsernameActions(user);
+        return this.batchHelper.executeBatchActions(actions).pipe(mapTo(user));
+      });
+    }
+
+    private getCreateUserAndUsernameActions(user: User): BaseBatchAction[] {
+        const createUserAction = this.authenticationService.getUserDocumentSetBatchAction(user);
+        const createUsernameAction = this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username);
+        return [createUserAction, createUsernameAction];
+    }
 }
