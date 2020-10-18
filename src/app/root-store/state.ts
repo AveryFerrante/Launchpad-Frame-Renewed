@@ -8,11 +8,13 @@ export interface State {
 export const initialState: AuthenticationState = {
   currentUser: null,
   isLoading: false,
-  errorMessage: null
+  registerErrorMessage: null,
+  loginErrorMessage: null
 };
 
 export interface AuthenticationState {
   currentUser: User;
   isLoading: boolean;
-  errorMessage: string;
+  registerErrorMessage: string;
+  loginErrorMessage: string;
 }

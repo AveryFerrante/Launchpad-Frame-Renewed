@@ -39,3 +39,37 @@ input {
   background-color: $primary;
   color: $light;
 }
+
+form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  .form-control-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: .5rem;
+  }
+
+  .error {
+    color: $error;
+  }
+
+  .inline-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .form-footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+
+    button {
+      margin-left: auto;
+    }
+  }
+}

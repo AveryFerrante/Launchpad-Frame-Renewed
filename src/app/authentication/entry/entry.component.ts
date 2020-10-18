@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RootState, RootActions } from '../../root-store';
 import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
+import { SignInRequest } from 'src/app/shared/models/requests/signInRequest';
 
 type ModeType = ('login' | 'register');
 
@@ -19,6 +20,10 @@ export class EntryComponent implements OnInit {
 
   onCreateAccount(request: NewUserRequest) {
     this.store$.dispatch(RootActions.CreateEmailUser.Request({ request }));
+  }
+
+  onLogin(request: SignInRequest) {
+    this.store$.dispatch(RootActions.SignInWithEmail.Request({ request }));
   }
 
   setMode(mode: ModeType) {

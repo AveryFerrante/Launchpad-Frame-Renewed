@@ -2,7 +2,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';
 import * as AuthenticationActions from './actions';
-import { map, catchError, exhaustMap, switchMap, mapTo, mergeMap } from 'rxjs/operators';
+import { map, catchError, exhaustMap, mapTo, mergeMap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { of, pipe, OperatorFunction, Observable } from 'rxjs';
 import { UsernameService } from '../shared/services/username/username.service';
@@ -57,7 +57,7 @@ export class RootEffects {
 
   private initializeNewUserRecords(): OperatorFunction<User, User> {
     return mergeMap((user: User) => {
-      const userRecordsCreation$ = this.orchestrateCreationOfNewUserRecords(user).pipe(mapTo(user));
+      const userRecordsCreation$ = this.orchestrateCreationOfNewUserRecords(user);
       return this.mapObservableTo<User>(userRecordsCreation$, user);
     });
   }
@@ -74,13 +74,15 @@ export class RootEffects {
   }
 
   private signInUser() {
-    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request));
+    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request).pipe(
+      this.fetchUser()
+    ));
   }
 
   private handleSignInUserOutcomes() {
     return pipe(
-      map((userCredential: firebase.auth.UserCredential) =>
-        AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: userCredential })),
+      map((user: User) =>
+        AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: user })),
       catchError((error: Error) => of(AuthenticationActions.SignInWithEmail.RequestFailure({ failureResponse: error.message })))
     );
   }

@@ -1,4 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { min } from 'rxjs/operators';
 import { authenticationPropertyKey, State, AuthenticationState } from './state';
 
 export const SelectAuthenticationState = createFeatureSelector<AuthenticationState>(authenticationPropertyKey);
@@ -13,7 +14,12 @@ export const SelectAuthenticationUser = createSelector(
     (s: AuthenticationState) => s.currentUser
 );
 
-export const SelectAuthenticationErrorMessage = createSelector(
+export const SelectRegistrationErrorMessage = createSelector(
     SelectAuthenticationState,
-    (s: AuthenticationState) => s.errorMessage
+    (s: AuthenticationState) => s.registerErrorMessage === null ? '' : s.registerErrorMessage
 );
+
+export const SelectLoginErrorMessage = createSelector(
+  SelectAuthenticationState,
+  (s: AuthenticationState) => s.loginErrorMessage === null ? '' : s.loginErrorMessage
+)

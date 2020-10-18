@@ -44,6 +44,7 @@
 
       <div class="form-content-section">
         <authentication-create-account *ngIf="mode === 'register'" (createAccount)="onCreateAccount($event)"></authentication-create-account>
+        <authentication-login *ngIf="mode === 'login'" (login)="onLogin($event)"></authentication-login>
       </div>
     </div>
 

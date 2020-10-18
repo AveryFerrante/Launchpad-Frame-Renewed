@@ -31,7 +31,7 @@ export class CreateAccountComponent implements OnInit {
   passwordView: 'password' | 'text' = 'password';
   @Output() createAccount = new EventEmitter<NewUserRequest>();
   createAccountLoading$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationIsLoading));
-  createAccountError$ = this.store$.pipe(this.filterNullErrorMessages());
+  createAccountError$ = this.store$.pipe(select(RootSelectors.SelectRegistrationErrorMessage));
   constructor(private store$: Store<RootState>, private usernameService: UsernameService) { }
 
   ngOnInit() { }
@@ -74,13 +74,6 @@ export class CreateAccountComponent implements OnInit {
       switchMap(() => this.usernameService.usernameExists(control.value as string)),
       tap(() => this.checkingUsernameLoading = false),
       map(exists => exists ? { [UNIQUE_USERNAME_ERROR]: true } : null)
-    );
-  }
-
-  private filterNullErrorMessages() {
-    return pipe(
-      select(RootSelectors.SelectAuthenticationErrorMessage),
-      filter((e: string) => e !== null)
     );
   }
 }
