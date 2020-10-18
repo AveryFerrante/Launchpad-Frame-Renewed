@@ -1,10 +1,15 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { select, Store } from '@ngrx/store';
+import { Observable, pipe, timer } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
-import { Store, select } from '@ngrx/store';
-import { AuthenticationSelectors, RootState } from '../../root-store';
-import { map, filter } from 'rxjs/operators';
-import { pipe } from 'rxjs';
+import { UsernameService } from 'src/app/shared/services/username/username.service';
+import { RootSelectors, RootState } from '../../root-store';
+
+const USERNAME_MIN_LENGTH = 3;
+const PASSWORD_MIN_LENGTH = 8;
+const UNIQUE_USERNAME_ERROR = 'notUnique';
 
 @Component({
   selector: 'authentication-create-account',
@@ -14,32 +19,36 @@ import { pipe } from 'rxjs';
 export class CreateAccountComponent implements OnInit {
 
   createAccountFormGroup = new FormGroup({
-    firstName: new FormControl('', [Validators.required]),
-    lastName: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required, Validators.email]),
-    username: new FormControl(''),
-    password: new FormControl('', [Validators.required, Validators.minLength(8)]),
-    passwordConfirm: new FormControl('', [Validators.required])
-  }, { validators: [this.passwordMatchValidator('password', 'passwordConfirm')] });
-  get firstName(): FormControl { return this.createAccountFormGroup.controls.firstName as FormControl; }
-  get lastName(): FormControl { return this.createAccountFormGroup.controls.lastName as FormControl; }
+    username: new FormControl('', [Validators.required, Validators.minLength(USERNAME_MIN_LENGTH)],
+      this.usernameIsUniqueValidator.bind(this)),
+    password: new FormControl('', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH)])
+  });
   get email(): FormControl { return this.createAccountFormGroup.controls.email as FormControl; }
   get username(): FormControl { return this.createAccountFormGroup.controls.username as FormControl; }
   get password(): FormControl { return this.createAccountFormGroup.controls.password as FormControl; }
-  get passwordConfirm(): FormControl { return this.createAccountFormGroup.controls.passwordConfirm as FormControl; }
+  checkingUsernameLoading = false;
+  passwordView: 'password' | 'text' = 'password';
   @Output() createAccount = new EventEmitter<NewUserRequest>();
-  createAccountLoading$ = this.store$.pipe(select(AuthenticationSelectors.SelectAuthenticationIsLoading));
-  createAccountError$ = this.store$.pipe(this.getCreateAccountErrorMessage());
-  constructor(public store$: Store<RootState>) { }
+  createAccountLoading$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationIsLoading));
+  createAccountError$ = this.store$.pipe(this.filterNullErrorMessages());
+  constructor(private store$: Store<RootState>, private usernameService: UsernameService) { }
 
   ngOnInit() { }
 
-  getFirstNameError() {
-    return this.firstName.hasError('required') ? 'First Name is required' : '';
+  onCreateAccount() {
+    const request: NewUserRequest = {
+      username: this.username.value,
+      email: this.email.value,
+      password: this.password.value,
+      imageUploadCount: 0,
+      frames: []
+    };
+    this.createAccount.emit(request);
   }
 
-  getLastNameError() {
-    return this.lastName.hasError('required') ? 'Last Name is required' : '';
+  togglePasswordView() {
+    this.passwordView = this.passwordView === 'text' ? 'password' : 'text';
   }
 
   getEmailError() {
@@ -49,40 +58,29 @@ export class CreateAccountComponent implements OnInit {
 
   getPasswordError() {
     return this.password.hasError('required') ? 'Password is required' :
-      this.password.hasError('minlength') ? 'Password must be atleast 8 characters' : '';
+      this.password.hasError('minlength') ? `Password must be atleast ${PASSWORD_MIN_LENGTH} characters` : '';
   }
 
-  getPasswordConfirmError() {
-    return this.passwordConfirm.hasError('passwordMismatch') ? 'Passwords must match' : '';
+  getUsernameError() {
+    return this.username.hasError('required') ? 'Username is required' :
+      this.username.hasError('minlength') ? `Username must be atleast ${USERNAME_MIN_LENGTH} characters` :
+      this.username.hasError(UNIQUE_USERNAME_ERROR) ? 'Username already exists, please choose another' : '';
   }
 
-  onCreateAccount() {
-    const request: NewUserRequest = {
-      firstName: this.firstName.value,
-      lastName: this.lastName.value,
-      username: this.username.value,
-      email: this.email.value,
-      password: this.password.value
-    };
-    this.createAccount.emit(request);
+  private usernameIsUniqueValidator(control: AbstractControl): Observable<ValidationErrors | null> {
+    // The async validator automatically unsubscribes if the control recieves a new value before the observable emits
+    return timer(500).pipe(
+      tap(() => this.checkingUsernameLoading = true),
+      switchMap(() => this.usernameService.usernameExists(control.value as string)),
+      tap(() => this.checkingUsernameLoading = false),
+      map(exists => exists ? { [UNIQUE_USERNAME_ERROR]: true } : null)
+    );
   }
 
-  private passwordMatchValidator(primaryPasswordControlName: string, confirmPasswordControlName: string): ValidatorFn {
-    return (group: FormGroup) => {
-      const password = group.controls[primaryPasswordControlName];
-      const confirmPassword = group.controls[confirmPasswordControlName];
-      if (password.value !== confirmPassword.value) {
-        confirmPassword.setErrors({ passwordMismatch: true });
-      }
-      return null;
-    };
-  }
-
-  private getCreateAccountErrorMessage() {
+  private filterNullErrorMessages() {
     return pipe(
-      select(AuthenticationSelectors.SelectAuthenticationError),
-      filter((e: Error) => e !== null),
-      map((e: Error) => `ERROR: ${e.message}`)
+      select(RootSelectors.SelectAuthenticationErrorMessage),
+      filter((e: string) => e !== null)
     );
   }
 }

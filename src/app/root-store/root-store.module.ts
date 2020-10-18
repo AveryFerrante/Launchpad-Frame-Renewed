@@ -5,15 +5,16 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
-import { AuthenticationStateModule } from './authentication';
+import { reducer } from './reducer';
+import { RootEffects } from './effects';
+import { authenticationPropertyKey } from './state';
 
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    AuthenticationStateModule,
-    StoreModule.forRoot({}, {
+    StoreModule.forRoot({ [authenticationPropertyKey]: reducer }, {
       runtimeChecks: {
         strictStateImmutability: true,
         strictActionImmutability: true,
@@ -21,7 +22,7 @@ import { AuthenticationStateModule } from './authentication';
         strictActionSerializability: true,
       },
     }),
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([RootEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode

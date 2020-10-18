@@ -9,6 +9,33 @@ body {
   background-color: $secondary;
 }
 
-.full-screen-height {
-  height: 100vh;
+input {
+  font: inherit;
+  font-size: inherit;
+  text-indent: 2px;
+  padding: .5rem;
+  border: 1px solid lightgray;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.btn {
+  text-align: center;
+  border: 0;
+  border-radius: 0;
+  padding: .375rem .75rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.btn:disabled {
+  opacity: .75;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: $primary;
+  color: $light;
 }

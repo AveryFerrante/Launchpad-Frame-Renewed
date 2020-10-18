@@ -1,14 +1,132 @@
 @import '../../../variables.scss';
+$max-section-size: 634px;
 
-@include media($tablet-size...) {
-  .test-class {
-    color: $secondary;
+h1, h3 {
+  margin: 0;
+}
+
+svg {
+  fill: $light;
+}
+
+.layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(to right, $secondary, $primary);
+}
+
+.branding-line {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .svg-image {
+    height: 2rem;
   }
 }
 
-@include media($desktop-size...) {
-  .test-class {
-    color: $primary;
-    font-weight: bold;
+.subtitle {
+  margin-bottom: 1rem;
+}
+
+.image-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+
+  svg {
+    height: 10rem;
+  }
+}
+
+.authentication-card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  margin: 10px;
+}
+
+.information-section {
+  padding: 3rem 0 6rem 0;
+  background-color: $primary;
+  color: $light;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 $max-section-size;
+  text-align: center;
+
+  .bottom-space {
+    margin-bottom: 1rem;
+  }
+
+  :last-child {
+    font-style: italic;
+  }
+}
+
+.form-section {
+  background-color: $light;
+  flex: 0 1 $max-section-size;
+  display: flex;
+  flex-direction: column;
+
+  .navigation-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    div {
+      padding: .75rem 0;
+      width: 50%;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .active {
+      border-bottom: 1px solid black;
+    }
+  }
+}
+
+.form-content-section {
+  padding: 0 2rem;
+  flex: 1;
+}
+
+@include media($phone-size...) {
+  .layout {
+    align-items: start;
+    background-image: linear-gradient(to bottom, $secondary, $primary);
+  }
+
+  .authentication-card {
+    flex-direction: column;
+    margin: 10px;
+
+    .subtitle {
+      display: none;
+    }
+  }
+
+  .information-section {
+    width: auto;
+    flex: initial;
+  }
+
+  .form-section {
+    width: auto;
+    flex: initial;
   }
 }

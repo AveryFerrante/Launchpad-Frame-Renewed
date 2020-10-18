@@ -1,7 +1,12 @@
 export interface NewUserRequest {
-    firstName: string;
-    lastName: string;
     email: string;
     password: string;
     username: string;
+    imageUploadCount: number;
+    frames: UserFrame[]
+}
+
+interface UserFrame {
+  id: string;
+  permissions: string[];
 }

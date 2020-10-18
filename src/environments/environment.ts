@@ -7,6 +7,9 @@ export const environment = {
   firebaseCollections: {
     users: {
       name: 'Users'
+    },
+    usernames: {
+      name: 'Usernames'
     }
   }
 };

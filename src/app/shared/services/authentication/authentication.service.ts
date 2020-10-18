@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { User } from '../../models/user';
-import { Observable, from } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
-import { NewUserRequest } from '../../models/requests/NewUserRequest';
+import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { createDefaultUser, createUserFromDocument, User } from '../../models/firebase-collections/user';
+import { SetBatchAction } from '../../models/setBatchAction';
+import { NewUserRequest } from '../../models/requests/NewUserRequest';
+import { SignInRequest } from '../../models/requests/signInRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -16,40 +18,42 @@ export class AuthenticationService {
 
   createEmailUser(request: NewUserRequest): Observable<User> {
     return from(this.afAuth.auth.createUserWithEmailAndPassword(request.email, request.password)).pipe(
-      this.createNewUser(request)
+      this.createUserFromNewUserRequest(request)
     );
   }
 
-
-  private createNewUser(request: NewUserRequest) {
-    return switchMap((credentials: firebase.auth.UserCredential) => {
-      const user = this.createUserFromNewUserRequest(request);
-      return this.createNewUserDocument(user, credentials);
-    });
+  signInWithEmail(request: SignInRequest): Observable<firebase.auth.UserCredential> {
+    return from(this.afAuth.auth.signInWithEmailAndPassword(request.email, request.password));
   }
 
-  private createNewUserDocument(user: User, credentials: firebase.auth.UserCredential): Observable<User> {
-    return from(this.afStore.collection(environment.firebaseCollections.users.name).doc(credentials.user.uid).set(user)).pipe(
-      this.mapToUserWithUserId(user, credentials.user.uid)
+  getUserDocumentById(userId: string): Observable<User> {
+    return from(this.getUserDocumentReference(userId).get()).pipe(
+      this.mapDocumentToUser()
     );
   }
 
-  private mapToUserWithUserId(user: User, uid: string) {
-    return map(() => {
-      user.id = uid;
-      return user;
-    });
+  getUserDocumentSetBatchAction(user: User): SetBatchAction {
+    return { documentReference: this.getUserDocumentReference(user.id), data: user };
+  }
+
+  private getUserDocumentReference(docId: string) {
+    return this.afStore.firestore.collection(environment.firebaseCollections.users.name).doc(docId);
   }
 
   private createUserFromNewUserRequest(request: NewUserRequest) {
-    const user: User = {
-      firstName: request.firstName,
-      lastName: request.lastName,
-      email: request.email,
-      username: request.username,
-      imageUploadCount: 0
-    };
-    return user;
+    return map((credentials: firebase.auth.UserCredential) => {
+      return createDefaultUser(request.email, request.username, credentials.user.uid);
+    });
+  }
+
+  private mapDocumentToUser() {
+    return map((userDocument: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>) => {
+      if (userDocument.exists) {
+        return createUserFromDocument(userDocument);
+      } else {
+        throw new Error('No associated user document was found for the user id');
+      }
+    });
   }
 
 }

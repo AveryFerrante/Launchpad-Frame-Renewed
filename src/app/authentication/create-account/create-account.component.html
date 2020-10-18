@@ -1,54 +1,34 @@
-<!-- <mat-card>
-  <mat-card-header>
-    <mat-card-title>
-      Launchpad Frame
-    </mat-card-title>
-    <mat-card-subtitle>
-      Create Account
-    </mat-card-subtitle>
-  </mat-card-header>
+<form [formGroup]="createAccountFormGroup">
 
-  <mat-card-content>
-    <form [formGroup]="createAccountFormGroup">
-      <div fxLayout="column">
-        <mat-form-field>
-          <input matInput placeholder="First Name" formControlName="firstName">
-          <mat-error *ngIf="firstName.invalid">{{ getFirstNameError() }}</mat-error>
-        </mat-form-field>
+  <div class="form-control-section">
+    <span>Email:</span>
+    <input formControlName="email" />
+    <span class="error" *ngIf="email.touched && email.invalid">{{ getEmailError() }}</span>
+  </div>
 
-        <mat-form-field>
-          <input matInput placeholder="Last Name" formControlName="lastName">
-          <mat-error *ngIf="lastName.invalid">{{ getLastNameError() }}</mat-error>
-        </mat-form-field>
 
-        <mat-form-field>
-          <input matInput placeholder="Email" formControlName="email">
-          <mat-error *ngIf="email.invalid">{{ getEmailError() }}</mat-error>
-        </mat-form-field>
+  <div class="form-control-section">
+    <div class="inline-label">
+      <span>Username:</span>
+      <span class="error" *ngIf="checkingUsernameLoading">Checing Username...</span>
+    </div>
+    <input formControlName="username" />
+    <span class="error" *ngIf="username.touched && username.invalid">{{ getUsernameError() }}</span>
+  </div>
 
-        <mat-form-field>
-          <input matInput placeholder="Username" formControlName="username">
-          <mat-error *ngIf="username.invalid">{{ 'Username Error Here?' }}</mat-error>
-        </mat-form-field>
+  <div class="form-control-section">
+    <div class="inline-label">
+      <span>Password:</span>
+      <span class="clickable" (click)="togglePasswordView()">(o)View Password</span>
+    </div>
+    <input [type]="passwordView" formControlName="password" />
+    <span class="error" *ngIf="password.touched && password.invalid">{{ getPasswordError() }}</span>
+  </div>
 
-        <mat-form-field>
-          <input type="password" matInput placeholder="Password" formControlName="password">
-          <mat-error *ngIf="password.invalid">{{ getPasswordError() }}</mat-error>
-        </mat-form-field>
+  <div class="form-footer">
+    <span class="error" *ngIf="createAccountError$ | async; let message">ERROR: {{ message }}</span>
+    <button class="btn btn-primary" [disabled]="!createAccountFormGroup.valid || !createAccountFormGroup.touched"
+      (click)="onCreateAccount()">CREATE</button>
+  </div>
 
-        <mat-form-field>
-          <input type="password" matInput placeholder="Confirm Password" formControlName="passwordConfirm">
-          <mat-error *ngIf="passwordConfirm.invalid">{{ getPasswordConfirmError() }}</mat-error>
-        </mat-form-field>
-      </div>
-    </form>
-  </mat-card-content>
-
-  <mat-card-actions align="end">
-    <button mat-raised-button color="primary" (click)="onCreateAccount()"
-      [disabled]="this.createAccountFormGroup.invalid || this.createAccountFormGroup.untouched">CREATE ACCOUNT</button>
-  </mat-card-actions>
-  <mat-card-footer>
-    <mat-error *ngIf="createAccountError$ | async; let errorMessage">{{ errorMessage }}</mat-error>
-  </mat-card-footer>
-</mat-card> -->
+</form>
