@@ -11,10 +11,12 @@ export class EntryComponent implements OnInit {
   constructor(private AfAuth: AngularFireAuth) { }
 
   ngOnInit() {
+
   }
 
   signout() {
     this.AfAuth.auth.signOut();
+    // this.AfAuth.auth.signInWithEmailAndPassword('averyferrante123@gmail.com', '123456789');
   }
 
 }

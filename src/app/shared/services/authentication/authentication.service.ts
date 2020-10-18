@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { createDefaultUser, createUserFromDocument, User } from '../../models/firebase-collections/user';
 import { SetBatchAction } from '../../models/setBatchAction';
@@ -27,7 +27,9 @@ export class AuthenticationService {
   }
 
   getUserDocumentById(userId: string): Observable<User> {
+    console.log('Inside getUserDocumentById');
     return from(this.getUserDocumentReference(userId).get()).pipe(
+      tap(() => console.log('Inside chain for getting the doc reference')),
       this.mapDocumentToUser()
     );
   }
@@ -37,13 +39,17 @@ export class AuthenticationService {
   }
 
   userIsSignedIn(): Observable<boolean> {
-    return this.afAuth.user.pipe(
+    return this.getCurrentSignedInUser().pipe(
       map((user: firebase.User) => user !== null)
     );
   }
 
+  getCurrentSignedInUser(): Observable<firebase.User> {
+    return this.afAuth.user;
+  }
+
   private getUserDocumentReference(docId: string) {
-    return this.afStore.firestore.collection(environment.firebaseCollections.users.name).doc(docId);
+    return this.afStore.collection(environment.firebaseCollections.users.name).doc<User>(docId);
   }
 
   private createUserFromNewUserRequest(request: NewUserRequest) {

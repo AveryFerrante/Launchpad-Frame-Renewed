@@ -1,7 +1,8 @@
+import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
 
 export interface SetBatchAction {
-  documentReference: firebase.firestore.DocumentReference;
+  documentReference: AngularFirestoreDocument;
   data: firebase.firestore.DocumentData;
   options?: firebase.firestore.SetOptions;
 }

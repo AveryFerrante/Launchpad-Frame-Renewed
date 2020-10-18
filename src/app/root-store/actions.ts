@@ -8,5 +8,5 @@ export const CreateEmailUser =
 export const SignInWithEmail =
   createDefaultRequestActions<SignInRequest, User, string>('[Authentication] Sign In With Email');
 export const GetUserAfterAuthentication =
-  createDefaultRequestActions<firebase.auth.UserCredential, User, string>('[Authentication] Get User After Authentication');
+  createDefaultRequestActions<firebase.User, User, string>('[Authentication] Get User After Authentication');
 

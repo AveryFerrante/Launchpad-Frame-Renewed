@@ -35,8 +35,8 @@ export class UsernameService {
     };
   }
 
-  private getUsernameDocumentReference(): firebase.firestore.DocumentReference {
-    return this.afStore.firestore.collection(environment.firebaseCollections.usernames.name).doc();
+  private getUsernameDocumentReference() {
+    return this.afStore.collection(environment.firebaseCollections.usernames.name).doc<Username>();
   }
 
   private trimUsername(username: string): string {

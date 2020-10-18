@@ -38,15 +38,15 @@ export class BatchActionOrchestrator {
   }
 
   private attachSetAction() {
-    this.setActions.forEach(action => this.batch.set(action.documentReference, action.data, action.options));
+    this.setActions.forEach(action => this.batch.set(action.documentReference.ref, action.data, action.options));
   }
 
   private attachUpdateAction() {
-    this.updateActions.forEach(action => this.batch.update(action.documentReference, action.data));
+    this.updateActions.forEach(action => this.batch.update(action.documentReference.ref, action.data));
   }
 
   private attachDeleteAction() {
-    this.deleteActions.forEach(action => this.batch.delete(action.documentReference));
+    this.deleteActions.forEach(action => this.batch.delete(action.documentReference.ref));
   }
 
 }

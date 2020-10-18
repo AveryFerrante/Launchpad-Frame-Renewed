@@ -2,19 +2,22 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';
 import * as AuthenticationActions from './actions';
-import { map, catchError, exhaustMap, mapTo, mergeMap } from 'rxjs/operators';
+import { map, catchError, exhaustMap, mapTo, mergeMap, filter, tap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { of, pipe, OperatorFunction, Observable } from 'rxjs';
 import { UsernameService } from '../shared/services/username/username.service';
 import { NewUserRequest } from '../shared/models/requests/NewUserRequest';
 import { BatchActionOrchestrator } from '../shared/models/batchActionOrchestrator';
 import { SignInRequest } from '../shared/models/requests/signInRequest';
+import { Router } from '@angular/router';
+import { URL_PATHS } from '../shared/models/urlPathConstants';
 
 @Injectable()
 export class RootEffects {
   constructor(private actions$: Actions,
               private authenticationService: AuthenticationService,
-              private usernameService: UsernameService) { }
+              private usernameService: UsernameService,
+              private router: Router) { }
 
   signInWithEmail$ = createEffect(() => this.actions$.pipe(
     ofType(AuthenticationActions.SignInWithEmail.Request),
@@ -32,10 +35,15 @@ export class RootEffects {
 
   getUserAfterAuthentication$ = createEffect(() => this.actions$.pipe(
     ofType(AuthenticationActions.GetUserAfterAuthentication.Request),
-    map((action) => action.request),
+    mergeMap(() => this.authenticationService.getCurrentSignedInUser()),
     this.fetchUser(),
     this.handleFetchUserOutcomes()
   ));
+
+  navigateAfterAuthenticationComplete$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthenticationActions.CreateEmailUser.RequestSuccess, AuthenticationActions.SignInWithEmail.RequestSuccess),
+    tap(() => this.router.navigateByUrl(URL_PATHS.home))
+  ), { dispatch: false });
 
   private handleNewEmailUserFlowOutcomes() {
     return pipe(
@@ -75,7 +83,9 @@ export class RootEffects {
 
   private signInUser() {
     return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request).pipe(
-      this.fetchUser()
+      mergeMap(() => this.authenticationService.getCurrentSignedInUser().pipe(
+        this.fetchUser()
+      ))
     ));
   }
 
@@ -88,8 +98,8 @@ export class RootEffects {
   }
 
   private fetchUser() {
-    return mergeMap((userCredential: firebase.auth.UserCredential) =>
-        this.authenticationService.getUserDocumentById(userCredential.user.uid));
+    return mergeMap((signedInUser: firebase.User) =>
+        this.authenticationService.getUserDocumentById(signedInUser.uid));
   }
 
   private handleFetchUserOutcomes() {
