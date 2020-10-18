@@ -36,6 +36,12 @@ export class AuthenticationService {
     return { documentReference: this.getUserDocumentReference(user.id), data: user };
   }
 
+  userIsSignedIn(): Observable<boolean> {
+    return this.afAuth.user.pipe(
+      map((user: firebase.User) => user !== null)
+    );
+  }
+
   private getUserDocumentReference(docId: string) {
     return this.afStore.firestore.collection(environment.firebaseCollections.users.name).doc(docId);
   }
