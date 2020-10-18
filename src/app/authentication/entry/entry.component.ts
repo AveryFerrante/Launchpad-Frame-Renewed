@@ -6,7 +6,7 @@ import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
 type ModeType = ('login' | 'register');
 
 @Component({
-  selector: 'app-entry',
+  selector: 'authentication-entry',
   templateUrl: './entry.component.html',
   styleUrls: ['./entry.component.scss']
 })
@@ -18,7 +18,7 @@ export class EntryComponent implements OnInit {
   }
 
   onCreateAccount(request: NewUserRequest) {
-    this.store$.dispatch(RootActions.CreateEmailUserRequest({ newUserRequest: request }));
+    this.store$.dispatch(RootActions.CreateEmailUser.Request({ request }));
   }
 
   setMode(mode: ModeType) {
