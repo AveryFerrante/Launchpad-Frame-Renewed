@@ -1,5 +1,5 @@
 import { AngularFirestoreDocument } from '@angular/fire/firestore';
 
 export interface DeleteBatchAction {
-  documentReference: AngularFirestoreDocument;
+  documentReference: firebase.firestore.DocumentReference;
 }

@@ -13,17 +13,22 @@ const r = createReducer(
 
     on(Actions.SignInWithEmail.Request, (state: AuthenticationState) =>
       ({ ...state, isLoading: true })),
-    on(Actions.SignInWithEmail.RequestSuccess, (state: AuthenticationState, { successResponse }) =>
-      ({ ...state, isLoading: false, loginErrorMessage: null, currentUser: successResponse })),
+    on(Actions.SignInWithEmail.RequestSuccess, (state: AuthenticationState) =>
+      ({ ...state, isLoading: false, loginErrorMessage: null })),
     on(Actions.SignInWithEmail.RequestFailure, (state: AuthenticationState, { failureResponse }) =>
       ({ ...state, currentUser: null, isLoading: false, loginErrorMessage: failureResponse })),
 
-    on(Actions.GetUserAfterAuthentication.Request, (state: AuthenticationState) =>
+    on(Actions.GetUserDataFromSignedInUser.Request, (state: AuthenticationState) =>
       ({ ...state, isLoading: true })),
-    on(Actions.GetUserAfterAuthentication.RequestSuccess, (state: AuthenticationState, { successResponse }) =>
+    on(Actions.GetUserDataFromSignedInUser.RequestSuccess, (state: AuthenticationState, { successResponse }) =>
       ({ ...state, currentUser: successResponse, isLoading: false, loginErrorMessage: null })),
-    on(Actions.GetUserAfterAuthentication.RequestFailure, (state: AuthenticationState, { failureResponse }) =>
+    on(Actions.GetUserDataFromSignedInUser.RequestFailure, (state: AuthenticationState, { failureResponse }) =>
       ({ ...state, currentUser: null, isLoading: false, loginErrorMessage: failureResponse })),
+
+    on(Actions.SignOutUser.RequestSuccess, (state: AuthenticationState) =>
+      ({ ...state, currentUser: null, loginErrorMessage: null, registerErrorMessage: null, isLoading: false })),
+    on(Actions.SignOutUser.RequestFailure, (state: AuthenticationState) =>
+      ({ ...state, currentUser: null, isLoading: false, loginErrorMessage: null, registerErrorMessage: null }))
 );
 
 export function reducer(state: AuthenticationState, action: Action ) {

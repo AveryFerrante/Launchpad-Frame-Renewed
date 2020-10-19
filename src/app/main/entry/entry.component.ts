@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Actions } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { RootActions, RootState } from 'src/app/root-store';
 
 @Component({
   selector: 'app-entry',
@@ -8,15 +10,14 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class EntryComponent implements OnInit {
 
-  constructor(private AfAuth: AngularFireAuth) { }
+  constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
 
   }
 
   signout() {
-    this.AfAuth.auth.signOut();
-    // this.AfAuth.auth.signInWithEmailAndPassword('averyferrante123@gmail.com', '123456789');
+    this.store$.dispatch(RootActions.SignOutUser.Request({ request: null }));
   }
 
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { of } from 'rxjs';
-import { filter, first, map, mapTo, mergeMap, tap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { first, map, mapTo, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { RootActions, RootSelectors, RootState } from 'src/app/root-store';
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { URL_PATHS } from 'src/app/shared/models/urlPathConstants';
@@ -26,16 +26,19 @@ export class MainGuard implements CanActivate {
 
   private ensureUserDataIsInStore() {
     const storedUser$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationUser));
-    return storedUser$.pipe(
+    const loginError$ = this.store$.pipe(select(RootSelectors.SelectLoginErrorMessage));
+    return combineLatest(storedUser$, loginError$).pipe(
       this.fetchUserIfNull(),
-      filter((user: User) => user !== null),
-      mapTo(true),
+      first(([user, errorMessage]: [User, string]) => (user !== null || errorMessage !== '')),
+      mapTo(true)
     );
   }
 
   private fetchUserIfNull() {
-    return tap((user: User) => {
-      if (user === null) { this.store$.dispatch(RootActions.GetUserAfterAuthentication.Request({ request: null })); }
+    return tap(([user, errorMessage]: [User, string]) => {
+      if (user === null && errorMessage === '') {
+        this.store$.dispatch(RootActions.GetUserDataFromSignedInUser.Request({ request: null }));
+      }
     });
   }
 }

@@ -18,16 +18,16 @@ export class BatchActionOrchestrator {
     this.updateActions = [];
   }
 
-  appendSetAction(action: SetBatchAction) {
-    this.setActions.push(action);
+  appendSetAction(...actions: SetBatchAction[]) {
+    this.setActions.concat(actions);
   }
 
-  appendUpdateAction(action: UpdateBatchAction) {
-    this.updateActions.push(action);
+  appendUpdateAction(...actions: UpdateBatchAction[]) {
+    this.updateActions.concat(actions);
   }
 
-  appendDeleteAction(action: DeleteBatchAction) {
-    this.deleteActions.push(action);
+  appendDeleteAction(...actions: DeleteBatchAction[]) {
+    this.deleteActions.concat(actions);
   }
 
   executeActions(): Observable<void> {
@@ -38,15 +38,15 @@ export class BatchActionOrchestrator {
   }
 
   private attachSetAction() {
-    this.setActions.forEach(action => this.batch.set(action.documentReference.ref, action.data, action.options));
+    this.setActions.forEach(action => this.batch.set(action.documentReference, action.data, action.options));
   }
 
   private attachUpdateAction() {
-    this.updateActions.forEach(action => this.batch.update(action.documentReference.ref, action.data));
+    this.updateActions.forEach(action => this.batch.update(action.documentReference, action.data));
   }
 
   private attachDeleteAction() {
-    this.deleteActions.forEach(action => this.batch.delete(action.documentReference.ref));
+    this.deleteActions.forEach(action => this.batch.delete(action.documentReference));
   }
 
 }

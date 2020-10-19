@@ -6,7 +6,9 @@ import { createDefaultRequestActions } from './actionFactory';
 export const CreateEmailUser =
   createDefaultRequestActions<NewUserRequest, User, string>('[Authentication] Create Email User');
 export const SignInWithEmail =
-  createDefaultRequestActions<SignInRequest, User, string>('[Authentication] Sign In With Email');
-export const GetUserAfterAuthentication =
-  createDefaultRequestActions<firebase.User, User, string>('[Authentication] Get User After Authentication');
+  createDefaultRequestActions<SignInRequest, null, string>('[Authentication] Sign In With Email');
+export const GetUserDataFromSignedInUser =
+  createDefaultRequestActions<null, User, string>('[Authentication] Get User Data From Signed In User');
+export const SignOutUser =
+  createDefaultRequestActions<null, null, null>('[Authentication] Sign Out User');
 

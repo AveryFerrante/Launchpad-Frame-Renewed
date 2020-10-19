@@ -22,4 +22,4 @@ export const SelectRegistrationErrorMessage = createSelector(
 export const SelectLoginErrorMessage = createSelector(
   SelectAuthenticationState,
   (s: AuthenticationState) => s.loginErrorMessage === null ? '' : s.loginErrorMessage
-)
+);

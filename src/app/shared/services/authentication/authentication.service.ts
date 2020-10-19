@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { createDefaultUser, createUserFromDocument, User } from '../../models/firebase-collections/user';
 import { SetBatchAction } from '../../models/setBatchAction';
@@ -27,15 +27,13 @@ export class AuthenticationService {
   }
 
   getUserDocumentById(userId: string): Observable<User> {
-    console.log('Inside getUserDocumentById');
     return from(this.getUserDocumentReference(userId).get()).pipe(
-      tap(() => console.log('Inside chain for getting the doc reference')),
       this.mapDocumentToUser()
     );
   }
 
   getUserDocumentSetBatchAction(user: User): SetBatchAction {
-    return { documentReference: this.getUserDocumentReference(user.id), data: user };
+    return { documentReference: this.getUserDocumentReference(user.id).ref, data: user };
   }
 
   userIsSignedIn(): Observable<boolean> {
@@ -45,7 +43,11 @@ export class AuthenticationService {
   }
 
   getCurrentSignedInUser(): Observable<firebase.User> {
-    return this.afAuth.user;
+    return this.afAuth.user.pipe(take(1));
+  }
+
+  signOutUser(): Observable<void> {
+    return from(this.afAuth.auth.signOut());
   }
 
   private getUserDocumentReference(docId: string) {
@@ -53,9 +55,8 @@ export class AuthenticationService {
   }
 
   private createUserFromNewUserRequest(request: NewUserRequest) {
-    return map((credentials: firebase.auth.UserCredential) => {
-      return createDefaultUser(request.email, request.username, credentials.user.uid);
-    });
+    return map((credentials: firebase.auth.UserCredential) =>
+      createDefaultUser(request.email, request.username, credentials.user.uid));
   }
 
   private mapDocumentToUser() {

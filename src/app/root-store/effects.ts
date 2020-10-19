@@ -33,16 +33,28 @@ export class RootEffects {
     this.handleNewEmailUserFlowOutcomes()
   ));
 
-  getUserAfterAuthentication$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthenticationActions.GetUserAfterAuthentication.Request),
-    mergeMap(() => this.authenticationService.getCurrentSignedInUser()),
-    this.fetchUser(),
-    this.handleFetchUserOutcomes()
+  getUserData$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthenticationActions.GetUserDataFromSignedInUser.Request),
+    this.fetchUserDataFromSignedInUser(),
+    this.handleFetchUserDataOutcomes()
+  ));
+
+  signOutUser$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthenticationActions.SignOutUser.Request),
+    mergeMap(() => this.authenticationService.signOutUser().pipe(
+      map(() => AuthenticationActions.SignOutUser.RequestSuccess({ successResponse: null })),
+      catchError(() => of(AuthenticationActions.SignOutUser.RequestFailure({ failureResponse: null })))
+    ))
   ));
 
   navigateAfterAuthenticationComplete$ = createEffect(() => this.actions$.pipe(
     ofType(AuthenticationActions.CreateEmailUser.RequestSuccess, AuthenticationActions.SignInWithEmail.RequestSuccess),
     tap(() => this.router.navigateByUrl(URL_PATHS.home))
+  ), { dispatch: false });
+
+  navigateAfterSignoutComplete$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthenticationActions.SignOutUser.RequestSuccess, AuthenticationActions.SignOutUser.RequestFailure),
+    tap(() => this.router.navigateByUrl(URL_PATHS.authentication))
   ), { dispatch: false });
 
   private handleNewEmailUserFlowOutcomes() {
@@ -72,8 +84,10 @@ export class RootEffects {
 
   private orchestrateCreationOfNewUserRecords(user: User) {
     const batchOrchestrator = new BatchActionOrchestrator();
-    batchOrchestrator.appendSetAction(this.authenticationService.getUserDocumentSetBatchAction(user));
-    batchOrchestrator.appendSetAction(this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username));
+    batchOrchestrator.appendSetAction(
+      this.authenticationService.getUserDocumentSetBatchAction(user),
+      this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username)
+    );
     return batchOrchestrator.executeActions();
   }
 
@@ -82,30 +96,29 @@ export class RootEffects {
   }
 
   private signInUser() {
-    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request).pipe(
-      mergeMap(() => this.authenticationService.getCurrentSignedInUser().pipe(
-        this.fetchUser()
-      ))
-    ));
+    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request));
   }
 
   private handleSignInUserOutcomes() {
     return pipe(
-      map((user: User) =>
-        AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: user })),
-      catchError((error: Error) => of(AuthenticationActions.SignInWithEmail.RequestFailure({ failureResponse: error.message })))
+      map(() =>
+        AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: null })),
+        catchError((error: Error) => of(AuthenticationActions.SignInWithEmail.RequestFailure({ failureResponse: error.message })))
     );
   }
 
-  private fetchUser() {
-    return mergeMap((signedInUser: firebase.User) =>
-        this.authenticationService.getUserDocumentById(signedInUser.uid));
+  private fetchUserDataFromSignedInUser() {
+    return pipe(
+      mergeMap(() => this.authenticationService.getCurrentSignedInUser()),
+      mergeMap((signedInUser: firebase.User) =>
+        this.authenticationService.getUserDocumentById(signedInUser.uid))
+    );
   }
 
-  private handleFetchUserOutcomes() {
+  private handleFetchUserDataOutcomes() {
     return pipe(
-      map((user: User) => AuthenticationActions.GetUserAfterAuthentication.RequestSuccess({ successResponse: user })),
-      catchError((error: Error) => of(AuthenticationActions.GetUserAfterAuthentication.RequestFailure({ failureResponse: error.message })))
+      map((user: User) => AuthenticationActions.GetUserDataFromSignedInUser.RequestSuccess({ successResponse: user })),
+      catchError((error: Error) => of(AuthenticationActions.GetUserDataFromSignedInUser.RequestFailure({ failureResponse: error.message })))
     );
   }
 }
