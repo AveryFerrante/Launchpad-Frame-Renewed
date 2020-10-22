@@ -5,7 +5,7 @@ import { combineLatest, of } from 'rxjs';
 import { first, map, mapTo, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { RootActions, RootSelectors, RootState } from 'src/app/root-store';
 import { User } from 'src/app/shared/models/firebase-collections/user';
-import { URL_PATHS } from 'src/app/shared/models/urlPathConstants';
+import { URL_PATHS } from 'src/app/shared/models/constants/urlPathConstants';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';
 
 @Injectable()

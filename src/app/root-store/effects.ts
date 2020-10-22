@@ -10,7 +10,7 @@ import { NewUserRequest } from '../shared/models/requests/NewUserRequest';
 import { BatchActionOrchestrator } from '../shared/models/batchActionOrchestrator';
 import { SignInRequest } from '../shared/models/requests/signInRequest';
 import { Router } from '@angular/router';
-import { URL_PATHS } from '../shared/models/urlPathConstants';
+import { URL_PATHS } from '../shared/models/constants/urlPathConstants';
 
 @Injectable()
 export class RootEffects {

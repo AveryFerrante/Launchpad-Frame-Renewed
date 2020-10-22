@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { createDefaultUser, createUserFromDocument, User } from '../../models/firebase-collections/user';
 import { SetBatchAction } from '../../models/setBatchAction';

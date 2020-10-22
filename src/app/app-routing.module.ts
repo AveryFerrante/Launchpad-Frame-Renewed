@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { URL_PATHS } from './shared/models/urlPathConstants';
+import { URL_PATHS } from './shared/models/constants/urlPathConstants';
 
 const routes: Routes = [
   { path: '', redirectTo: URL_PATHS.authentication, pathMatch: 'full' },

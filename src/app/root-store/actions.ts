@@ -1,7 +1,7 @@
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { NewUserRequest } from '../shared/models/requests/NewUserRequest';
 import { SignInRequest } from '../shared/models/requests/signInRequest';
-import { createDefaultRequestActions } from './actionFactory';
+import { createDefaultRequestActions } from './shared/actionFactory';
 
 export const CreateEmailUser =
   createDefaultRequestActions<NewUserRequest, User, string>('[Authentication] Create Email User');

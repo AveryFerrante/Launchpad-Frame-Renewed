@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { reducer } from './reducer';
 import { RootEffects } from './effects';
 import { authenticationPropertyKey } from './state';
+import { FrameStoreModule } from './frame-store';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { authenticationPropertyKey } from './state';
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
+    FrameStoreModule
   ]
 })
 export class RootStoreModule { }

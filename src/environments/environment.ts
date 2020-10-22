@@ -10,6 +10,9 @@ export const environment = {
     },
     usernames: {
       name: 'Usernames'
+    },
+    frames: {
+      name: 'Frames'
     }
   }
 };
