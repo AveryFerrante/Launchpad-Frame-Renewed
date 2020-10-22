@@ -1,6 +1,7 @@
 import { createReducer, on, Action } from '@ngrx/store';
 import { initialState, AuthenticationState } from './state';
 import * as Actions from './actions';
+import { FrameStoreActions } from './frame-store';
 
 const r = createReducer(
     initialState,
@@ -28,7 +29,12 @@ const r = createReducer(
     on(Actions.SignOutUser.RequestSuccess, (state: AuthenticationState) =>
       ({ ...state, currentUser: null, loginErrorMessage: null, registerErrorMessage: null, isLoading: false })),
     on(Actions.SignOutUser.RequestFailure, (state: AuthenticationState) =>
-      ({ ...state, currentUser: null, isLoading: false, loginErrorMessage: null, registerErrorMessage: null }))
+      ({ ...state, currentUser: null, isLoading: false, loginErrorMessage: null, registerErrorMessage: null })),
+
+    on(FrameStoreActions.NewFrame.RequestSuccess, (state: AuthenticationState, { successResponse }) =>
+      ({ ...state, currentUser:
+        { ...state.currentUser, frames: [...state.currentUser.frames, { id: 'test', frameId: 'test', permission: [1] }] }
+      }))
 );
 
 export function reducer(state: AuthenticationState, action: Action ) {
