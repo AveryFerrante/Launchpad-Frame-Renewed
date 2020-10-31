@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AuthenticationService } from './shared/services/authentication/authentication.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
     BrowserModule,
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(FirebaseConfig),
+    AngularFireStorageModule,
     RootStoreModule,
     AppRoutingModule
   ],

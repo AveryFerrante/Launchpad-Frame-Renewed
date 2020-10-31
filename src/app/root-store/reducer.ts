@@ -33,7 +33,7 @@ const r = createReducer(
 
     on(FrameStoreActions.NewFrame.RequestSuccess, (state: AuthenticationState, { successResponse }) =>
       ({ ...state, currentUser:
-        { ...state.currentUser, frames: [...state.currentUser.frames, { id: 'test', frameId: 'test', permission: [1] }] }
+        { ...state.currentUser, frames: [...state.currentUser.frames, { id: successResponse.id, frameId: 'REDO', permission: [1] }] }
       }))
 );
 

@@ -1,1 +1,13 @@
 <p>entry works!</p> <button (click)="signout()">SIGNOUT</button>
+<button (click)="createFrame()">CREATE FRAME</button>
+<button (click)="createImage()">CREATE IMAGE</button>
+
+<div *ngIf="selectedFrame$ | async as frame">
+  {{ frame.images | json }}
+</div>
+
+<input type="file" style="display: none" #file (change)="fileChange($event)"/>
+<button type="button" class="btn" (click)="file.click()"> Browse </button>
+
+<img [src]="imageSource$ | async" />
+

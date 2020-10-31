@@ -4,6 +4,8 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { stateKey } from './state';
 import { reducer } from './reducer';
+import { FrameStoreEffects } from './effects';
+import { FrameTranslator } from 'src/app/shared/models/translators/frameTranslator';
 
 
 
@@ -12,7 +14,8 @@ import { reducer } from './reducer';
   imports: [
     CommonModule,
     StoreModule.forFeature(stateKey, reducer),
-    EffectsModule.forFeature([])
-  ]
+    EffectsModule.forFeature([FrameStoreEffects])
+  ],
+  providers: [FrameTranslator]
 })
 export class FrameStoreModule { }

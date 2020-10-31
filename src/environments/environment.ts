@@ -12,7 +12,10 @@ export const environment = {
       name: 'Usernames'
     },
     frames: {
-      name: 'Frames'
+      name: 'Frames',
+      images: {
+        name: 'Images'
+      }
     }
   }
 };

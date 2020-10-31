@@ -1,15 +1,17 @@
-import { Frame } from 'src/app/shared/models/firebase-collections/frame';
+import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
 
 export const stateKey = 'frame';
 
 export interface State {
-  frame: Frame;
+  frames: FrameModel[];
+  selectedFrameId: string;
   isLoading: boolean;
   error: string;
 }
 
 export const initialState: State = {
-  frame: null,
+  frames: [],
+  selectedFrameId: null,
   isLoading: false,
   error: null
 };

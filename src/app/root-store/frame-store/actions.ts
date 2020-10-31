@@ -1,7 +1,9 @@
-import { Frame } from 'src/app/shared/models/firebase-collections/frame';
-import { NewFrameRequest } from 'src/app/shared/models/requests/newFrameRequest';
+import { CreateFrameImageRequest, CreateFrameRequest } from 'src/app/shared/models/requests/FrameRequests';
+import { FrameImageModel, FrameModel } from 'src/app/shared/models/view-models/frameModel';
 import { createDefaultRequestActions } from '../shared/actionFactory';
 
 
 export const NewFrame =
-  createDefaultRequestActions<NewFrameRequest, Frame, string>('[Frame] Create New Frame');
+  createDefaultRequestActions<CreateFrameRequest, FrameModel, string>('[Frame] Create New Frame');
+export const NewFrameImage =
+  createDefaultRequestActions<CreateFrameImageRequest, FrameImageModel, string>('[Frame] Create New Image');

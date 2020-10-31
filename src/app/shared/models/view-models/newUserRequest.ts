@@ -6,7 +6,7 @@ export interface NewUserRequest {
     frames: UserFrame[]
 }
 
-interface UserFrame {
+export interface UserFrame {
   id: string;
   permissions: string[];
 }

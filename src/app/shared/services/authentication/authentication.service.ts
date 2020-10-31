@@ -6,8 +6,8 @@ import { map, take } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { createDefaultUser, createUserFromDocument, User } from '../../models/firebase-collections/user';
 import { SetBatchAction } from '../../models/setBatchAction';
-import { NewUserRequest } from '../../models/requests/NewUserRequest';
-import { SignInRequest } from '../../models/requests/signInRequest';
+import { NewUserRequest } from '../../models/view-models/NewUserRequest';
+import { SignInRequest } from '../../models/view-models/signInRequest';
 
 @Injectable({
   providedIn: 'root'

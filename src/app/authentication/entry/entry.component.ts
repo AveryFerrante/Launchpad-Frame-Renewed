@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RootState, RootActions } from '../../root-store';
-import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
-import { SignInRequest } from 'src/app/shared/models/requests/signInRequest';
+import { NewUserRequest } from 'src/app/shared/models/view-models/NewUserRequest';
+import { SignInRequest } from 'src/app/shared/models/view-models/signInRequest';
 
 type ModeType = ('login' | 'register');
 

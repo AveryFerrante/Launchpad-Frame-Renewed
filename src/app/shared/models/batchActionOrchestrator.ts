@@ -19,15 +19,15 @@ export class BatchActionOrchestrator {
   }
 
   appendSetAction(...actions: SetBatchAction[]) {
-    this.setActions.concat(actions);
+    this.setActions = this.setActions.concat(actions);
   }
 
   appendUpdateAction(...actions: UpdateBatchAction[]) {
-    this.updateActions.concat(actions);
+    this.updateActions = this.updateActions.concat(actions);
   }
 
   appendDeleteAction(...actions: DeleteBatchAction[]) {
-    this.deleteActions.concat(actions);
+    this.deleteActions = this.deleteActions.concat(actions);
   }
 
   executeActions(): Observable<void> {

@@ -6,9 +6,9 @@ import { map, catchError, exhaustMap, mapTo, mergeMap, filter, tap } from 'rxjs/
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { of, pipe, OperatorFunction, Observable } from 'rxjs';
 import { UsernameService } from '../shared/services/username/username.service';
-import { NewUserRequest } from '../shared/models/requests/NewUserRequest';
+import { NewUserRequest } from '../shared/models/view-models/NewUserRequest';
 import { BatchActionOrchestrator } from '../shared/models/batchActionOrchestrator';
-import { SignInRequest } from '../shared/models/requests/signInRequest';
+import { SignInRequest } from '../shared/models/view-models/signInRequest';
 import { Router } from '@angular/router';
 import { URL_PATHS } from '../shared/models/constants/urlPathConstants';
 

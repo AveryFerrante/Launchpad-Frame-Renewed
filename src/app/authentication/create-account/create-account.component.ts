@@ -3,7 +3,7 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators }
 import { select, Store } from '@ngrx/store';
 import { Observable, pipe, timer } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
+import { NewUserRequest } from 'src/app/shared/models/view-models/NewUserRequest';
 import { UsernameService } from 'src/app/shared/services/username/username.service';
 import { RootSelectors, RootState } from '../../root-store';
 

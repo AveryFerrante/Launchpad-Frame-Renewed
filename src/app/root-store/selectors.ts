@@ -1,6 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { min } from 'rxjs/operators';
-import { authenticationPropertyKey, State, AuthenticationState } from './state';
+import { authenticationPropertyKey, AuthenticationState } from './state';
 
 export const SelectAuthenticationState = createFeatureSelector<AuthenticationState>(authenticationPropertyKey);
 

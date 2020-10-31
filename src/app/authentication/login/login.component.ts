@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
 import { RootSelectors, RootState } from 'src/app/root-store';
-import { SignInRequest } from 'src/app/shared/models/requests/signInRequest';
+import { SignInRequest } from 'src/app/shared/models/view-models/signInRequest';
 
 @Component({
   selector: 'authentication-login',
