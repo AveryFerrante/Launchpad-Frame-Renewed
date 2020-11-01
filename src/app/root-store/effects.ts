@@ -40,21 +40,14 @@ export class RootEffects {
   ));
 
   signOutUser$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthenticationActions.SignOutUser.Request),
-    mergeMap(() => this.authenticationService.signOutUser().pipe(
-      map(() => AuthenticationActions.SignOutUser.RequestSuccess({ successResponse: null })),
-      catchError(() => of(AuthenticationActions.SignOutUser.RequestFailure({ failureResponse: null })))
-    ))
-  ));
+    ofType(AuthenticationActions.SignOutUser),
+    mergeMap(() => this.authenticationService.signOutUser()),
+    tap(() => this.router.navigateByUrl(URL_PATHS.authentication))
+  ), { dispatch: false });
 
   navigateAfterAuthenticationComplete$ = createEffect(() => this.actions$.pipe(
     ofType(AuthenticationActions.CreateEmailUser.RequestSuccess, AuthenticationActions.SignInWithEmail.RequestSuccess),
     tap(() => this.router.navigateByUrl(URL_PATHS.home))
-  ), { dispatch: false });
-
-  navigateAfterSignoutComplete$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthenticationActions.SignOutUser.RequestSuccess, AuthenticationActions.SignOutUser.RequestFailure),
-    tap(() => this.router.navigateByUrl(URL_PATHS.authentication))
   ), { dispatch: false });
 
   private handleNewEmailUserFlowOutcomes() {

@@ -1,13 +1,18 @@
+<div *ngIf="user$ | async as user">
+  <span *ngFor="let frame of user.frames" class="clickable" (click)="onFrameSelect(frame)">
+    {{ frame.name }}
+  </span>
+</div>
+
+
 <p>entry works!</p> <button (click)="signout()">SIGNOUT</button>
 <button (click)="createFrame()">CREATE FRAME</button>
 <button (click)="createImage()">CREATE IMAGE</button>
 
 <div *ngIf="selectedFrame$ | async as frame">
-  {{ frame.images | json }}
+  <img *ngFor="let image of frame.images" [src]="image.downloadUrl" width="100px" height="100px">
 </div>
 
-<input type="file" style="display: none" #file (change)="fileChange($event)"/>
-<button type="button" class="btn" (click)="file.click()"> Browse </button>
-
-<img [src]="imageSource$ | async" />
-
+<ngx-dropzone (change)="onSelect($event)">
+  <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
+</ngx-dropzone>

@@ -7,3 +7,7 @@ export const NewFrame =
   createDefaultRequestActions<CreateFrameRequest, FrameModel, string>('[Frame] Create New Frame');
 export const NewFrameImage =
   createDefaultRequestActions<CreateFrameImageRequest, FrameImageModel, string>('[Frame] Create New Image');
+export const SelectFrame =
+  createDefaultRequestActions<string, string, string>('[Frame] Select Frame');
+export const LoadFrame =
+  createDefaultRequestActions<string, FrameModel, string>('[Frame] Load Frame');

@@ -8,9 +8,9 @@ export interface User {
     imageIds: string[];
 }
 
-interface FrameMetadataForUser {
-  id: string;
+export interface FrameMetadataForUser {
   frameId: string;
+  name: string;
   permissions: FramePermissions[];
 }
 

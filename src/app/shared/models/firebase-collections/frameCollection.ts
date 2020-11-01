@@ -14,6 +14,7 @@ export interface FrameImageSubCollection {
   downloadUrl: string;
   userId: string;
   username: string;
+  storagePath: string;
 }
 
 

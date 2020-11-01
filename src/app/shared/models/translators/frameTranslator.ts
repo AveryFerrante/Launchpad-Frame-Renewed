@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
 import { FrameCollection, FrameImageSubCollection } from '../firebase-collections/frameCollection';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../requests/FrameRequests';
 import { FrameImageModel, FrameModel } from '../view-models/frameModel';
@@ -38,4 +38,31 @@ export class FrameTranslator {
       ...frameImgeRequest.data
     };
   }
+
+  CreateFrameModel(frameDoc: firebase.firestore.DocumentSnapshot<DocumentData>,
+                   imagesCollection: firebase.firestore.QuerySnapshot<DocumentData>): FrameModel {
+    const frameDocData = frameDoc.data();
+    const imagesCollectionData = imagesCollection.docs;
+
+    return {
+      id: frameDoc.id,
+      name: frameDocData.name,
+      creator: frameDocData.creator,
+      participants: frameDocData.participants,
+      images: imagesCollectionData.reduce(ReduceToImageModel, [])
+    };
+  }
 }
+
+const ReduceToImageModel = (acc, current) => {
+  const docData = current.data();
+  const frameImage: FrameImageModel = {
+    id: current.id,
+    userId: docData.userId,
+    username: docData.username,
+    downloadUrl: docData.downloadUrl,
+    storagePath: docData.storagePath
+  };
+  return [...acc, frameImage];
+};
+

@@ -1,6 +1,5 @@
 import { User } from '../shared/models/firebase-collections/user';
-import { FrameModel } from '../shared/models/view-models/frameModel';
-import { UserFrame } from '../shared/models/view-models/NewUserRequest';
+import { FrameState, stateKey } from './frame-store/state';
 
 
 export const authenticationPropertyKey = 'authentication';
@@ -20,3 +19,9 @@ export interface AuthenticationState {
   registerErrorMessage: string;
   loginErrorMessage: string;
 }
+
+export interface RootState {
+  [authenticationPropertyKey]: AuthenticationState;
+  [stateKey]: FrameState;
+}
+
