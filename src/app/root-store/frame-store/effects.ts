@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as FrameActions from './actions';
-import { Observable, of, combineLatest } from 'rxjs';
+import { Observable, of, combineLatest, pipe, merge } from 'rxjs';
 import { exhaustMap, map, mapTo, catchError, withLatestFrom, mergeMap, tap, finalize, last, delay } from 'rxjs/operators';
 import { FrameService } from 'src/app/shared/services/frame/frame.service';
 import { BatchActionOrchestrator } from 'src/app/shared/models/batchActionOrchestrator';
@@ -14,6 +14,7 @@ import { frameStateKey } from './state';
 import { RootState } from '..';
 import { authenticationPropertyKey } from '../state';
 import { validateBasis } from '@angular/flex-layout';
+import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
 
 
 @Injectable()
@@ -28,39 +29,7 @@ export class FrameStoreEffects {
       ofType(FrameActions.UploadImagesRequest),
       withLatestFrom(this.store$),
       map(([action, state]) => [action.Images, state]),
-      mergeMap(([images, state]: [File[], RootState]) => {
-        const userId = state[authenticationPropertyKey].currentUser.id;
-        const username = state[authenticationPropertyKey].currentUser.username;
-        const uploads = this.frameService.uploadImages(images, userId);
-        const frameId = state[frameStateKey].selectedFrameId;
-        const start: Observable<Action>[] = [];
-        uploads.forEach((curr) => {
-          const action = curr.uploadTask.snapshotChanges().pipe(
-            last(),
-            mergeMap(() => curr.imageReference.getDownloadURL()),
-            map((url: string) => {
-              const request = {
-                userId,
-                downloadUrl: url,
-                storagePath: curr.storagePath,
-                username
-              };
-              const req = this.frameTranslator.GetCreateFrameImageRequest(frameId, request);
-              return FrameActions.NewFrameImage.Request({ request: req });
-            })
-          );
-          start.push(action);
-        });
-        const uploadPercentage$ = combineLatest(...uploads.reduce((acc, curr) => [...acc, curr.uploadTask.percentageChanges()], [])).pipe(
-          map((combinedPercentages) => {
-            const percentage = combinedPercentages.reduce((acc, curr) => acc + curr, 0) / combinedPercentages.length;
-            return FrameActions.UpdateUploadPercentageRequest({ percentage: percentage === 100 ? null : percentage });
-          }),
-        );
-        start.push(uploadPercentage$);
-        return start;
-      }),
-      mergeMap((a) => a)
+      this.handleImageUpload()
     ));
 
     createNewFrame$ = createEffect(() => this.actions$.pipe(
@@ -100,6 +69,58 @@ export class FrameStoreEffects {
       map((frame: FrameModel) => FrameActions.LoadFrame.RequestSuccess({ successResponse: frame })),
       catchError((error: Error) => of(FrameActions.LoadFrame.RequestFailure({ failureResponse: error.message })))
     ));
+
+    private handleImageUpload() {
+      return pipe(
+        mergeMap(([images, state]: [File[], RootState]) => {
+          const userId = state[authenticationPropertyKey].currentUser.id;
+          const uploads = this.frameService.uploadImages(images, userId);
+          const actions$: Observable<Action>[] = this.createFrameImageOnUploadComplete(uploads, state);
+          actions$.push(this.createUploadPercentageTracker(uploads));
+          return merge(...actions$);
+        })
+      );
+    }
+
+    private createUploadPercentageTracker(uploads: UploadImageResponse[]): Observable<Action> {
+      return combineLatest(...this.getUploadSnapshots(uploads)).pipe(
+        map((combinedPercentages: number[]) => {
+          const percentage = combinedPercentages.reduce((acc, curr) => acc + curr, 0) / combinedPercentages.length;
+          return FrameActions.UpdateUploadPercentageRequest({ percentage: percentage === 100 ? null : percentage });
+        }),
+      );
+    }
+
+    private getUploadSnapshots(uploads: UploadImageResponse[]): Observable<number>[] {
+      return uploads.reduce((acc, curr) => [...acc, curr.uploadTask.percentageChanges()], []);
+    }
+
+    private createFrameImageOnUploadComplete(uploads: UploadImageResponse[], state: RootState): Observable<Action>[] {
+      const username = state[authenticationPropertyKey].currentUser.username;
+      const frameId = state[frameStateKey].selectedFrameId;
+      const userId = state[authenticationPropertyKey].currentUser.id;
+      return uploads.reduce((acc, currentTask) => {
+        const action = currentTask.uploadTask.snapshotChanges().pipe(
+          last(),
+          mergeMap(() => currentTask.imageReference.getDownloadURL()),
+          this.mapToCreateImageRequest(userId, currentTask.storagePath, username, frameId)
+        );
+        return [...acc, action];
+      }, []);
+    }
+
+    private mapToCreateImageRequest(userId: string, storagePath: string, username: string, frameId: string) {
+      return map((url: string) => {
+        const request = {
+          userId,
+          downloadUrl: url,
+          storagePath,
+          username
+        };
+        const req = this.frameTranslator.GetCreateFrameImageRequest(frameId, request);
+        return FrameActions.NewFrameImage.Request({ request: req });
+      });
+    }
 
     private OrchestrateFrameCreation(request: CreateFrameRequest) {
       const orchestrator = new BatchActionOrchestrator();

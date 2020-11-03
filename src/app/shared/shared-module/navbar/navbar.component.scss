@@ -15,6 +15,10 @@
 @include media($phone-size...) {
   .menu-button {
     visibility: visible;
-    align-self: flex-start;
+    flex-grow: 1;
+  }
+
+  .nav-title {
+    flex-grow: 1;
   }
 }
