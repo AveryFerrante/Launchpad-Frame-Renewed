@@ -1,0 +1,21 @@
+@import '../../../../variables.scss';
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  color: $light;
+  padding: .75rem;
+  background-color: $primary;
+  z-index: 1000;
+}
+
+.menu-button {
+  visibility: hidden;
+}
+
+@include media($phone-size...) {
+  .menu-button {
+    visibility: visible;
+    align-self: flex-start;
+  }
+}

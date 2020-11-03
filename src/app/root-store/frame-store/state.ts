@@ -1,6 +1,6 @@
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
 
-export const stateKey = 'frame';
+export const frameStateKey = 'frame';
 
 export interface FrameState {
   frames: FrameModel[];

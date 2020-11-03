@@ -17,6 +17,9 @@ export const environment = {
         name: 'Images'
       }
     }
+  },
+  imageUploadProperties: {
+    cacheControlValues: ['public', 'max-age=604800', 'immutable']
   }
 };
 

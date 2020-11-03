@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 import { Store } from '@ngrx/store';
 import { NgxDropzoneChangeEvent } from 'ngx-dropzone';
 import { from, Observable, combineLatest } from 'rxjs';
-import { finalize, last, mergeMap, tap } from 'rxjs/operators';
+import { finalize, last, map, mergeMap, tap } from 'rxjs/operators';
 import { RootActions, RootSelectors, RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { FrameCollection, FrameImageSubCollection } from 'src/app/shared/models/firebase-collections/frameCollection';
 import { FrameMetadataForUser, User } from 'src/app/shared/models/firebase-collections/user';
 import { FrameTranslator } from 'src/app/shared/models/translators/frameTranslator';
+import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
+import { FrameService } from 'src/app/shared/services/frame/frame.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-entry',
@@ -19,9 +22,10 @@ import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
 export class EntryComponent implements OnInit {
   user$: Observable<User> = this.setUserListener();
   selectedFrame$: Observable<FrameModel> = this.setSelectedFrameListener();
+  uploadPercentage$: Observable<number> = null;
   user: User;
   selectedFrame: FrameModel;
-  constructor(private store$: Store<RootState>, private frameTranslator: FrameTranslator, private store: AngularFireStorage) { }
+  constructor(private store$: Store<RootState>, private frameTranslator: FrameTranslator, private frameService: FrameService) { }
 
   ngOnInit() {
     this.user$.subscribe();
@@ -33,28 +37,6 @@ export class EntryComponent implements OnInit {
 
   onFrameSelect(frame: FrameMetadataForUser) {
     this.store$.dispatch(FrameStoreActions.SelectFrame.Request({ request: frame.frameId }));
-  }
-
-  onSelect(event: NgxDropzoneChangeEvent) {
-    const percentage$: Observable<number>[] = [];
-    event.addedFiles.forEach(f => {
-      const path = this.user.id + '/' + new Date().toTimeString() + '-' + f.name;
-      const ref = this.store.ref(path);
-      const task = this.store.upload(path, f);
-      task.snapshotChanges().pipe(
-        finalize(async () => {
-          const url = await ref.getDownloadURL().toPromise();
-          this.createImage(url, path);
-        })
-      ).subscribe();
-      percentage$.push(task.percentageChanges());
-    });
-    combineLatest(percentage$).pipe(
-      tap((values: number[]) => {
-        const sum = values.reduce((acc, current) => acc + current, 0);
-        console.log(sum / values.length + ' percent of the way done');
-      })
-    ).subscribe();
   }
 
   createFrame() {
@@ -70,7 +52,40 @@ export class EntryComponent implements OnInit {
     this.store$.dispatch(FrameStoreActions.NewFrame.Request({ request: frameRequest }));
   }
 
-  createImage(url: string, path: string) {
+  onFilesAdded(event: NgxDropzoneChangeEvent) {
+    const percetageTrackers$: Observable<number>[] = [];
+    event.addedFiles.forEach(file => {
+      const path = this.getStoragePath(file);
+      const uploadImageResponse = this.frameService.uploadImage(file, path);
+      this.createImageOnCompletedUpload(uploadImageResponse, path);
+      percetageTrackers$.push(uploadImageResponse.uploadTask.percentageChanges());
+    });
+    this.uploadPercentage$ = this.setUploadPercentage(percetageTrackers$);
+  }
+
+  private getStoragePath(file: File) {
+    return this.user.id + '/' + new Date().toUTCString() + '-' + file.name;
+  }
+
+  private setUploadPercentage(percentage$: Observable<number>[]) {
+    return combineLatest(percentage$).pipe(
+      map((values: number[]) => {
+        return values.reduce((acc, current) => acc + current, 0) / values.length;
+      }),
+      finalize(() => this.uploadPercentage$ = null)
+    );
+  }
+
+  private createImageOnCompletedUpload(imageUpload: UploadImageResponse, path: string) {
+    imageUpload.uploadTask.snapshotChanges().pipe(
+      finalize(async () => {
+        const url: string = await imageUpload.imageReference.getDownloadURL().toPromise();
+        this.createImage(url, path);
+      })
+    ).subscribe();
+  }
+
+  private createImage(url: string, path: string) {
     const image: FrameImageSubCollection = {
       downloadUrl: url,
       userId: this.user.id,

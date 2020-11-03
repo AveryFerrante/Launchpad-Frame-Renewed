@@ -10,7 +10,7 @@ import { FrameTranslator } from 'src/app/shared/models/translators/frameTranslat
 import { CreateFrameImageRequest, CreateFrameRequest } from 'src/app/shared/models/requests/FrameRequests';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';
 import { Store } from '@ngrx/store';
-import { FrameState, stateKey } from './state';
+import { FrameState, frameStateKey } from './state';
 import { RootState } from '..';
 
 
@@ -43,7 +43,7 @@ export class FrameStoreEffects {
       withLatestFrom(this.store$),
       map(([action, state]) => {
         const frameId = action.request;
-        if (state[stateKey].frames.find(f => f.id === frameId) === undefined) {
+        if (state[frameStateKey].frames.find(f => f.id === frameId) === undefined) {
           return FrameActions.LoadFrame.Request({ request: frameId });
         } else {
           return FrameActions.SelectFrame.RequestSuccess({ successResponse: frameId });

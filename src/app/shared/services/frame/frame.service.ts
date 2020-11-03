@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 import { forkJoin, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { FrameCollection, FrameImageSubCollection } from '../../models/firebase-collections/frameCollection';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/requests/FrameRequests';
 import { SetBatchAction } from '../../models/setBatchAction';
 import { FrameTranslator } from '../../models/translators/frameTranslator';
+import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
 
 @Injectable({
@@ -14,7 +16,7 @@ import { FrameModel } from '../../models/view-models/frameModel';
 })
 export class FrameService {
 
-  constructor(private afStore: AngularFirestore, private frameTranslator: FrameTranslator) { }
+  constructor(private afStore: AngularFirestore, private frameTranslator: FrameTranslator, private afStorage: AngularFireStorage) { }
 
   loadFrame(id: string): Observable<FrameModel> {
     const frameDocument$ = this.getFrameDocumentReference(id).get();
@@ -24,6 +26,18 @@ export class FrameService {
         return this.frameTranslator.CreateFrameModel(frameDocument, frameImages);
       })
     );
+  }
+
+  uploadImage(image: File, path: string): UploadImageResponse {
+    const ref = this.afStorage.ref(path);
+    const headers = environment.imageUploadProperties.cacheControlValues.reduce((acc, curr, index, arr) => {
+      return acc + curr + (index === arr.length - 1 ? '' : ', ');
+    }, '');
+    const response: UploadImageResponse = {
+      imageReference: ref,
+      uploadTask: this.afStorage.upload(path, image, { cacheControl: headers })
+    };
+    return response;
   }
 
   getFrameDocumentSetBatchAction(request: CreateFrameRequest): SetBatchAction {

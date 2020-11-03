@@ -4,6 +4,7 @@ import { EntryComponent } from './entry/entry.component';
 import { MainRoutingModule } from './main-routing.module';
 import { FrameTranslator } from '../shared/models/translators/frameTranslator';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { SharedModule } from '../shared/shared-module/shared.module';
 
 
 
@@ -12,7 +13,8 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
   imports: [
     CommonModule,
     MainRoutingModule,
-    NgxDropzoneModule
+    NgxDropzoneModule,
+    SharedModule
   ],
   providers: [FrameTranslator]
 })

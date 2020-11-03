@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { FrameState, stateKey } from './state';
+import { FrameState, frameStateKey } from './state';
 
-export const SelectFrameState = createFeatureSelector<FrameState>(stateKey);
+export const SelectFrameState = createFeatureSelector<FrameState>(frameStateKey);
 
 export const SelectFrameStoreIsLoading = createSelector(
   SelectFrameState,

@@ -39,8 +39,8 @@ export function reducer(state: AuthenticationState, action: Action ) {
     return reduce(state, action);
 }
 
-export function clearState(r: ActionReducer<RootState>) {
-  return (state, action: Action) => {
+export function clearStateOnSignOut(r: ActionReducer<RootState>) {
+  return (state: RootState, action: Action) => {
     if (action.type === Actions.SignOutUserActionTitle) {
       state = { } as RootState;
     }

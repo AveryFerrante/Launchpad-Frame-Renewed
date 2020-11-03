@@ -1,5 +1,5 @@
 import { User } from '../shared/models/firebase-collections/user';
-import { FrameState, stateKey } from './frame-store/state';
+import { FrameState, frameStateKey } from './frame-store/state';
 
 
 export const authenticationPropertyKey = 'authentication';
@@ -22,6 +22,6 @@ export interface AuthenticationState {
 
 export interface RootState {
   [authenticationPropertyKey]: AuthenticationState;
-  [stateKey]: FrameState;
+  [frameStateKey]: FrameState;
 }
 
