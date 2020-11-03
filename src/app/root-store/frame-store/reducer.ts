@@ -1,4 +1,4 @@
-import { Action, createReducer, on, UPDATE } from '@ngrx/store';
+import { Action, createReducer, on, State, UPDATE } from '@ngrx/store';
 import { FrameImageModel } from 'src/app/shared/models/view-models/frameModel';
 import * as Actions from './actions';
 import { initialState, FrameState } from './state';
@@ -37,7 +37,10 @@ const r = createReducer(
   on(Actions.LoadFrame.RequestSuccess, (state: FrameState, { successResponse }) =>
     ({ ...state, frames: [...state.frames, successResponse], selectedFrameId: successResponse.id, isLoading: false, error: null })),
   on(Actions.LoadFrame.RequestFailure, (state: FrameState, { failureResponse }) =>
-    ({ ...state, isLoading: false, error: failureResponse }))
+    ({ ...state, isLoading: false, error: failureResponse })),
+
+  on(Actions.UpdateUploadPercentageRequest, (state: FrameState, { percentage }) =>
+    ({ ...state, imageUploadPercentage: percentage }))
 );
 
 export function reducer(state: FrameState, action: Action) {

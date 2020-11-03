@@ -12,3 +12,8 @@ export const SelectSelectedFrame = createSelector(
   SelectFrameState,
   (s: FrameState) => s.frames.find(f => f.id === s.selectedFrameId)
 );
+
+export const SelectUploadPercentage = createSelector(
+  SelectFrameState,
+  (s: FrameState) => s.imageUploadPercentage
+);

@@ -3,4 +3,5 @@ import { AngularFireStorageReference, AngularFireUploadTask } from '@angular/fir
 export interface UploadImageResponse {
   imageReference: AngularFireStorageReference;
   uploadTask: AngularFireUploadTask;
+  storagePath: string;
 }

@@ -16,7 +16,6 @@ import { FrameStoreModule } from './frame-store';
   imports: [
     CommonModule,
     StoreModule.forRoot({ [authenticationPropertyKey]: reducer }, {
-      metaReducers: [clearStateOnSignOut],
       runtimeChecks: {
         strictStateImmutability: true,
         strictActionImmutability: true,

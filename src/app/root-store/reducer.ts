@@ -1,9 +1,6 @@
 import { createReducer, on, Action, ActionReducer } from '@ngrx/store';
 import { initialState, AuthenticationState } from './state';
 import * as Actions from './actions';
-import { FrameStoreActions } from './frame-store';
-import { FrameMetadataForUser } from '../shared/models/firebase-collections/user';
-import { FramePermissions } from '../shared/models/constants/framePermissions';
 import { CreateEmailUserAdjuster } from './state-adjusters/createEmailUserAdjuster';
 import { NewFrameAdjuster } from './state-adjusters/newFrameAdjuster';
 import { RootState } from '.';

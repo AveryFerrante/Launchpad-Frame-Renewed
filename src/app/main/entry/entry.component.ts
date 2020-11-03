@@ -22,7 +22,7 @@ import { environment } from 'src/environments/environment';
 export class EntryComponent implements OnInit {
   user$: Observable<User> = this.setUserListener();
   selectedFrame$: Observable<FrameModel> = this.setSelectedFrameListener();
-  uploadPercentage$: Observable<number> = null;
+  uploadPercentage$: Observable<number> = this.store$.select(FrameStoreSelectors.SelectUploadPercentage);
   user: User;
   selectedFrame: FrameModel;
   constructor(private store$: Store<RootState>, private frameTranslator: FrameTranslator, private frameService: FrameService) { }
@@ -53,47 +53,7 @@ export class EntryComponent implements OnInit {
   }
 
   onFilesAdded(event: NgxDropzoneChangeEvent) {
-    const percetageTrackers$: Observable<number>[] = [];
-    event.addedFiles.forEach(file => {
-      const path = this.getStoragePath(file);
-      const uploadImageResponse = this.frameService.uploadImage(file, path);
-      this.createImageOnCompletedUpload(uploadImageResponse, path);
-      percetageTrackers$.push(uploadImageResponse.uploadTask.percentageChanges());
-    });
-    this.uploadPercentage$ = this.setUploadPercentage(percetageTrackers$);
-  }
-
-  private getStoragePath(file: File) {
-    return this.user.id + '/' + new Date().toUTCString() + '-' + file.name;
-  }
-
-  private setUploadPercentage(percentage$: Observable<number>[]) {
-    return combineLatest(percentage$).pipe(
-      map((values: number[]) => {
-        return values.reduce((acc, current) => acc + current, 0) / values.length;
-      }),
-      finalize(() => this.uploadPercentage$ = null)
-    );
-  }
-
-  private createImageOnCompletedUpload(imageUpload: UploadImageResponse, path: string) {
-    imageUpload.uploadTask.snapshotChanges().pipe(
-      finalize(async () => {
-        const url: string = await imageUpload.imageReference.getDownloadURL().toPromise();
-        this.createImage(url, path);
-      })
-    ).subscribe();
-  }
-
-  private createImage(url: string, path: string) {
-    const image: FrameImageSubCollection = {
-      downloadUrl: url,
-      userId: this.user.id,
-      username: this.user.username,
-      storagePath: path
-    };
-    const request = this.frameTranslator.GetCreateFrameImageRequest(this.selectedFrame.id, image);
-    this.store$.dispatch(FrameStoreActions.NewFrameImage.Request({ request }));
+    this.store$.dispatch(FrameStoreActions.UploadImagesRequest({ Images: event.addedFiles }));
   }
 
   private setUserListener() {

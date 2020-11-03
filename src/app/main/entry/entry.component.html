@@ -9,7 +9,7 @@
 
 <p>entry works!</p> <button (click)="signout()">SIGNOUT</button>
 <button (click)="createFrame()">CREATE FRAME</button>
-<button (click)="createImage()">CREATE IMAGE</button>
+<button (click)="test()">Test</button>
 
 <div *ngIf="selectedFrame$ | async as frame">
   <img *ngFor="let image of frame.images" [src]="image.downloadUrl" width="100px" height="100px">

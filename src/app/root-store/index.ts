@@ -1,4 +1,4 @@
-import { State as RootState } from './state';
+import { RootState } from './state';
 import * as RootActions from './actions';
 import * as RootSelectors from './selectors';
 

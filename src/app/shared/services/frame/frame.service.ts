@@ -28,17 +28,31 @@ export class FrameService {
     );
   }
 
-  uploadImage(image: File, path: string): UploadImageResponse {
-    const ref = this.afStorage.ref(path);
+  uploadImages(images: File[], userId: string) {
+    const imageUploads: UploadImageResponse[] = [];
     const headers = environment.imageUploadProperties.cacheControlValues.reduce((acc, curr, index, arr) => {
       return acc + curr + (index === arr.length - 1 ? '' : ', ');
     }, '');
-    const response: UploadImageResponse = {
-      imageReference: ref,
-      uploadTask: this.afStorage.upload(path, image, { cacheControl: headers })
-    };
-    return response;
+    images.forEach(image => {
+      const path = userId + '/' + new Date().toUTCString() + '-' + image.name;
+      const ref = this.afStorage.ref(path);
+      const task = this.afStorage.upload(path, image, { cacheControl: headers });
+      imageUploads.push({ imageReference: ref, uploadTask: task, storagePath: path });
+    });
+    return imageUploads;
   }
+
+  // uploadImage(image: File, path: string): UploadImageResponse {
+  //   const ref = this.afStorage.ref(path);
+  //   const headers = environment.imageUploadProperties.cacheControlValues.reduce((acc, curr, index, arr) => {
+  //     return acc + curr + (index === arr.length - 1 ? '' : ', ');
+  //   }, '');
+  //   const response: UploadImageResponse = {
+  //     imageReference: ref,
+  //     uploadTask: this.afStorage.upload(path, image, { cacheControl: headers })
+  //   };
+  //   return response;
+  // }
 
   getFrameDocumentSetBatchAction(request: CreateFrameRequest): SetBatchAction {
     return { documentReference: this.getFrameDocumentReference(request.id).ref, data: request.data };
