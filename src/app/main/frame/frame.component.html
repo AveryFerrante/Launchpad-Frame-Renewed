@@ -1,9 +1,19 @@
 
 <div class="layout" *ngIf="selectedFrame$ | async as frame; else noFrame">
-  <h2>{{ frame.name }}</h2>
-  <ngx-dropzone (change)="onFilesAdded($event)">
-    <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
-  </ngx-dropzone>
+  <span class="title">{{ frame.name }}</span>
+
+  <div class="image-upload-section">
+    <ngx-dropzone (change)="onFilesAdded($event.addedFiles)" class="image-upload-zone">
+      <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
+    </ngx-dropzone>
+
+    <div class="image-upload-camera">
+      <input #mobileupload type="file" accept="image/*" capture="camera"
+      (change)="onFilesAddedMobile($event.target.files)">
+      <span (click)="onClickMe()">click me</span>
+    </div>
+
+  </div>
 
   <div *ngIf="uploadPercentage$ | async as uploadPercentage">
     {{ uploadPercentage }}% COMPLETE

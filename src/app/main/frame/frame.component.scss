@@ -1,3 +1,34 @@
+@import '../../../variables.scss';
+
 .layout {
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
+
+.title {
+  font-size: 1.5rem;
+  padding-bottom: .5rem;
+  align-self: center;
+}
+
+.image-upload-zone {
+  display: flex;
+  opacity: .75;
+  height: 100px;
+}
+
+.image-upload-camera {
+  display: none;
+}
+
+@include media($less-than-desktop) {
+  .image-upload-zone {
+    display: none;
+  }
+
+  .image-upload-camera {
+    display: block;
+  }
+}
+
