@@ -12,6 +12,9 @@ export const SelectFrame =
   createDefaultRequestActions<string, string, string>('[Frame] Select Frame');
 export const LoadFrame =
   createDefaultRequestActions<string, FrameModel, string>('[Frame] Load Frame');
+
+export const UpdateSideNavVisibility =
+  createAction('[Frame] Update SideNav Visibility', props<{ visible: boolean }>());
 export const UploadImagesRequest =
   createAction('[Frame] Upload Images', props<{ Images: File[] }>());
 export const UpdateUploadPercentageRequest =

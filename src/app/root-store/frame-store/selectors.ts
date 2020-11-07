@@ -17,3 +17,8 @@ export const SelectUploadPercentage = createSelector(
   SelectFrameState,
   (s: FrameState) => s.imageUploadPercentage
 );
+
+export const SelectSideNavVisibility = createSelector(
+  SelectFrameState,
+  (s: FrameState) => s.showSideNav
+);

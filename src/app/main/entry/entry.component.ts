@@ -23,6 +23,7 @@ export class EntryComponent implements OnInit {
   user$: Observable<User> = this.setUserListener();
   selectedFrame$: Observable<FrameModel> = this.setSelectedFrameListener();
   uploadPercentage$: Observable<number> = this.store$.select(FrameStoreSelectors.SelectUploadPercentage);
+  showSidenav$ = this.store$.select(FrameStoreSelectors.SelectSideNavVisibility);
   user: User;
   selectedFrame: FrameModel;
   constructor(private store$: Store<RootState>, private frameTranslator: FrameTranslator, private frameService: FrameService) { }
@@ -31,12 +32,9 @@ export class EntryComponent implements OnInit {
     this.user$.subscribe();
   }
 
-  signout() {
-    this.store$.dispatch(RootActions.SignOutUser());
-  }
-
   onFrameSelect(frame: FrameMetadataForUser) {
     this.store$.dispatch(FrameStoreActions.SelectFrame.Request({ request: frame.frameId }));
+    this.store$.dispatch(FrameStoreActions.UpdateSideNavVisibility({ visible: false }));
   }
 
   createFrame() {

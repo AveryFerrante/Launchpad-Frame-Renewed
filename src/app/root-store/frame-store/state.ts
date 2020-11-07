@@ -7,6 +7,7 @@ export interface FrameState {
   selectedFrameId: string;
   isLoading: boolean;
   imageUploadPercentage: number;
+  showSideNav: boolean;
   error: string;
 }
 
@@ -15,5 +16,6 @@ export const initialState: FrameState = {
   selectedFrameId: null,
   isLoading: false,
   imageUploadPercentage: null,
+  showSideNav: false,
   error: null
 };

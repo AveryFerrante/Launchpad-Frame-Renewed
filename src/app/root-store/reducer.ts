@@ -1,9 +1,10 @@
 import { createReducer, on, Action, ActionReducer } from '@ngrx/store';
-import { initialState, AuthenticationState } from './state';
+import { initialState, AuthenticationState, State } from './state';
 import * as Actions from './actions';
 import { CreateEmailUserAdjuster } from './state-adjusters/createEmailUserAdjuster';
 import { NewFrameAdjuster } from './state-adjusters/newFrameAdjuster';
 import { RootState } from '.';
+import { AuthenticationService } from '../shared/services/authentication/authentication.service';
 
 
 
@@ -36,10 +37,10 @@ export function reducer(state: AuthenticationState, action: Action ) {
     return reduce(state, action);
 }
 
-export function clearStateOnSignOut(r: ActionReducer<RootState>) {
-  return (state: RootState, action: Action) => {
+export function clearStateOnSignOut(r: ActionReducer<State>) {
+  return (state: State, action: Action) => {
     if (action.type === Actions.SignOutUserActionTitle) {
-      state = { } as RootState;
+      state = { } as State;
     }
     return r(state, action);
   };

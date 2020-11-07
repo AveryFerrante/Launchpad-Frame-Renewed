@@ -1,4 +1,11 @@
 <div class="layout">
-  <span class="menu-button">Ham</span>
+  <span class="menu-button clickable" (click)="openSideNav()">Ham</span>
+  <span class="filler"></span>
   <span class="nav-title">Launchpad Frame</span>
+  <div class="account dropdown">
+    <span class="clickable">Account</span>
+    <div class="dropdown-content">
+      <span class="clickable" (click)="onLogout()">Logout</span>
+    </div>
+  </div>
 </div>

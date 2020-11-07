@@ -40,7 +40,10 @@ const r = createReducer(
     ({ ...state, isLoading: false, error: failureResponse })),
 
   on(Actions.UpdateUploadPercentageRequest, (state: FrameState, { percentage }) =>
-    ({ ...state, imageUploadPercentage: percentage }))
+    ({ ...state, imageUploadPercentage: percentage })),
+
+  on(Actions.UpdateSideNavVisibility, (state: FrameState, { visible }) =>
+    ({ ...state, showSideNav: visible }))
 );
 
 export function reducer(state: FrameState, action: Action) {

@@ -1,13 +1,5 @@
 <app-navbar></app-navbar>
 
-<div *ngIf="user$ | async as user">
-  <span *ngFor="let frame of user.frames" class="clickable" (click)="onFrameSelect(frame)">
-    {{ frame.name }}
-  </span>
-</div>
-
-
-<p>entry works!</p> <button (click)="signout()">SIGNOUT</button>
 <button (click)="createFrame()">CREATE FRAME</button>
 <button (click)="test()">Test</button>
 
@@ -22,3 +14,9 @@
 <div *ngIf="uploadPercentage$ | async as uploadPercentage">
   {{ uploadPercentage }}% COMPLETE
 </div>
+
+<app-sidenav *ngIf="showSidenav$ | async">
+  <span *ngFor="let frame of (user$ | async).frames" class="clickable sidenav-item" (click)="onFrameSelect(frame)">
+    {{ frame.name }}
+  </span>
+</app-sidenav>
