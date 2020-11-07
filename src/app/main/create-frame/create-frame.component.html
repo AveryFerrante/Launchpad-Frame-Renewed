@@ -1,0 +1,17 @@
+<div class="modal">
+  <div class="modal-content">
+    <div class="header">
+      <span>Create a Frame</span>
+      <span class="clickable" (click)="onCloseModal()">X</span>
+    </div>
+    <hr class="header-seperator">
+    <div class="body">
+      <span class="input-label">Name:</span>
+      <input type="text" #frameName>
+      <span class="error">{{ errorText }}</span>
+    </div>
+    <div class="footer">
+      <button class="btn btn-primary" (click)="onCreateFrame(frameName.value)">CREATE</button>
+    </div>
+  </div>
+</div>

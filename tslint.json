@@ -18,7 +18,7 @@
     "component-selector": [
       true,
       "element",
-      ["authentication", "app"],
+      ["authentication", "app", "main"],
       "kebab-case"
     ],
     "import-blacklist": [

@@ -15,6 +15,7 @@ import { RootState } from '..';
 import { authenticationPropertyKey } from '../state';
 import { validateBasis } from '@angular/flex-layout';
 import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
+import { FrameCollection } from 'src/app/shared/models/firebase-collections/frameCollection';
 
 
 @Injectable()
@@ -34,7 +35,8 @@ export class FrameStoreEffects {
 
     createNewFrame$ = createEffect(() => this.actions$.pipe(
       ofType(FrameActions.NewFrame.Request),
-      map((action) => action.request),
+      withLatestFrom(this.store$),
+      map(([action, state]) => this.mapToCreateFrameRequest(action.request, state)),
       exhaustMap((request: CreateFrameRequest) => this.OrchestrateFrameCreation(request)),
       map((frameModel: FrameModel) => FrameActions.NewFrame.RequestSuccess({ successResponse: frameModel })),
       catchError((error: Error) => of(FrameActions.NewFrame.RequestFailure({ failureResponse: error.message })))
@@ -69,6 +71,19 @@ export class FrameStoreEffects {
       map((frame: FrameModel) => FrameActions.LoadFrame.RequestSuccess({ successResponse: frame })),
       catchError((error: Error) => of(FrameActions.LoadFrame.RequestFailure({ failureResponse: error.message })))
     ));
+
+    private mapToCreateFrameRequest(frameName: string, state: RootState): CreateFrameRequest {
+      const currentUser = state[authenticationPropertyKey].currentUser;
+      const frame: FrameCollection = {
+        name: frameName,
+        creator: {
+          userId: currentUser.id,
+          usesrname: currentUser.username
+        },
+        participants: []
+      };
+      return this.frameTranslator.GetCreateFrameRequest(frame);
+    }
 
     private handleImageUpload() {
       return pipe(

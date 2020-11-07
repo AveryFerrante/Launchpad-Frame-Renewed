@@ -5,7 +5,7 @@ import { createDefaultRequestActions } from '../shared/actionFactory';
 
 
 export const NewFrame =
-  createDefaultRequestActions<CreateFrameRequest, FrameModel, string>('[Frame] Create New Frame');
+  createDefaultRequestActions<string, FrameModel, string>('[Frame] Create New Frame');
 export const NewFrameImage =
   createDefaultRequestActions<CreateFrameImageRequest, FrameImageModel, string>('[Frame] Create New Image');
 export const SelectFrame =

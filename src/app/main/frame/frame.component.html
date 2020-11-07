@@ -1,0 +1,20 @@
+
+<div class="layout" *ngIf="selectedFrame$ | async as frame; else noFrame">
+  <h2>{{ frame.name }}</h2>
+  <ngx-dropzone (change)="onFilesAdded($event)">
+    <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
+  </ngx-dropzone>
+
+  <div *ngIf="uploadPercentage$ | async as uploadPercentage">
+    {{ uploadPercentage }}% COMPLETE
+  </div>
+
+  <div>
+    <img *ngFor="let image of frame.images" [src]="image.downloadUrl" width="100px" height="100px">
+  </div>
+</div>
+
+<ng-template #noFrame>
+  NO FRAME SELECTED!
+</ng-template>
+

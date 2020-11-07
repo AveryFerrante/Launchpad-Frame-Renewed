@@ -31,8 +31,8 @@
   }
 }
 
-@include media($tablet-size, $less-than-desktop) {
-  .sidenav {
-    width: 35%;
+@include media($tablet-or-larger) {
+  .close-button {
+    display: none;
   }
 }

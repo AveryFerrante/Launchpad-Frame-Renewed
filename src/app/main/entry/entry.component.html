@@ -1,22 +1,34 @@
-<app-navbar></app-navbar>
 
-<button (click)="createFrame()">CREATE FRAME</button>
-<button (click)="test()">Test</button>
+<div class="layout">
+  <app-navbar></app-navbar>
+  <div class="component-layout">
+    <!-- Mobile SideNav -->
+    <app-sidenav *ngIf="showSidenav$ | async" class="sidenav-space mobile-sidenav">
+      <span class="clickable sidenav-item" (click)="openCreateFrame()">+ Create New Frame</span>
+      <span *ngFor="let frame of (user$ | async).frames"
+        [ngClass]="{'sidenav-item-selected': (selectedFrameId$ | async) === frame.frameId}"
+        class="clickable sidenav-item"
+        (click)="onFrameSelect(frame)">
+        {{ frame.name }}
+      </span>
+    </app-sidenav>
 
-<div *ngIf="selectedFrame$ | async as frame">
-  <img *ngFor="let image of frame.images" [src]="image.downloadUrl" width="100px" height="100px">
+    <!-- Fixed SideNav -->
+    <app-sidenav class="sidenav-space fixed-sidenav">
+      <span class="clickable sidenav-item" (click)="openCreateFrame()">+ Create New Frame</span>
+      <span *ngFor="let frame of (user$ | async).frames"
+        [ngClass]="{'sidenav-item-selected': (selectedFrameId$ | async) === frame.frameId}"
+        class="clickable sidenav-item"
+        (click)="onFrameSelect(frame)">
+        {{ frame.name }}
+      </span>
+    </app-sidenav>
+
+    <main-frame class="frame-space"></main-frame>
+  </div>
 </div>
 
-<ngx-dropzone (change)="onFilesAdded($event)">
-  <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
-</ngx-dropzone>
+<main-create-frame *ngIf="showCreateFrameModal" (closeModal)="onCloseModal()" (createFrame)="onCreateFrame($event)"></main-create-frame>
 
-<div *ngIf="uploadPercentage$ | async as uploadPercentage">
-  {{ uploadPercentage }}% COMPLETE
-</div>
 
-<app-sidenav *ngIf="showSidenav$ | async">
-  <span *ngFor="let frame of (user$ | async).frames" class="clickable sidenav-item" (click)="onFrameSelect(frame)">
-    {{ frame.name }}
-  </span>
-</app-sidenav>
+

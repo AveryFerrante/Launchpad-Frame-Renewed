@@ -1,3 +1,50 @@
+@import '../../../variables.scss';
+
 .sidenav-item {
-  padding-bottom: .25rem;
+  padding-bottom: .35rem;
+}
+
+.sidenav-item-selected {
+  text-decoration: underline;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .component-layout {
+    display: flex;
+    height: 100%;
+
+    .sidenav-space {
+      flex: 3
+    }
+
+    .frame-space {
+      flex: 7;
+    }
+  }
+}
+
+@include media($phone-size) {
+  .mobile-sidenav {
+    display: block
+  }
+
+  .fixed-sidenav {
+    display: none;
+  }
+}
+
+@include media($tablet-or-larger) {
+  .mobile-sidenav {
+    display: none;
+  }
+
+  .fixed-sidenav {
+    display: block;
+  }
 }
