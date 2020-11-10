@@ -7,11 +7,12 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { SharedModule } from '../shared/shared-module/shared.module';
 import { FrameComponent } from './frame/frame.component';
 import { CreateFrameComponent } from './create-frame/create-frame.component';
+import { LiveViewComponent } from './live-view/live-view.component';
 
 
 
 @NgModule({
-  declarations: [EntryComponent, FrameComponent, CreateFrameComponent],
+  declarations: [EntryComponent, FrameComponent, CreateFrameComponent, LiveViewComponent],
   imports: [
     CommonModule,
     MainRoutingModule,

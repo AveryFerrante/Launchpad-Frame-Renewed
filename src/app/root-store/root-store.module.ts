@@ -15,13 +15,13 @@ import { FrameStoreModule } from './frame-store';
   declarations: [],
   imports: [
     CommonModule,
-    StoreModule.forRoot({ [authenticationPropertyKey]: reducer }, {
+    StoreModule.forRoot({ authentication: reducer }, {
       metaReducers: [clearStateOnSignOut],
       runtimeChecks: {
         strictStateImmutability: true,
         strictActionImmutability: true,
         strictStateSerializability: true,
-        strictActionSerializability: true,
+        strictActionSerializability: true
       },
     }),
     EffectsModule.forRoot([RootEffects]),

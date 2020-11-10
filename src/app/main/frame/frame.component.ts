@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
+import { GroupedImages } from 'src/app/shared/models/groupedImages';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
 
 @Component({
@@ -13,7 +15,8 @@ import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
 export class FrameComponent implements OnInit {
   selectedFrame$: Observable<FrameModel> = this.store$.select(FrameStoreSelectors.SelectSelectedFrame);
   uploadPercentage$: Observable<number> = this.store$.select(FrameStoreSelectors.SelectUploadPercentage);
-  @ViewChild('mobileupload', { static: true }) mobileUpload;
+  groupedImages$ = this.setGroupedImagesSelector();
+  showLiveView = false;
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
@@ -27,8 +30,32 @@ export class FrameComponent implements OnInit {
     this.onFilesAdded(Array.from(files));
   }
 
-  onClickMe() {
-    console.log(this.mobileUpload);
-    // this.mobileUpload.click();
+  onFabClick() {
+    document.getElementById('mobileUpload').click();
+  }
+
+  onShowLiveView() {
+    this.showLiveView = true;
+  }
+
+  onExitLiveView() {
+    this.showLiveView = false;
+  }
+
+  private setGroupedImagesSelector() {
+    return this.selectedFrame$.pipe(
+      map((frame: FrameModel) => {
+        const groupedImages: GroupedImages[] = [];
+        frame.images.forEach(image => {
+          const existingIndex = groupedImages.findIndex(gi => gi.displayKey === image.username);
+          if (existingIndex >= 0) {
+            groupedImages[existingIndex].downloadUrls.push(image.downloadUrl);
+          } else {
+            groupedImages.push({ displayKey: image.username, downloadUrls: [image.downloadUrl] });
+          }
+        });
+        return groupedImages;
+      })
+    );
   }
 }

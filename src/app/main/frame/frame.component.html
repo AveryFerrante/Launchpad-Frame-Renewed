@@ -1,6 +1,10 @@
 
 <div class="layout" *ngIf="selectedFrame$ | async as frame; else noFrame">
-  <span class="title">{{ frame.name }}</span>
+  <div class="title">
+    <span>{{ frame.name }}</span>
+    <span (click)="onShowLiveView()">Live View</span>
+    <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()"></main-live-view>
+  </div>
 
   <div class="image-upload-section">
     <ngx-dropzone (change)="onFilesAdded($event.addedFiles)" class="image-upload-zone">
@@ -8,9 +12,9 @@
     </ngx-dropzone>
 
     <div class="image-upload-camera">
-      <input #mobileupload type="file" accept="image/*" capture="camera"
-      (change)="onFilesAddedMobile($event.target.files)">
-      <span (click)="onClickMe()">click me</span>
+      <input id="mobileUpload" type="file" accept="image/*" capture="camera"
+      (change)="onFilesAddedMobile($event.target.files)" [hidden]="true">
+      <button class="fab-image-capture" (click)="onFabClick()">CAM</button>
     </div>
 
   </div>
@@ -19,11 +23,15 @@
     {{ uploadPercentage }}% COMPLETE
   </div>
 
-  <div>
-    <img *ngFor="let image of frame.images" [src]="image.downloadUrl" width="100px" height="100px">
+  <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
+    <span class="group-title">{{ grouping.displayKey }}'s Images</span>
+    <div class="image-section">
+      <img class="image" *ngFor="let downloadUrl of grouping.downloadUrls" [src]="downloadUrl">
+    </div>
   </div>
 </div>
 
+<div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage"></div>
 <ng-template #noFrame>
   NO FRAME SELECTED!
 </ng-template>

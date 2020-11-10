@@ -1,7 +1,7 @@
 @import '../../../variables.scss';
 
 .sidenav-item {
-  padding-bottom: .35rem;
+  padding-bottom: .75rem;
 }
 
 .sidenav-item-selected {
@@ -25,6 +25,7 @@
 
     .frame-space {
       flex: 7;
+      overflow: auto;
     }
   }
 }

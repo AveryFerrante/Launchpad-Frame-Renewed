@@ -10,6 +10,31 @@
   font-size: 1.5rem;
   padding-bottom: .5rem;
   align-self: center;
+  text-decoration: underline;
+}
+
+.group-image-display-section {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem;
+
+  .group-title {
+    font-weight: bold;
+    padding-bottom: .5rem;
+  }
+
+  .image-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .image {
+      padding-bottom: .3rem;
+      max-width: 100%;
+      height: auto;
+    }
+
+  }
 }
 
 .image-upload-zone {
@@ -30,5 +55,28 @@
   .image-upload-camera {
     display: block;
   }
+}
+
+.fab-image-capture {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  z-index: 10;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+  background-color: $tetradic-brown;
+  color: $light;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  border: none;
+}
+
+.upload-progress {
+  background-color: $success;
+  height: 10px;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
 }
 
