@@ -40,21 +40,24 @@ export class FrameTranslator {
   }
 
   CreateFrameModel(frameDoc: firebase.firestore.DocumentSnapshot<DocumentData>,
-                   imagesCollection: firebase.firestore.QuerySnapshot<DocumentData>): FrameModel {
+                   imagesCollection: firebase.firestore.QueryDocumentSnapshot<DocumentData>[]): FrameModel {
     const frameDocData = frameDoc.data();
-    const imagesCollectionData = imagesCollection.docs;
 
     return {
       id: frameDoc.id,
       name: frameDocData.name,
       creator: frameDocData.creator,
       participants: frameDocData.participants,
-      images: imagesCollectionData.reduce(ReduceToImageModel, [])
+      images: this.CreateImageModels(imagesCollection)
     };
+  }
+
+  CreateImageModels(imagesCollection: firebase.firestore.QueryDocumentSnapshot<DocumentData>[]) {
+    return imagesCollection.reduce(ReduceToImageModel, []);
   }
 }
 
-const ReduceToImageModel = (acc, current) => {
+const ReduceToImageModel = (acc: FrameImageModel[], current: firebase.firestore.DocumentData) => {
   const docData = current.data();
   const frameImage: FrameImageModel = {
     id: current.id,

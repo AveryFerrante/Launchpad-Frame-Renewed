@@ -4,11 +4,11 @@ import * as Actions from './actions';
 import { initialState, FrameState } from './state';
 
 
-function addImageToFrame(state: FrameState, successResponse: FrameImageModel): FrameState {
+function addImagesToFrame(state: FrameState, newImages: FrameImageModel[]): FrameState {
   const framesCopy = [...state.frames];
   const index = framesCopy.findIndex(f => f.id === state.selectedFrameId);
   const frameToAddImageTo = framesCopy.splice(index, 1).pop();
-  const updatedFrame = { ...frameToAddImageTo, images: [...frameToAddImageTo.images, successResponse] };
+  const updatedFrame = { ...frameToAddImageTo, images: [...frameToAddImageTo.images, ...newImages] };
   return { ...state, frames: [...framesCopy, updatedFrame], isLoading: false, error: null };
 }
 
@@ -26,7 +26,7 @@ const r = createReducer(
 
   on(Actions.NewFrameImage.Request, turnOnLoading),
   on(Actions.NewFrameImage.RequestSuccess, (state: FrameState, { successResponse }) =>
-    addImageToFrame(state, successResponse)),
+    addImagesToFrame(state, [successResponse])),
   on(Actions.NewFrameImage.RequestFailure, (state: FrameState, { failureResponse }) =>
     ({ ...state, isLoading: false, error: failureResponse })),
 
@@ -43,7 +43,10 @@ const r = createReducer(
     ({ ...state, imageUploadPercentage: percentage })),
 
   on(Actions.UpdateSideNavVisibility, (state: FrameState, { visible }) =>
-    ({ ...state, showSideNav: visible }))
+    ({ ...state, showSideNav: visible })),
+
+  on(Actions.LiveImageListenerNewImages, (state: FrameState, { newImages }) =>
+    addImagesToFrame(state, newImages))
 );
 
 export function reducer(state: FrameState, action: Action) {

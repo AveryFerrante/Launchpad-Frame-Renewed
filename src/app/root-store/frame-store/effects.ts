@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as FrameActions from './actions';
-import { Observable, of, combineLatest, pipe, merge } from 'rxjs';
-import { exhaustMap, map, mapTo, catchError, withLatestFrom, mergeMap, tap, finalize, last, delay } from 'rxjs/operators';
+import { Observable, of, combineLatest, pipe, merge, Subject } from 'rxjs';
+import { exhaustMap, map, mapTo, catchError, withLatestFrom, mergeMap, last, switchMap, takeUntil, tap, finalize } from 'rxjs/operators';
 import { FrameService } from 'src/app/shared/services/frame/frame.service';
 import { BatchActionOrchestrator } from 'src/app/shared/models/batchActionOrchestrator';
 import { FrameImageModel, FrameModel } from 'src/app/shared/models/view-models/frameModel';
@@ -13,13 +13,13 @@ import { Action, Store } from '@ngrx/store';
 import { frameStateKey } from './state';
 import { RootState } from '..';
 import { authenticationPropertyKey } from '../state';
-import { validateBasis } from '@angular/flex-layout';
 import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
 import { FrameCollection } from 'src/app/shared/models/firebase-collections/frameCollection';
 
 
 @Injectable()
 export class FrameStoreEffects {
+    liveListenerCork$ = new Subject<boolean>();
     constructor(private actions$: Actions,
                 private store$: Store<RootState>,
                 private frameService: FrameService,
@@ -71,6 +71,22 @@ export class FrameStoreEffects {
       map((frame: FrameModel) => FrameActions.LoadFrame.RequestSuccess({ successResponse: frame })),
       catchError((error: Error) => of(FrameActions.LoadFrame.RequestFailure({ failureResponse: error.message })))
     ));
+
+    liveImageListener$ = createEffect(() => this.actions$.pipe(
+      ofType(FrameActions.LiveImageListenerRequest),
+      withLatestFrom(this.store$),
+      map(([_, state]) => state[frameStateKey].selectedFrameId),
+      switchMap((frameId: string) => this.frameService.getLiveImageListener(frameId).pipe(
+        // Hack since bug in AngularFire doesn't give proper update type (i.e. added) on SnapshotChanges()...
+        this.getOnlyNewImages(),
+      )),
+      map((newImages: FrameImageModel[]) => FrameActions.LiveImageListenerNewImages({ newImages })),
+    ));
+
+    liveImageListenerStop$ = createEffect(() => this.actions$.pipe(
+      ofType(FrameActions.LiveImageListenerStopRequest),
+      tap(() => this.liveListenerCork$.next(true))
+    ), { dispatch: false });
 
     private mapToCreateFrameRequest(frameName: string, state: RootState): CreateFrameRequest {
       const currentUser = state[authenticationPropertyKey].currentUser;
@@ -151,6 +167,18 @@ export class FrameStoreEffects {
       orchestrator.appendSetAction(this.frameService.getFrameImageDocumentSetBatchAction(request));
       return orchestrator.executeActions().pipe(
         mapTo(this.frameTranslator.CreateImageRequestToModel(request))
+      );
+    }
+
+    private getOnlyNewImages() {
+      return pipe(
+        withLatestFrom(this.store$),
+        map(([images, state]: [FrameImageModel[], RootState]) => {
+          const selectedFrameId = state[frameStateKey].selectedFrameId;
+          const currentFrameImages = state[frameStateKey].frames.find(f => f.id === selectedFrameId).images;
+          const currentFrameImageIds = currentFrameImages.map(i => i.id);
+          return images.filter(i => !currentFrameImageIds.includes(i.id));
+        })
       );
     }
 }

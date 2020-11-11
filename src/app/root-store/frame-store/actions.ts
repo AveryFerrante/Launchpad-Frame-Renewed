@@ -20,5 +20,12 @@ export const UploadImagesRequest =
 export const UpdateUploadPercentageRequest =
   createAction('[Frame] Update Image Upload Percentage Request', props<{ percentage: number }>());
 
+export const LiveImageListenerRequest =
+  createAction('[Frame] Live Image Listener Request');
+export const LiveImageListenerNewImages =
+  createAction('[Frame] Live Image Listener Request Success', props<{ newImages: FrameImageModel[] }>());
+export const LiveImageListenerStopRequest =
+  createAction('[Frame] Live Image Listener Stop Request');
+
 
 

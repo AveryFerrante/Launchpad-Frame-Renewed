@@ -1,9 +1,9 @@
 import { Component, EventEmitter, HostListener, OnDestroy, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { from, interval, Observable, Subscription, timer, zip } from 'rxjs';
-import { concatMap, map, repeat, tap } from 'rxjs/operators';
+import { concatMap, map, repeat, scan, startWith, tap, withLatestFrom } from 'rxjs/operators';
 import { RootState } from 'src/app/root-store';
-import { FrameStoreSelectors } from 'src/app/root-store/frame-store';
+import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { FrameImageModel } from 'src/app/shared/models/view-models/frameModel';
 
 @Component({
@@ -12,9 +12,9 @@ import { FrameImageModel } from 'src/app/shared/models/view-models/frameModel';
   styleUrls: ['./live-view.component.scss']
 })
 export class LiveViewComponent implements OnInit, OnDestroy {
-  frameImages$ = this.setFrameImageListener();
-  frameImagesSubscription: Subscription;
-  rotatingImages$: Observable<FrameImageModel>;
+  currentImages$ = this.setCurrentImagesListener();
+  currentImageIndex$ = this.setCurrentImageIndexGenerator();
+  liveImage$ = this.setLiveImageGenerator();
   images: FrameImageModel[] = [];
   @Output() exit = new EventEmitter<boolean>();
   @HostListener('document:keydown.escape', ['$event']) onEscapeHandler(event: KeyboardEvent) {
@@ -23,24 +23,39 @@ export class LiveViewComponent implements OnInit, OnDestroy {
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
-    this.frameImagesSubscription = this.frameImages$.subscribe();
-    this.rotatingImages$ = this.setRotatingImageListener();
+    this.store$.dispatch(FrameStoreActions.LiveImageListenerRequest());
   }
 
   ngOnDestroy() {
-    this.frameImagesSubscription.unsubscribe();
+    this.store$.dispatch(FrameStoreActions.LiveImageListenerStopRequest());
   }
 
-  private setFrameImageListener() {
+  private setCurrentImagesListener() {
     return this.store$.select(FrameStoreSelectors.SelectFrameImages).pipe(
-      tap((frameImages) => this.images = [...frameImages])
+      tap((images) => console.log('New payload from store: ', images)),
+      scan((accumulated: FrameImageModel[], current: FrameImageModel[]) => {
+        console.log('Current accumulated: ', accumulated);
+        const difference = current.filter(c => !accumulated.includes(c));
+        console.log('Detected difference of ', difference);
+        return [...accumulated, ...difference];
+      }, []),
+      tap((images) => console.log('Outputting current images ', images))
     );
   }
 
-  private setRotatingImageListener() {
-    return zip(interval(500), from(this.images)).pipe(
-      map(([_, frameImage]) => frameImage),
-      repeat()
+  private setCurrentImageIndexGenerator() {
+    return interval(7500).pipe(
+      startWith(0),
+      withLatestFrom(this.currentImages$),
+      map(([_, images]) => images),
+      scan((accumulatedIndex: number, currentImagesArray: FrameImageModel[]) => (accumulatedIndex + 1) % currentImagesArray.length, 0)
+    );
+  }
+
+  private setLiveImageGenerator() {
+    return this.currentImageIndex$.pipe(
+      withLatestFrom(this.currentImages$),
+      map(([currentIndex, currentImages]) => currentImages[currentIndex])
     );
   }
 

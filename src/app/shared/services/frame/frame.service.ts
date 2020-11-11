@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 import { forkJoin, Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { filter, finalize, map, skip, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { FrameCollection, FrameImageSubCollection } from '../../models/firebase-collections/frameCollection';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/requests/FrameRequests';
@@ -23,7 +23,7 @@ export class FrameService {
     const frameImages$ = this.getFrameImageCollectionReference(id).get();
     return forkJoin(frameDocument$, frameImages$).pipe(
       map(([frameDocument, frameImages]) => {
-        return this.frameTranslator.CreateFrameModel(frameDocument, frameImages);
+        return this.frameTranslator.CreateFrameModel(frameDocument, frameImages.docs);
       })
     );
   }
@@ -42,17 +42,16 @@ export class FrameService {
     return imageUploads;
   }
 
-  // uploadImage(image: File, path: string): UploadImageResponse {
-  //   const ref = this.afStorage.ref(path);
-  //   const headers = environment.imageUploadProperties.cacheControlValues.reduce((acc, curr, index, arr) => {
-  //     return acc + curr + (index === arr.length - 1 ? '' : ', ');
-  //   }, '');
-  //   const response: UploadImageResponse = {
-  //     imageReference: ref,
-  //     uploadTask: this.afStorage.upload(path, image, { cacheControl: headers })
-  //   };
-  //   return response;
-  // }
+  getLiveImageListener(frameId: string) {
+    // Want to use something like map((documentChanges) => documentChanges.filter(dc => dc.type === 'added'))
+    // Looking at the GitHub for AngularFire, there seems to be an open bug around the type returned from QuerySnapshot
+    // Have to let the effect use the current state to determine which docs are new
+    return this.getFrameImageCollectionReference(frameId).snapshotChanges().pipe(
+      skip(1),
+      map((documentsAdded) => documentsAdded.map(da => da.payload.doc)),
+      map((queryDocuments) => this.frameTranslator.CreateImageModels(queryDocuments))
+    );
+  }
 
   getFrameDocumentSetBatchAction(request: CreateFrameRequest): SetBatchAction {
     return { documentReference: this.getFrameDocumentReference(request.id).ref, data: request.data };
