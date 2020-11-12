@@ -6,6 +6,7 @@ import { frameStateKey } from './state';
 import { reducer } from './reducer';
 import { FrameStoreEffects } from './effects';
 import { FrameTranslator } from 'src/app/shared/models/translators/frameTranslator';
+import { UserTranslator } from 'src/app/shared/models/translators/userTranslator';
 
 
 
@@ -16,6 +17,6 @@ import { FrameTranslator } from 'src/app/shared/models/translators/frameTranslat
     StoreModule.forFeature(frameStateKey, reducer),
     EffectsModule.forFeature([FrameStoreEffects])
   ],
-  providers: [FrameTranslator]
+  providers: [FrameTranslator, UserTranslator]
 })
 export class FrameStoreModule { }

@@ -3,8 +3,7 @@ import { initialState, AuthenticationState, State } from './state';
 import * as Actions from './actions';
 import { CreateEmailUserAdjuster } from './state-adjusters/createEmailUserAdjuster';
 import { NewFrameAdjuster } from './state-adjusters/newFrameAdjuster';
-import { RootState } from '.';
-import { AuthenticationService } from '../shared/services/authentication/authentication.service';
+import { FrameStoreActions } from './frame-store';
 
 
 
@@ -30,7 +29,10 @@ const reduce = createReducer(
     on(Actions.GetUserDataFromSignedInUser.RequestFailure, (state: AuthenticationState, { failureResponse }) =>
       ({ ...state, currentUser: null, isLoading: false, loginErrorMessage: failureResponse })),
 
-    NewFrameAdjuster.SuccessHandler
+    NewFrameAdjuster.SuccessHandler,
+
+    on(FrameStoreActions.JoinFrame.RequestSuccess, (state: AuthenticationState, { successResponse }) =>
+      ({ ...state, currentUser: { ...state.currentUser, frames: [...state.currentUser.frames, successResponse] }}))
 );
 
 export function reducer(state: AuthenticationState, action: Action ) {

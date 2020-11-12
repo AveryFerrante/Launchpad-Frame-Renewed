@@ -15,6 +15,8 @@ import { RootState } from '..';
 import { authenticationPropertyKey } from '../state';
 import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
 import { FrameCollection } from 'src/app/shared/models/firebase-collections/frameCollection';
+import { UserTranslator } from 'src/app/shared/models/translators/userTranslator';
+import { User } from 'src/app/shared/models/firebase-collections/user';
 
 
 @Injectable()
@@ -24,6 +26,7 @@ export class FrameStoreEffects {
                 private store$: Store<RootState>,
                 private frameService: FrameService,
                 private frameTranslator: FrameTranslator,
+                private userTranslator: UserTranslator,
                 private authenticationService: AuthenticationService) {}
 
     uploadImages$ = createEffect(() => this.actions$.pipe(
@@ -36,7 +39,7 @@ export class FrameStoreEffects {
     createNewFrame$ = createEffect(() => this.actions$.pipe(
       ofType(FrameActions.NewFrame.Request),
       withLatestFrom(this.store$),
-      map(([action, state]) => this.mapToCreateFrameRequest(action.request, state)),
+      map(([action, state]) => this.frameService.getFrameRequest(state[authenticationPropertyKey].currentUser, action.request)),
       exhaustMap((request: CreateFrameRequest) => this.OrchestrateFrameCreation(request)),
       map((frameModel: FrameModel) => FrameActions.NewFrame.RequestSuccess({ successResponse: frameModel })),
       catchError((error: Error) => of(FrameActions.NewFrame.RequestFailure({ failureResponse: error.message })))
@@ -79,6 +82,7 @@ export class FrameStoreEffects {
       switchMap((frameId: string) => this.frameService.getLiveImageListener(frameId).pipe(
         // Hack since bug in AngularFire doesn't give proper update type (i.e. added) on SnapshotChanges()...
         this.getOnlyNewImages(),
+        takeUntil(this.liveListenerCork$.asObservable())
       )),
       map((newImages: FrameImageModel[]) => FrameActions.LiveImageListenerNewImages({ newImages })),
     ));
@@ -88,18 +92,20 @@ export class FrameStoreEffects {
       tap(() => this.liveListenerCork$.next(true))
     ), { dispatch: false });
 
-    private mapToCreateFrameRequest(frameName: string, state: RootState): CreateFrameRequest {
-      const currentUser = state[authenticationPropertyKey].currentUser;
-      const frame: FrameCollection = {
-        name: frameName,
-        creator: {
-          userId: currentUser.id,
-          usesrname: currentUser.username
-        },
-        participants: []
-      };
-      return this.frameTranslator.GetCreateFrameRequest(frame);
-    }
+    joinFrame$ = createEffect(() => this.actions$.pipe(
+      ofType(FrameActions.JoinFrame.Request),
+      mergeMap((action) => this.frameService.getFrameIdByAccessToken(action.request)),
+      withLatestFrom(this.store$),
+      mergeMap(([queryResults, state]) => {
+        if (queryResults.size < 0) {
+          // Dispatch something for not found?
+        } else {
+          return this.orchestrateJoiningFrame(queryResults.docs[0], state[authenticationPropertyKey].currentUser);
+        }
+      }),
+      map((userFrame) => FrameActions.JoinFrame.RequestSuccess({ successResponse: userFrame })),
+      catchError((error: Error) => of(FrameActions.JoinFrame.RequestFailure({ failureResponse: error.message })))
+    ));
 
     private handleImageUpload() {
       return pipe(
@@ -156,7 +162,8 @@ export class FrameStoreEffects {
     private OrchestrateFrameCreation(request: CreateFrameRequest) {
       const orchestrator = new BatchActionOrchestrator();
       orchestrator.appendSetAction(this.frameService.getFrameDocumentSetBatchAction(request));
-      orchestrator.appendUpdateAction(this.authenticationService.getUserFrameUpdateBatchAction(request));
+      const userFrame = this.userTranslator.CreateUserFrameMetadataFromCreateFrameRequest(request);
+      orchestrator.appendUpdateAction(this.authenticationService.addFrameToUserUpdateBatchAction(userFrame, request.data.creator.userId));
       return orchestrator.executeActions().pipe(
         mapTo(this.frameTranslator.CreateRequestToModel(request))
       );
@@ -167,6 +174,16 @@ export class FrameStoreEffects {
       orchestrator.appendSetAction(this.frameService.getFrameImageDocumentSetBatchAction(request));
       return orchestrator.executeActions().pipe(
         mapTo(this.frameTranslator.CreateImageRequestToModel(request))
+      );
+    }
+
+    private orchestrateJoiningFrame(frameDoc: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>, user: User) {
+      const orchestrator = new BatchActionOrchestrator();
+      orchestrator.appendUpdateAction(this.frameService.addParticipantToFrameUpdateBatchAction(frameDoc.id, user));
+      const userFrame = this.userTranslator.CreateUserFrameMetadataForJoiningFrame(frameDoc);
+      orchestrator.appendUpdateAction(this.authenticationService.addFrameToUserUpdateBatchAction(userFrame, user.id));
+      return orchestrator.executeActions().pipe(
+        mapTo(userFrame)
       );
     }
 

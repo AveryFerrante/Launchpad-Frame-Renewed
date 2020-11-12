@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RootSelectors, RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
-import { FrameMetadataForUser, User } from 'src/app/shared/models/firebase-collections/user';
+import { UserFrameMetadata, User } from 'src/app/shared/models/firebase-collections/user';
 
 @Component({
   selector: 'app-entry',
@@ -16,12 +16,13 @@ export class EntryComponent implements OnInit {
   user$: Observable<User> = this.store$.select(RootSelectors.SelectAuthenticationUser);
   selectedFrameId$ = this.setSelectedFrameIdListener();
   showCreateFrameModal = false;
+  showJoinFrameModal = false;
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
   }
 
-  onFrameSelect(frame: FrameMetadataForUser) {
+  onFrameSelect(frame: UserFrameMetadata) {
     this.store$.dispatch(FrameStoreActions.SelectFrame.Request({ request: frame.frameId }));
     this.closeSideNav();
   }
@@ -33,10 +34,20 @@ export class EntryComponent implements OnInit {
 
   onCloseModal() {
     this.showCreateFrameModal = false;
+    this.showJoinFrameModal = false;
   }
 
   onCreateFrame(frameName: string) {
     this.store$.dispatch(FrameStoreActions.NewFrame.Request({ request: frameName }));
+    this.onCloseModal();
+  }
+
+  openJoinFrame() {
+    this.showJoinFrameModal = true;
+  }
+
+  onJoinFrame(accessKey: string) {
+    this.store$.dispatch(FrameStoreActions.JoinFrame.Request({ request: accessKey}));
     this.onCloseModal();
   }
 

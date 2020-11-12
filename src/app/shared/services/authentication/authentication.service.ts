@@ -7,7 +7,7 @@ import { from, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { FramePermissions } from '../../models/constants/framePermissions';
-import { createDefaultUser, createUserFromDocument, FrameMetadataForUser, User } from '../../models/firebase-collections/user';
+import { createDefaultUser, createUserFromDocument, UserFrameMetadata, User } from '../../models/firebase-collections/user';
 import { CreateFrameRequest } from '../../models/requests/FrameRequests';
 import { SetBatchAction } from '../../models/setBatchAction';
 import { UpdateBatchAction } from '../../models/updateBatchAction';
@@ -55,14 +55,8 @@ export class AuthenticationService {
     return from(this.afAuth.auth.signOut());
   }
 
-  getUserFrameUpdateBatchAction(frameRequest: CreateFrameRequest): UpdateBatchAction {
-    const newFrame: FrameMetadataForUser = {
-      frameId: frameRequest.id,
-      permissions: [FramePermissions.creator],
-      name: frameRequest.data.name
-    };
-    const userId = frameRequest.data.creator.userId;
-    return { documentReference: this.getUserDocumentReference(userId).ref, data: { frames: firestore.FieldValue.arrayUnion(newFrame) } };
+  addFrameToUserUpdateBatchAction(frame: UserFrameMetadata, userId: string) {
+    return { documentReference: this.getUserDocumentReference(userId).ref, data: { frames: firestore.FieldValue.arrayUnion(frame) } };
   }
 
   private getUserDocumentReference(docId: string) {

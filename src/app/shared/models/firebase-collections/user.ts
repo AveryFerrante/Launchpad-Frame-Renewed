@@ -4,11 +4,11 @@ export interface User {
     id: string;
     email: string;
     username: string;
-    frames: FrameMetadataForUser[];
+    frames: UserFrameMetadata[];
     imageIds: string[];
 }
 
-export interface FrameMetadataForUser {
+export interface UserFrameMetadata {
   frameId: string;
   name: string;
   permissions: FramePermissions[];

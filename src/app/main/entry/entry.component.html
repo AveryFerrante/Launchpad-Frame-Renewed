@@ -5,6 +5,7 @@
     <!-- Mobile SideNav -->
     <app-sidenav *ngIf="showSidenav$ | async" class="sidenav-space mobile-sidenav">
       <span class="clickable sidenav-item" (click)="openCreateFrame()">+ Create New Frame</span>
+      <span class="clickable sidenav-item" (click)="openJoinFrame()">+ Join Frame</span>
       <span *ngFor="let frame of (user$ | async).frames"
         [ngClass]="{'sidenav-item-selected': (selectedFrameId$ | async) === frame.frameId}"
         class="clickable sidenav-item"
@@ -16,6 +17,7 @@
     <!-- Fixed SideNav -->
     <app-sidenav class="sidenav-space fixed-sidenav">
       <span class="clickable sidenav-item" (click)="openCreateFrame()">+ Create New Frame</span>
+      <span class="clickable sidenav-item" (click)="openJoinFrame()">+ Join Frame</span>
       <span *ngFor="let frame of (user$ | async).frames"
         [ngClass]="{'sidenav-item-selected': (selectedFrameId$ | async) === frame.frameId}"
         class="clickable sidenav-item"
@@ -29,6 +31,7 @@
 </div>
 
 <main-create-frame *ngIf="showCreateFrameModal" (closeModal)="onCloseModal()" (createFrame)="onCreateFrame($event)"></main-create-frame>
+<main-join-frame *ngIf="showJoinFrameModal" (closeModal)="onCloseModal()" (joinFrame)="onJoinFrame($event)"></main-join-frame>
 
 
 

@@ -17,7 +17,8 @@
 
   .component-layout {
     display: flex;
-    height: 100%;
+    flex-grow: 1;
+    overflow: hidden;
 
     .sidenav-space {
       flex: 3

@@ -48,7 +48,8 @@ export class FrameTranslator {
       name: frameDocData.name,
       creator: frameDocData.creator,
       participants: frameDocData.participants,
-      images: this.CreateImageModels(imagesCollection)
+      images: this.CreateImageModels(imagesCollection),
+      accessToken: frameDocData.accessToken
     };
   }
 

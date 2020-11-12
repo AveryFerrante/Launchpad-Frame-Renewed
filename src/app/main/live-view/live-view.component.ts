@@ -32,14 +32,10 @@ export class LiveViewComponent implements OnInit, OnDestroy {
 
   private setCurrentImagesListener() {
     return this.store$.select(FrameStoreSelectors.SelectFrameImages).pipe(
-      tap((images) => console.log('New payload from store: ', images)),
       scan((accumulated: FrameImageModel[], current: FrameImageModel[]) => {
-        console.log('Current accumulated: ', accumulated);
         const difference = current.filter(c => !accumulated.includes(c));
-        console.log('Detected difference of ', difference);
         return [...accumulated, ...difference];
-      }, []),
-      tap((images) => console.log('Outputting current images ', images))
+      }, [])
     );
   }
 

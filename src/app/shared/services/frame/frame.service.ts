@@ -1,13 +1,17 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
-import { forkJoin, Observable } from 'rxjs';
+import { firestore } from 'firebase';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { filter, finalize, map, skip, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { FrameCollection, FrameImageSubCollection } from '../../models/firebase-collections/frameCollection';
+import { FramePermissions } from '../../models/constants/framePermissions';
+import { FrameAccessToken, FrameCollection, FrameImageSubCollection, FrameUser } from '../../models/firebase-collections/frameCollection';
+import { User, UserFrameMetadata } from '../../models/firebase-collections/user';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/requests/FrameRequests';
 import { SetBatchAction } from '../../models/setBatchAction';
 import { FrameTranslator } from '../../models/translators/frameTranslator';
+import { UpdateBatchAction } from '../../models/updateBatchAction';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
 
@@ -53,6 +57,27 @@ export class FrameService {
     );
   }
 
+  getFrameIdByAccessToken(accessToken: string) {
+    const query = this.getFrameCollectionReference().ref
+      .where('accessToken.token', '==', accessToken.toUpperCase())
+      .limit(1)
+      .get();
+    return from(query);
+  }
+
+  getFrameRequest(currentUser: User, frameName: string): CreateFrameRequest {
+    const frame: FrameCollection = {
+      name: frameName,
+      creator: {
+        userId: currentUser.id,
+        usesrname: currentUser.username
+      },
+      participants: [],
+      accessToken: this.getFrameAccessToken()
+    };
+    return this.frameTranslator.GetCreateFrameRequest(frame);
+  }
+
   getFrameDocumentSetBatchAction(request: CreateFrameRequest): SetBatchAction {
     return { documentReference: this.getFrameDocumentReference(request.id).ref, data: request.data };
   }
@@ -61,8 +86,32 @@ export class FrameService {
     return { documentReference: this.getFrameImageDocumentReference(request.frameId, request.id).ref, data: request.data };
   }
 
+  addParticipantToFrameUpdateBatchAction(frameId: string, user: User): UpdateBatchAction {
+    const frameParticipant: FrameUser = {
+      userId: user.id,
+      usesrname: user.username
+    };
+    return {
+      documentReference: this.getFrameDocumentReference(frameId).ref,
+      data: { participants: firestore.FieldValue.arrayUnion(frameParticipant) }
+    };
+  }
+
+  private getFrameAccessToken(): FrameAccessToken {
+    const expiresDate = new Date();
+    expiresDate.setDate(expiresDate.getDate() + 60);
+    return {
+      token: (Math.random() * 1e64).toString(36).substr(0, 6).toUpperCase(),
+      expiresUtc: expiresDate.toUTCString()
+    };
+  }
+
+  private getFrameCollectionReference() {
+    return this.afStore.collection(environment.firebaseCollections.frames.name);
+  }
+
   private getFrameDocumentReference(id: string) {
-    return this.afStore.collection(environment.firebaseCollections.frames.name).doc<FrameCollection>(id);
+    return this.getFrameCollectionReference().doc<FrameCollection>(id);
   }
 
   private getFrameImageDocumentReference(frameId: string, frameImageId: string = null) {
