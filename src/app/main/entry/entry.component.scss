@@ -1,15 +1,5 @@
 @import '../../../variables.scss';
 
-.sidenav-item {
-  padding-bottom: .75rem;
-}
-
-.sidenav-item-selected {
-  text-decoration: underline;
-  font-weight: bold;
-  font-style: italic;
-}
-
 .layout {
   display: flex;
   flex-direction: column;
@@ -20,10 +10,6 @@
     flex-grow: 1;
     overflow: hidden;
 
-    .sidenav-space {
-      flex: 3
-    }
-
     .frame-space {
       flex: 7;
       overflow: auto;
@@ -32,21 +18,13 @@
 }
 
 @include media($phone-size) {
-  .mobile-sidenav {
-    display: block
-  }
-
-  .fixed-sidenav {
-    display: none;
+  .sidenav-space {
+    flex: 0;
   }
 }
 
 @include media($tablet-or-larger) {
-  .mobile-sidenav {
-    display: none;
-  }
-
-  .fixed-sidenav {
-    display: block;
+  .sidenav-space {
+    flex: 3
   }
 }

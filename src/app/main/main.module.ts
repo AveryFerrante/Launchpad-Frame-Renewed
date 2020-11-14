@@ -9,11 +9,12 @@ import { FrameComponent } from './frame/frame.component';
 import { CreateFrameComponent } from './create-frame/create-frame.component';
 import { LiveViewComponent } from './live-view/live-view.component';
 import { JoinFrameComponent } from './join-frame/join-frame.component';
+import { FrameSidenavComponent } from './frame-sidenav/frame-sidenav.component';
 
 
 
 @NgModule({
-  declarations: [EntryComponent, FrameComponent, CreateFrameComponent, LiveViewComponent, JoinFrameComponent],
+  declarations: [EntryComponent, FrameComponent, CreateFrameComponent, LiveViewComponent, JoinFrameComponent, FrameSidenavComponent],
   imports: [
     CommonModule,
     MainRoutingModule,

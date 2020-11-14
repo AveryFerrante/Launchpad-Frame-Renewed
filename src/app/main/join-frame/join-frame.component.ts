@@ -6,7 +6,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./join-frame.component.scss']
 })
 export class JoinFrameComponent implements OnInit {
-  // TODO: THIS ENTIRE COMPONENT (SCSS INCLUDED) IS BASICALLY A DIRECT COPY OF CREATE FRAME. ABSTRACT
   // TODO: USER CAN JOIN FRAME THEY ARE IN BY REPEATEDLY ENTERING ACCESS CODE. RESTRICT
   @Output() closeModal = new EventEmitter<boolean>();
   @Output() joinFrame = new EventEmitter<string>();
@@ -23,6 +22,8 @@ export class JoinFrameComponent implements OnInit {
   onCreateFrame(accessKey: string) {
     if (!accessKey || accessKey === '') {
       this.errorText = 'Must enter a value.';
+    } else if (accessKey.length !== 6) {
+      this.errorText = 'Value must have 6 characters/numbers.';
     } else {
       this.joinFrame.emit(accessKey);
     }

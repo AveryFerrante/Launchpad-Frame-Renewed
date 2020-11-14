@@ -1,17 +1,12 @@
-<div class="modal">
-  <div class="modal-content">
-    <div class="header">
-      <span>Join a Frame</span>
-      <span class="clickable" (click)="onCloseModal()">X</span>
-    </div>
-    <hr class="header-seperator">
-    <div class="body">
-      <span class="input-label">Access Key:</span>
-      <input type="text" #accessKey>
-      <span class="error">{{ errorText }}</span>
-    </div>
-    <div class="footer">
-      <button class="btn btn-primary" (click)="onCreateFrame(accessKey.value)">JOIN</button>
-    </div>
+<app-modal [title]="'Join a Frame'" (closeModal)="onCloseModal()">
+
+  <div class="body">
+    <span class="input-label">Access Key:</span>
+    <input type="text" #accessKey>
+    <span class="error">{{ errorText }}</span>
   </div>
-</div>
+  <div class="footer">
+    <button class="btn btn-primary" (click)="onCreateFrame(accessKey.value)">JOIN</button>
+  </div>
+
+</app-modal>

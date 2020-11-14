@@ -14,7 +14,6 @@ import { frameStateKey } from './state';
 import { RootState } from '..';
 import { authenticationPropertyKey } from '../state';
 import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
-import { FrameCollection } from 'src/app/shared/models/firebase-collections/frameCollection';
 import { UserTranslator } from 'src/app/shared/models/translators/userTranslator';
 import { User } from 'src/app/shared/models/firebase-collections/user';
 
@@ -96,13 +95,7 @@ export class FrameStoreEffects {
       ofType(FrameActions.JoinFrame.Request),
       mergeMap((action) => this.frameService.getFrameIdByAccessToken(action.request)),
       withLatestFrom(this.store$),
-      mergeMap(([queryResults, state]) => {
-        if (queryResults.size < 0) {
-          // Dispatch something for not found?
-        } else {
-          return this.orchestrateJoiningFrame(queryResults.docs[0], state[authenticationPropertyKey].currentUser);
-        }
-      }),
+      this.joinFrameIfEligible(),
       map((userFrame) => FrameActions.JoinFrame.RequestSuccess({ successResponse: userFrame })),
       catchError((error: Error) => of(FrameActions.JoinFrame.RequestFailure({ failureResponse: error.message })))
     ));
@@ -197,5 +190,17 @@ export class FrameStoreEffects {
           return images.filter(i => !currentFrameImageIds.includes(i.id));
         })
       );
+    }
+
+    private joinFrameIfEligible() {
+      return mergeMap(([queryResults, state]) => {
+        if (queryResults.size < 0) {
+          // Dispatch something for not found?
+        } else if (state[authenticationPropertyKey].currentUser.frames.find(f => f.frameId === queryResults.docs[0].id)) {
+          // Dispatch something for already participant?
+        } else {
+          return this.orchestrateJoiningFrame(queryResults.docs[0], state[authenticationPropertyKey].currentUser);
+        }
+      });
     }
 }

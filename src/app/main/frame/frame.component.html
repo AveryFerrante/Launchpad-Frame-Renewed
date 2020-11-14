@@ -1,9 +1,12 @@
 
 <div class="layout" *ngIf="selectedFrame$ | async as frame; else noFrame">
   <div class="title">
-    <span>{{ frame.name }}</span>
-    <span (click)="onShowLiveView()">Live View</span>
-    <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()"></main-live-view>
+    <span class="frame-name">{{ frame.name }}</span>
+    <span class="live-view clickable" (click)="onShowLiveView()">Live Mode</span>
+  </div>
+
+  <div class="subtitle">
+    <span class="access-code">- Access Code: {{ frame.accessToken.token }}</span>
   </div>
 
   <div class="image-upload-section">
@@ -19,10 +22,6 @@
 
   </div>
 
-  <div *ngIf="uploadPercentage$ | async as uploadPercentage">
-    {{ uploadPercentage }}% COMPLETE
-  </div>
-
   <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
     <span class="group-title">{{ grouping.displayKey }}'s Images</span>
     <div class="image-section">
@@ -31,6 +30,7 @@
   </div>
 </div>
 
+<main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()"></main-live-view>
 <div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage"></div>
 <ng-template #noFrame>
   NO FRAME SELECTED!

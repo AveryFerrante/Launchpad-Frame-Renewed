@@ -7,10 +7,27 @@
 }
 
 .title {
-  font-size: 1.5rem;
+
   padding-bottom: .5rem;
-  align-self: center;
-  text-decoration: underline;
+  display: flex;
+  justify-content: space-between;
+
+  .frame-name {
+    text-decoration: underline;
+    font-size: 1.5rem;
+  }
+
+  .live-view {
+    align-self: center;
+  }
+}
+
+.subtitle {
+  display: flex;
+
+  .access-code {
+    padding-left: .75rem;
+  }
 }
 
 .group-image-display-section {
