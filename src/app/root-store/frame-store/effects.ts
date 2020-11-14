@@ -154,9 +154,11 @@ export class FrameStoreEffects {
 
     private OrchestrateFrameCreation(request: CreateFrameRequest) {
       const orchestrator = new BatchActionOrchestrator();
-      orchestrator.appendSetAction(this.frameService.getFrameDocumentSetBatchAction(request));
       const userFrame = this.userTranslator.CreateUserFrameMetadataFromCreateFrameRequest(request);
-      orchestrator.appendUpdateAction(this.authenticationService.addFrameToUserUpdateBatchAction(userFrame, request.data.creator.userId));
+      orchestrator.appendActions(
+        this.authenticationService.addFrameToUserUpdateBatchAction(userFrame, request.data.creator.userId),
+        this.frameService.getFrameDocumentSetBatchAction(request)
+      );
       return orchestrator.executeActions().pipe(
         mapTo(this.frameTranslator.CreateRequestToModel(request))
       );
@@ -164,7 +166,7 @@ export class FrameStoreEffects {
 
     private OrchestrateFrameImageCreation(request: CreateFrameImageRequest) {
       const orchestrator = new BatchActionOrchestrator();
-      orchestrator.appendSetAction(this.frameService.getFrameImageDocumentSetBatchAction(request));
+      orchestrator.appendActions(this.frameService.getFrameImageDocumentSetBatchAction(request));
       return orchestrator.executeActions().pipe(
         mapTo(this.frameTranslator.CreateImageRequestToModel(request))
       );
@@ -172,9 +174,11 @@ export class FrameStoreEffects {
 
     private orchestrateJoiningFrame(frameDoc: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>, user: User) {
       const orchestrator = new BatchActionOrchestrator();
-      orchestrator.appendUpdateAction(this.frameService.addParticipantToFrameUpdateBatchAction(frameDoc.id, user));
       const userFrame = this.userTranslator.CreateUserFrameMetadataForJoiningFrame(frameDoc);
-      orchestrator.appendUpdateAction(this.authenticationService.addFrameToUserUpdateBatchAction(userFrame, user.id));
+      orchestrator.appendActions(
+        this.authenticationService.addFrameToUserUpdateBatchAction(userFrame, user.id),
+        this.frameService.addParticipantToFrameUpdateBatchAction(frameDoc.id, user)
+      );
       return orchestrator.executeActions().pipe(
         mapTo(userFrame)
       );

@@ -3,6 +3,7 @@ import { FramePermissions } from '../constants/framePermissions';
 import { UserFrameMetadata } from '../firebase-collections/user';
 import { CreateFrameRequest } from '../requests/FrameRequests';
 
+
 @Injectable()
 export class UserTranslator {
 

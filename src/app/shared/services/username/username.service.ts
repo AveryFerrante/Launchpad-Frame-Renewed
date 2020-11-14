@@ -3,8 +3,8 @@ import { AngularFirestore, QueryFn, CollectionReference } from '@angular/fire/fi
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SetBatchAction } from '../../models/setBatchAction';
 import { Username } from '../../models/firebase-collections/username';
+import { SetBatchAction } from '../../models/batchAction';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +13,9 @@ export class UsernameService {
 
   constructor(private afStore: AngularFirestore) { }
 
-  getUsernameDocumentSetBatchAction(userId: string, username: string): SetBatchAction {
+  getUsernameDocumentSetBatchAction(userId: string, username: string): SetBatchAction<Username> {
     const documentData = this.initializeUsernameDocumentData(userId, username);
-    return { documentReference: this.getNewUsernameDocumentReference(), data: documentData };
+    return new SetBatchAction<Username>(this.getNewUsernameDocumentReference(), documentData);
   }
 
   usernameExists(username: string): Observable<boolean> {

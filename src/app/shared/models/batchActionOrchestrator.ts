@@ -1,52 +1,35 @@
-import { SetBatchAction } from './setBatchAction';
-import { DeleteBatchAction } from './deleteBatchAction';
-import { UpdateBatchAction } from './updateBatchAction';
 import { firestore } from 'firebase';
 import { Observable, from } from 'rxjs';
+import { DeleteBatchAction, SetBatchAction, UpdateBatchAction } from './batchAction';
 
+type BatchAction = DeleteBatchAction | SetBatchAction<any> | UpdateBatchAction<any>;
 export class BatchActionOrchestrator {
   private batch: firebase.firestore.WriteBatch;
-  private setActions: SetBatchAction[];
-  private deleteActions: DeleteBatchAction[];
-  private updateActions: UpdateBatchAction[];
+  private actions: BatchAction[] = [];
 
 
   constructor() {
     this.batch = firestore().batch();
-    this.setActions = [];
-    this.deleteActions = [];
-    this.updateActions = [];
   }
 
-  appendSetAction(...actions: SetBatchAction[]) {
-    this.setActions = this.setActions.concat(actions);
-  }
-
-  appendUpdateAction(...actions: UpdateBatchAction[]) {
-    this.updateActions = this.updateActions.concat(actions);
-  }
-
-  appendDeleteAction(...actions: DeleteBatchAction[]) {
-    this.deleteActions = this.deleteActions.concat(actions);
+  appendActions(...newActions: BatchAction[]) {
+    this.actions = [...this.actions, ...newActions];
   }
 
   executeActions(): Observable<void> {
-    this.attachSetAction();
-    this.attachUpdateAction();
-    this.attachDeleteAction();
+    this.resolveActionTypes();
     return from(this.batch.commit());
   }
 
-  private attachSetAction() {
-    this.setActions.forEach(action => this.batch.set(action.documentReference, action.data, action.options));
+  private resolveActionTypes() {
+    this.actions.forEach(action => {
+      if (action instanceof SetBatchAction) {
+        this.batch.set(action.documentReference, action.data, action.options);
+      } else if (action instanceof UpdateBatchAction) {
+        this.batch.update(action.documentReference, action.data);
+      } else {
+        this.batch.delete(action.documentReference);
+      }
+    });
   }
-
-  private attachUpdateAction() {
-    this.updateActions.forEach(action => this.batch.update(action.documentReference, action.data));
-  }
-
-  private attachDeleteAction() {
-    this.deleteActions.forEach(action => this.batch.delete(action.documentReference));
-  }
-
 }

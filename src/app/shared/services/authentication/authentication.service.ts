@@ -1,4 +1,3 @@
-import { getAttrsForDirectiveMatching } from '@angular/compiler/src/render3/view/util';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -6,11 +5,8 @@ import { firestore } from 'firebase';
 import { from, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
-import { FramePermissions } from '../../models/constants/framePermissions';
+import { SetBatchAction, UpdateBatchAction } from '../../models/batchAction';
 import { createDefaultUser, createUserFromDocument, UserFrameMetadata, User } from '../../models/firebase-collections/user';
-import { CreateFrameRequest } from '../../models/requests/FrameRequests';
-import { SetBatchAction } from '../../models/setBatchAction';
-import { UpdateBatchAction } from '../../models/updateBatchAction';
 import { NewUserRequest } from '../../models/view-models/NewUserRequest';
 import { SignInRequest } from '../../models/view-models/signInRequest';
 
@@ -37,8 +33,8 @@ export class AuthenticationService {
     );
   }
 
-  getUserDocumentSetBatchAction(user: User): SetBatchAction {
-    return { documentReference: this.getUserDocumentReference(user.id).ref, data: user };
+  getUserDocumentSetBatchAction(user: User): SetBatchAction<User> {
+    return new SetBatchAction<User>(this.getUserDocumentReference(user.id).ref, user);
   }
 
   userIsSignedIn(): Observable<boolean> {
@@ -55,8 +51,11 @@ export class AuthenticationService {
     return from(this.afAuth.auth.signOut());
   }
 
-  addFrameToUserUpdateBatchAction(frame: UserFrameMetadata, userId: string) {
-    return { documentReference: this.getUserDocumentReference(userId).ref, data: { frames: firestore.FieldValue.arrayUnion(frame) } };
+  addFrameToUserUpdateBatchAction(frame: UserFrameMetadata, userId: string): UpdateBatchAction<User> {
+    return new UpdateBatchAction<User>(
+      this.getUserDocumentReference(userId).ref,
+      { frames: firestore.FieldValue.arrayUnion(frame) }
+    );
   }
 
   private getUserDocumentReference(docId: string) {

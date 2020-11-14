@@ -12,6 +12,7 @@ import { SignInRequest } from '../shared/models/view-models/signInRequest';
 import { Router } from '@angular/router';
 import { URL_PATHS } from '../shared/models/constants/urlPathConstants';
 
+// TODO: MOVE ALL CATCHERRORS TO INNER OBSERVABLES SO OUTER WILL STILL WORK!
 @Injectable()
 export class RootEffects {
   constructor(private actions$: Actions,
@@ -22,8 +23,7 @@ export class RootEffects {
   signInWithEmail$ = createEffect(() => this.actions$.pipe(
     ofType(AuthenticationActions.SignInWithEmail.Request),
     map((action) => action.request),
-    this.signInUser(),
-    this.handleSignInUserOutcomes()
+    this.signInUser()
   ));
 
   createEmailUser$ = createEffect(() => this.actions$.pipe(
@@ -77,7 +77,7 @@ export class RootEffects {
 
   private orchestrateCreationOfNewUserRecords(user: User) {
     const batchOrchestrator = new BatchActionOrchestrator();
-    batchOrchestrator.appendSetAction(
+    batchOrchestrator.appendActions(
       this.authenticationService.getUserDocumentSetBatchAction(user),
       this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username)
     );
@@ -89,7 +89,9 @@ export class RootEffects {
   }
 
   private signInUser() {
-    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request));
+    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request).pipe(
+      this.handleSignInUserOutcomes()
+    ));
   }
 
   private handleSignInUserOutcomes() {

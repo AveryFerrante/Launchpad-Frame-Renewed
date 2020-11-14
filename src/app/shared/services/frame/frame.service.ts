@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentData, QueryDocumentSnapshot } from '@angular/fire/firestore';
-import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireStorage } from '@angular/fire/storage';
 import { firestore } from 'firebase';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { filter, finalize, map, skip, tap } from 'rxjs/operators';
+import { forkJoin, from, Observable } from 'rxjs';
+import { map, skip } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { FramePermissions } from '../../models/constants/framePermissions';
+import { SetBatchAction, UpdateBatchAction } from '../../models/batchAction';
 import { FrameAccessToken, FrameCollection, FrameImageSubCollection, FrameUser } from '../../models/firebase-collections/frameCollection';
-import { User, UserFrameMetadata } from '../../models/firebase-collections/user';
+import { User } from '../../models/firebase-collections/user';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/requests/FrameRequests';
-import { SetBatchAction } from '../../models/setBatchAction';
 import { FrameTranslator } from '../../models/translators/frameTranslator';
-import { UpdateBatchAction } from '../../models/updateBatchAction';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
 
@@ -78,23 +76,29 @@ export class FrameService {
     return this.frameTranslator.GetCreateFrameRequest(frame);
   }
 
-  getFrameDocumentSetBatchAction(request: CreateFrameRequest): SetBatchAction {
-    return { documentReference: this.getFrameDocumentReference(request.id).ref, data: request.data };
+  getFrameDocumentSetBatchAction(request: CreateFrameRequest): SetBatchAction<FrameCollection> {
+    return new SetBatchAction<FrameCollection>(
+      this.getFrameDocumentReference(request.id).ref,
+      request.data
+    );
   }
 
-  getFrameImageDocumentSetBatchAction(request: CreateFrameImageRequest): SetBatchAction {
-    return { documentReference: this.getFrameImageDocumentReference(request.frameId, request.id).ref, data: request.data };
+  getFrameImageDocumentSetBatchAction(request: CreateFrameImageRequest): SetBatchAction<FrameImageSubCollection> {
+    return new SetBatchAction<FrameImageSubCollection>(
+      this.getFrameImageDocumentReference(request.frameId, request.id).ref,
+      request.data
+    );
   }
 
-  addParticipantToFrameUpdateBatchAction(frameId: string, user: User): UpdateBatchAction {
+  addParticipantToFrameUpdateBatchAction(frameId: string, user: User): UpdateBatchAction<FrameCollection> {
     const frameParticipant: FrameUser = {
       userId: user.id,
       usesrname: user.username
     };
-    return {
-      documentReference: this.getFrameDocumentReference(frameId).ref,
-      data: { participants: firestore.FieldValue.arrayUnion(frameParticipant) }
-    };
+    return new UpdateBatchAction<FrameCollection>(
+      this.getFrameDocumentReference(frameId).ref,
+      { participants: firestore.FieldValue.arrayUnion(frameParticipant) }
+    );
   }
 
   private getFrameAccessToken(): FrameAccessToken {
