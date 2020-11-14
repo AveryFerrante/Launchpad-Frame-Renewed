@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
 import { RootSelectors, RootState } from 'src/app/root-store';
 import { SignInRequest } from 'src/app/shared/models/view-models/signInRequest';
+import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
   selector: 'authentication-login',
@@ -20,6 +21,8 @@ export class LoginComponent implements OnInit {
   get password(): FormControl { return this.loginFormGroup.controls.password as FormControl; }
   passwordView: 'password' | 'text' = 'password';
   loginError$ = this.store$.pipe(select(RootSelectors.SelectLoginErrorMessage));
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {

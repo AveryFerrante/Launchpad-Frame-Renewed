@@ -10,7 +10,10 @@
   <div class="form-control-section">
     <div class="inline-label">
       <span>Password:</span>
-      <span class="clickable" (click)="togglePasswordView()">(o)View Password</span>
+      <span class="clickable password-view" (click)="togglePasswordView()">
+        <span *ngIf="passwordView === 'password'"><fa-icon [icon]="faEye"></fa-icon> View</span>
+        <span *ngIf="passwordView === 'text'"><fa-icon [icon]="faEyeSlash"></fa-icon> Hide</span>
+      </span>
     </div>
     <input [type]="passwordView" formControlName="password" />
     <span class="error" *ngIf="password.touched && password.invalid">{{ getPasswordError() }}</span>

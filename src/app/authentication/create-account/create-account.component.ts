@@ -6,6 +6,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { NewUserRequest } from 'src/app/shared/models/view-models/NewUserRequest';
 import { UsernameService } from 'src/app/shared/services/username/username.service';
 import { RootSelectors, RootState } from '../../root-store';
+import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 
 const USERNAME_MIN_LENGTH = 3;
 const PASSWORD_MIN_LENGTH = 8;
@@ -32,6 +33,8 @@ export class CreateAccountComponent implements OnInit {
   @Output() createAccount = new EventEmitter<NewUserRequest>();
   createAccountLoading$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationIsLoading));
   createAccountError$ = this.store$.pipe(select(RootSelectors.SelectRegistrationErrorMessage));
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
   constructor(private store$: Store<RootState>, private usernameService: UsernameService) { }
 
   ngOnInit() { }
