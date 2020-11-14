@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -9,6 +10,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class ModalComponent implements OnInit {
   @Input() title: string;
   @Output() closeModal = new EventEmitter<boolean>();
+  faTimes = faTimes;
   constructor() { }
 
   ngOnInit() {

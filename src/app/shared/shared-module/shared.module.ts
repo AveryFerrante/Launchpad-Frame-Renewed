@@ -4,13 +4,15 @@ import { LoaderComponent } from './loader/loader.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { ModalComponent } from './modal/modal.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 
 @NgModule({
   declarations: [LoaderComponent, NavbarComponent, SidenavComponent, ModalComponent],
   imports: [
-    CommonModule
+    CommonModule,
+    FontAwesomeModule
   ],
   exports: [LoaderComponent, NavbarComponent, SidenavComponent, ModalComponent]
 })

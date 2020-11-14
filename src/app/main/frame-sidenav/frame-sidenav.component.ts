@@ -3,6 +3,8 @@ import { Store } from '@ngrx/store';
 import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { UserFrameMetadata } from 'src/app/shared/models/firebase-collections/user';
+import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'main-frame-sidenav',
@@ -16,6 +18,8 @@ export class FrameSidenavComponent implements OnInit {
   @Output() openJoinFrame = new EventEmitter<boolean>();
   @Output() frameSelect = new EventEmitter<UserFrameMetadata>();
   showSidenav$ = this.store$.select(FrameStoreSelectors.SelectSideNavVisibility);
+  faPlusSquare = faPlusSquare;
+  faTimes = faTimes;
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {

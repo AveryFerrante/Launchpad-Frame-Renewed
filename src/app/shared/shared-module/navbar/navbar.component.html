@@ -1,9 +1,9 @@
 <div class="layout">
-  <span class="menu-button clickable" (click)="openSideNav()">Ham</span>
+  <span class="menu-button clickable" (click)="openSideNav()"><fa-icon [icon]="faBars"></fa-icon></span>
   <span class="filler"></span>
   <span class="nav-title">Launchpad Frame</span>
   <div class="account dropdown">
-    <span class="clickable">Account</span>
+    <span class="clickable"><fa-icon [icon]="faUserCircle"></fa-icon>Account</span>
     <div class="dropdown-content">
       <span class="clickable" (click)="onLogout()">Logout</span>
     </div>

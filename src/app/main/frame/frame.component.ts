@@ -6,6 +6,7 @@ import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'main-frame',
@@ -17,6 +18,7 @@ export class FrameComponent implements OnInit {
   uploadPercentage$: Observable<number> = this.store$.select(FrameStoreSelectors.SelectUploadPercentage);
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
+  faCamera = faCamera;
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
