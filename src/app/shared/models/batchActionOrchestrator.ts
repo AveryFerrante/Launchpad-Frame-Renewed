@@ -27,8 +27,11 @@ export class BatchActionOrchestrator {
         this.batch.set(action.documentReference, action.data, action.options);
       } else if (action instanceof UpdateBatchAction) {
         this.batch.update(action.documentReference, action.data);
-      } else {
+      } else if (action instanceof DeleteBatchAction) {
         this.batch.delete(action.documentReference);
+      } else {
+        console.error('Action is not of any BatchAction class type', action);
+        throw new Error('Action is not of any BatchAction class type');
       }
     });
   }

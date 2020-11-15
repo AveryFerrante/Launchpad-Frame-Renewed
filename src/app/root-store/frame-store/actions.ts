@@ -15,6 +15,8 @@ export const LoadFrame =
   createDefaultRequestActions<string, FrameModel, string>('[Frame] Load Frame');
 export const JoinFrame =
   createDefaultRequestActions<string, UserFrameMetadata, string>('[Frame] Join Frame');
+export const JoinFrameNoOp =
+  createAction('[Frame] Join Frame NoOp');
 
 export const UpdateSideNavVisibility =
   createAction('[Frame] Update SideNav Visibility', props<{ visible: boolean }>());

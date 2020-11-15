@@ -16,6 +16,7 @@ import { authenticationPropertyKey } from '../state';
 import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
 import { UserTranslator } from 'src/app/shared/models/translators/userTranslator';
 import { User } from 'src/app/shared/models/firebase-collections/user';
+import { AlertService } from 'src/app/shared/services/alert/alert.service';
 
 
 @Injectable()
@@ -26,7 +27,8 @@ export class FrameStoreEffects {
                 private frameService: FrameService,
                 private frameTranslator: FrameTranslator,
                 private userTranslator: UserTranslator,
-                private authenticationService: AuthenticationService) {}
+                private authenticationService: AuthenticationService,
+                private alertService: AlertService) {}
 
     uploadImages$ = createEffect(() => this.actions$.pipe(
       ofType(FrameActions.UploadImagesRequest),
@@ -39,9 +41,14 @@ export class FrameStoreEffects {
       ofType(FrameActions.NewFrame.Request),
       withLatestFrom(this.store$),
       map(([action, state]) => this.frameService.getFrameRequest(state[authenticationPropertyKey].currentUser, action.request)),
-      exhaustMap((request: CreateFrameRequest) => this.OrchestrateFrameCreation(request)),
-      map((frameModel: FrameModel) => FrameActions.NewFrame.RequestSuccess({ successResponse: frameModel })),
-      catchError((error: Error) => of(FrameActions.NewFrame.RequestFailure({ failureResponse: error.message })))
+      exhaustMap((request: CreateFrameRequest) => this.OrchestrateFrameCreation(request).pipe(
+        map((frameModel: FrameModel) => FrameActions.NewFrame.RequestSuccess({ successResponse: frameModel })),
+        catchError((error: Error) => of(FrameActions.NewFrame.RequestFailure({ failureResponse: error.message }))),
+        tap({
+          complete: () => this.alertService.alert({ message: 'New Frame Created!', type: 'success' }),
+          error: () => this.alertService.alert({ message: 'Something Went Wrong!', type: 'error' })
+        })
+      ))
     ));
 
     createNewFrameImage$ = createEffect(() => this.actions$.pipe(
@@ -95,9 +102,7 @@ export class FrameStoreEffects {
       ofType(FrameActions.JoinFrame.Request),
       mergeMap((action) => this.frameService.getFrameIdByAccessToken(action.request)),
       withLatestFrom(this.store$),
-      this.joinFrameIfEligible(),
-      map((userFrame) => FrameActions.JoinFrame.RequestSuccess({ successResponse: userFrame })),
-      catchError((error: Error) => of(FrameActions.JoinFrame.RequestFailure({ failureResponse: error.message })))
+      this.joinFrameIfEligible()
     ));
 
     private handleImageUpload() {
@@ -107,7 +112,9 @@ export class FrameStoreEffects {
           const uploads = this.frameService.uploadImages(images, userId);
           const actions$: Observable<Action>[] = this.createFrameImageOnUploadComplete(uploads, state);
           actions$.push(this.createUploadPercentageTracker(uploads));
-          return merge(...actions$);
+          return merge(...actions$).pipe(
+            tap({ complete: () => this.alertService.alert({ message: 'Image(s) Uploaded Successfully!', type: 'success' }) })
+          );
         })
       );
     }
@@ -198,12 +205,17 @@ export class FrameStoreEffects {
 
     private joinFrameIfEligible() {
       return mergeMap(([queryResults, state]) => {
-        if (queryResults.size < 0) {
-          // Dispatch something for not found?
+        if (queryResults.size < 1) {
+          this.alertService.alert({ message: 'No frame found for that access key!', type: 'inform' });
+          return of(FrameActions.JoinFrameNoOp());
         } else if (state[authenticationPropertyKey].currentUser.frames.find(f => f.frameId === queryResults.docs[0].id)) {
-          // Dispatch something for already participant?
+          this.alertService.alert({ message: 'You\'re already a participant!', type: 'inform' });
+          return of(FrameActions.JoinFrameNoOp());
         } else {
-          return this.orchestrateJoiningFrame(queryResults.docs[0], state[authenticationPropertyKey].currentUser);
+          return this.orchestrateJoiningFrame(queryResults.docs[0], state[authenticationPropertyKey].currentUser).pipe(
+            map((userFrame) => FrameActions.JoinFrame.RequestSuccess({ successResponse: userFrame })),
+            catchError((error: Error) => of(FrameActions.JoinFrame.RequestFailure({ failureResponse: error.message })))
+          );
         }
       });
     }

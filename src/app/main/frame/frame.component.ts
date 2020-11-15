@@ -7,6 +7,7 @@ import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { AlertService } from 'src/app/shared/services/alert/alert.service';
 
 @Component({
   selector: 'main-frame',
@@ -19,7 +20,7 @@ export class FrameComponent implements OnInit {
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
   faCamera = faCamera;
-  constructor(private store$: Store<RootState>) { }
+  constructor(private store$: Store<RootState>, private alertService: AlertService) { }
 
   ngOnInit() {
   }

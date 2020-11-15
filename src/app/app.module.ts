@@ -12,6 +12,7 @@ import { AuthenticationService } from './shared/services/authentication/authenti
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorageModule } from '@angular/fire/storage';
+import { SharedModule } from './shared/shared-module/shared.module';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
     AngularFireModule.initializeApp(FirebaseConfig),
     AngularFireStorageModule,
     RootStoreModule,
-    AppRoutingModule
+    AppRoutingModule,
+    SharedModule
   ],
   providers: [AuthenticationService, AngularFirestore, AngularFireAuth],
   bootstrap: [AppComponent]

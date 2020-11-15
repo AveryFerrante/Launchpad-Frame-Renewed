@@ -1,0 +1,53 @@
+@import '../../../../variables.scss';
+
+.alert {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100000;
+  background-color: $light;
+  text-align: center;
+  opacity: .8;
+}
+
+.success {
+  border-left: 10px solid $success;
+}
+
+.error {
+  border-left: 10px solid $error;
+}
+
+.inform {
+  border-left: 10px solid $primary;
+}
+
+.close {
+  font-size: .75rem;
+}
+
+.message {
+  padding: 1rem 1.25rem 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+@include media($phone-size) {
+  .alert {
+    max-width: 60%;
+  }
+}
+
+@include media($less-than-desktop) {
+  .close::after {
+    content: "(tap to dismiss)"
+  }
+}
+
+@include media($desktop-size) {
+  .close::after {
+    content: "(click to dismiss)"
+  }
+}
