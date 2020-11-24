@@ -1,5 +1,5 @@
 
-<div class="layout" *ngIf="selectedFrame$ | async as frame; else noFrame">
+<div class="layout" id="test" *ngIf="selectedFrame$ | async as frame; else noFrame">
   <div class="title">
     <span class="frame-name">{{ frame.name }}</span>
     <span class="live-view clickable" (click)="onShowLiveView()">Live Mode</span>
@@ -25,7 +25,11 @@
   <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
     <span class="group-title">{{ grouping.displayKey }}'s Images</span>
     <div class="image-section">
-      <img class="image" *ngFor="let downloadUrl of grouping.downloadUrls" [mainImageLazyLoad]="downloadUrl">
+      <div class="image-container" *ngFor="let image of grouping.images"
+        [style.height]="image.displayDimensions.height + 'px'"
+        [style.width]="image.displayDimensions.width + 'px'">
+        <img class="image" [mainImageLazyLoad]="image.image.downloadUrl">
+      </div>
     </div>
   </div>
 

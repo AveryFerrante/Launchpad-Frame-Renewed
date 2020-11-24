@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { firestore } from 'firebase';
-import { forkJoin, from, Observable } from 'rxjs';
-import { map, skip } from 'rxjs/operators';
+import { forkJoin, from, fromEvent, Observable } from 'rxjs';
+import { map, mergeMap, skip, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { SetBatchAction, UpdateBatchAction } from '../../models/batchAction';
 import { FrameAccessToken, FrameCollection, FrameImageSubCollection, FrameUser } from '../../models/firebase-collections/frameCollection';
 import { User } from '../../models/firebase-collections/user';
+import { ImageDeminsions } from '../../models/imageDeminsions';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/requests/FrameRequests';
 import { FrameTranslator } from '../../models/translators/frameTranslator';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
@@ -30,18 +31,29 @@ export class FrameService {
     );
   }
 
-  uploadImages(images: File[], userId: string) {
-    const imageUploads: UploadImageResponse[] = [];
+  uploadImages(images: File[], userId: string): Observable<UploadImageResponse[]> {
     const headers = environment.imageUploadProperties.cacheControlValues.reduce((acc, curr, index, arr) => {
       return acc + curr + (index === arr.length - 1 ? '' : ', ');
     }, '');
-    images.forEach(image => {
-      const path = userId + '/' + new Date().toUTCString() + '-' + image.name;
-      const ref = this.afStorage.ref(path);
-      const task = this.afStorage.upload(path, image, { cacheControl: headers });
-      imageUploads.push({ imageReference: ref, uploadTask: task, storagePath: path });
+    const imageUploads = images.map(image => {
+      return this.getImageDeminsions(image).pipe(
+        map((deminsions: ImageDeminsions): UploadImageResponse => {
+          const path = userId + '/' + new Date().toUTCString() + '-' + image.name;
+          const ref = this.afStorage.ref(path);
+          const task = this.afStorage.upload(path, image, { cacheControl: headers });
+          return { imageReference: ref, uploadTask: task, storagePath: path, deminsions };
+        })
+      );
     });
-    return imageUploads;
+    return forkJoin(imageUploads);
+    // images.forEach(image => {
+    //   this.getImageDeminsions(image).subscribe();
+    //   const path = userId + '/' + new Date().toUTCString() + '-' + image.name;
+    //   const ref = this.afStorage.ref(path);
+    //   const task = this.afStorage.upload(path, image, { cacheControl: headers });
+    //   imageUploads.push({ imageReference: ref, uploadTask: task, storagePath: path });
+    // });
+    // return imageUploads;
   }
 
   getLiveImageListener(frameId: string) {
@@ -99,6 +111,33 @@ export class FrameService {
       this.getFrameDocumentReference(frameId).ref,
       { participants: firestore.FieldValue.arrayUnion(frameParticipant) }
     );
+  }
+
+  private getImageDeminsions(image: File): Observable<ImageDeminsions> {
+    const fr = new FileReader();
+    fr.readAsArrayBuffer(image);
+    return fromEvent(fr, 'load').pipe(
+      take(1),
+      mergeMap(() => {
+        const arrayBuffer: ArrayBuffer = fr.result as ArrayBuffer;
+        const base64Data = this.toBase64(arrayBuffer);
+        const imageObj = new Image(100, 100);
+        imageObj.src = `data:${image.type};base64,${base64Data}`;
+        return fromEvent(imageObj, 'load').pipe(
+          take(1),
+          map(() => {
+            return { width: imageObj.naturalWidth, height: imageObj.naturalHeight };
+          })
+        );
+      })
+    );
+  }
+
+  private toBase64(arrayBuffer: ArrayBuffer) {
+    let binary = '';
+    const bytes = new Uint8Array(arrayBuffer);
+    bytes.forEach(b => binary += String.fromCharCode(b));
+    return window.btoa(binary);
   }
 
   private getFrameAccessToken(): FrameAccessToken {

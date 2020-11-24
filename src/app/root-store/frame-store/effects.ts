@@ -17,6 +17,7 @@ import { UploadImageResponse } from 'src/app/shared/models/uploadImageResponse';
 import { UserTranslator } from 'src/app/shared/models/translators/userTranslator';
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { AlertService } from 'src/app/shared/services/alert/alert.service';
+import { ImageDeminsions } from 'src/app/shared/models/imageDeminsions';
 
 
 @Injectable()
@@ -109,11 +110,15 @@ export class FrameStoreEffects {
       return pipe(
         mergeMap(([images, state]: [File[], RootState]) => {
           const userId = state[authenticationPropertyKey].currentUser.id;
-          const uploads = this.frameService.uploadImages(images, userId);
-          const actions$: Observable<Action>[] = this.createFrameImageOnUploadComplete(uploads, state);
-          actions$.push(this.createUploadPercentageTracker(uploads));
-          return merge(...actions$).pipe(
-            tap({ complete: () => this.alertService.alert({ message: 'Image(s) Uploaded Successfully!', type: 'success' }) })
+          return this.frameService.uploadImages(images, userId).pipe(
+            mergeMap((uploadResponses: UploadImageResponse[]) => {
+              const actions$: Observable<Action>[] = this.createFrameImageOnUploadComplete(uploadResponses, state);
+              actions$.push(this.createUploadPercentageTracker(uploadResponses));
+              const plural = uploadResponses.length > 1 ? 's' : '';
+              return merge(...actions$).pipe(
+                tap({ complete: () => this.alertService.alert({ message: `Image${plural} Uploaded Successfully!`, type: 'success' }) })
+              );
+            })
           );
         })
       );
@@ -123,36 +128,36 @@ export class FrameStoreEffects {
       return combineLatest(...this.getUploadSnapshots(uploads)).pipe(
         map((combinedPercentages: number[]) => {
           const percentage = combinedPercentages.reduce((acc, curr) => acc + curr, 0) / combinedPercentages.length;
-          return FrameActions.UpdateUploadPercentageRequest({ percentage: percentage === 100 ? null : percentage });
+          return FrameActions.UpdateUploadPercentageRequest({ percentage: percentage >= 100 ? null : percentage });
         }),
       );
     }
 
     private getUploadSnapshots(uploads: UploadImageResponse[]): Observable<number>[] {
-      return uploads.reduce((acc, curr) => [...acc, curr.uploadTask.percentageChanges()], []);
+      return uploads.map(upload => upload.uploadTask.percentageChanges());
     }
 
     private createFrameImageOnUploadComplete(uploads: UploadImageResponse[], state: RootState): Observable<Action>[] {
       const username = state[authenticationPropertyKey].currentUser.username;
       const frameId = state[frameStateKey].selectedFrameId;
       const userId = state[authenticationPropertyKey].currentUser.id;
-      return uploads.reduce((acc, currentTask) => {
-        const action = currentTask.uploadTask.snapshotChanges().pipe(
+      return uploads.map((currentTask) => {
+        return currentTask.uploadTask.snapshotChanges().pipe(
           last(),
           mergeMap(() => currentTask.imageReference.getDownloadURL()),
-          this.mapToCreateImageRequest(userId, currentTask.storagePath, username, frameId)
+          this.mapToCreateImageRequest(userId, currentTask.storagePath, username, frameId, currentTask.deminsions)
         );
-        return [...acc, action];
-      }, []);
+      });
     }
 
-    private mapToCreateImageRequest(userId: string, storagePath: string, username: string, frameId: string) {
+    private mapToCreateImageRequest(userId: string, storagePath: string, username: string, frameId: string, dems: ImageDeminsions) {
       return map((url: string) => {
         const request = {
           userId,
           downloadUrl: url,
           storagePath,
-          username
+          username,
+          dimensions: dems
         };
         const req = this.frameTranslator.GetCreateFrameImageRequest(frameId, request);
         return FrameActions.NewFrameImage.Request({ request: req });

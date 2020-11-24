@@ -1,3 +1,5 @@
+import { ImageDeminsions as ImageDimensions } from '../imageDeminsions';
+
 export interface FrameCollection {
   name: string;
   creator: FrameUser;
@@ -21,6 +23,7 @@ export interface FrameImageSubCollection {
   userId: string;
   username: string;
   storagePath: string;
+  dimensions: ImageDimensions;
 }
 
 

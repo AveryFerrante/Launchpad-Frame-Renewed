@@ -65,7 +65,8 @@ const ReduceToImageModel = (acc: FrameImageModel[], current: firebase.firestore.
     userId: docData.userId,
     username: docData.username,
     downloadUrl: docData.downloadUrl,
-    storagePath: docData.storagePath
+    storagePath: docData.storagePath,
+    dimensions: docData.dimensions
   };
   return [...acc, frameImage];
 };
