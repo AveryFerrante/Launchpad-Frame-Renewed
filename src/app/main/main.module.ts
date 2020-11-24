@@ -11,11 +11,20 @@ import { LiveViewComponent } from './live-view/live-view.component';
 import { JoinFrameComponent } from './join-frame/join-frame.component';
 import { FrameSidenavComponent } from './frame-sidenav/frame-sidenav.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
 
 
 
 @NgModule({
-  declarations: [EntryComponent, FrameComponent, CreateFrameComponent, LiveViewComponent, JoinFrameComponent, FrameSidenavComponent],
+  declarations: [
+    EntryComponent,
+    FrameComponent,
+    CreateFrameComponent,
+    LiveViewComponent,
+    JoinFrameComponent,
+    FrameSidenavComponent,
+    ImageLazyLoadDirective
+  ],
   imports: [
     CommonModule,
     MainRoutingModule,

@@ -12,7 +12,7 @@
     "directive-selector": [
       true,
       "attribute",
-      "app",
+      ["app", "main"],
       "camelCase"
     ],
     "component-selector": [
