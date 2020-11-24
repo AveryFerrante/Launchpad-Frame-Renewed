@@ -28,9 +28,10 @@
       <img class="image" *ngFor="let downloadUrl of grouping.downloadUrls" [mainImageLazyLoad]="downloadUrl">
     </div>
   </div>
+
+  <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()" [accessCode]="frame.accessToken.token"></main-live-view>
 </div>
 
-<main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()"></main-live-view>
 <div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage"></div>
 <ng-template #noFrame>
   NO FRAME SELECTED!

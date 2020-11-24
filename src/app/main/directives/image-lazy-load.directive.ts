@@ -10,22 +10,9 @@ export class ImageLazyLoadDirective implements OnInit {
   constructor(private image: ElementRef) { }
 
   ngOnInit(): void {
-    if (this.browserSupportsNativeLazyLoading()) {
-      this.applyNativeLazyLoading();
-    } else {
-      this.registerIntersectionObserver();
-    }
+    this.registerIntersectionObserver();
   }
 
-  private applyNativeLazyLoading() {
-    const imageElement = (this.image.nativeElement as HTMLImageElement);
-    imageElement.loading = 'lazy';
-    imageElement.src = this.source;
-  }
-
-  private browserSupportsNativeLazyLoading() {
-    return 'loading' in HTMLImageElement.prototype;
-  }
 
   private registerIntersectionObserver() {
     const options: IntersectionObserverInit = {

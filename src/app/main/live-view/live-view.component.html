@@ -1,3 +1,11 @@
-<div class="layout">
-  <img *ngIf="liveImage$ | async as image" [src]="image.downloadUrl">
+<div class="layout" *ngIf="liveImage$ | async as image">
+  <img [src]="image.downloadUrl">
+
+  <div class="username-overlay">
+    From: {{ image.username }}
+  </div>
+
+  <div class="access-code-overlay">
+    Access Code: {{ accessCode }}
+  </div>
 </div>

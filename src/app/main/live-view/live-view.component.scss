@@ -17,3 +17,23 @@ img {
   -o-object-fit: contain;
   object-fit: contain;
 }
+
+.username-overlay {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: white;
+  padding: .5rem;
+  background-color: black;
+  opacity: .75;
+}
+
+.access-code-overlay {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+  padding: .5rem;
+  background-color: black;
+  opacity: .75;
+}
