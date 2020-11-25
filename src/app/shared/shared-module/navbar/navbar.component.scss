@@ -1,0 +1,58 @@
+@import '../../../../variables.scss';
+
+.layout {
+  display: flex;
+  color: $light;
+  padding: .75rem;
+  background-color: $primary;
+  z-index: 1000;
+  justify-content: space-between;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+@include media($phone-size...) {
+  .menu-button, .account {
+    display: block;
+    flex: 1;
+  }
+
+  .account {
+    text-align: right;
+  }
+
+  .filler {
+    display: none;
+  }
+}
+
+@include media ($tablet-or-larger) {
+  .filler {
+    display: block
+  }
+
+  .menu-button {
+    display: none;
+  }
+}
+
+.account {
+  fa-icon {
+    padding-right: .35rem;
+  }
+}
+
+// Account Dropdown
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: $light;
+  color: $primary;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  padding: 1rem;
+  right: 5px;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}

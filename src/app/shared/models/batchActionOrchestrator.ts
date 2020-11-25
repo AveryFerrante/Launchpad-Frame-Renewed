@@ -1,52 +1,38 @@
-import { SetBatchAction } from './setBatchAction';
-import { DeleteBatchAction } from './deleteBatchAction';
-import { UpdateBatchAction } from './updateBatchAction';
 import { firestore } from 'firebase';
 import { Observable, from } from 'rxjs';
+import { DeleteBatchAction, SetBatchAction, UpdateBatchAction } from './batchAction';
 
+type BatchAction = DeleteBatchAction | SetBatchAction<any> | UpdateBatchAction<any>;
 export class BatchActionOrchestrator {
   private batch: firebase.firestore.WriteBatch;
-  private setActions: SetBatchAction[];
-  private deleteActions: DeleteBatchAction[];
-  private updateActions: UpdateBatchAction[];
+  private actions: BatchAction[] = [];
 
 
   constructor() {
     this.batch = firestore().batch();
-    this.setActions = [];
-    this.deleteActions = [];
-    this.updateActions = [];
   }
 
-  appendSetAction(action: SetBatchAction) {
-    this.setActions.push(action);
-  }
-
-  appendUpdateAction(action: UpdateBatchAction) {
-    this.updateActions.push(action);
-  }
-
-  appendDeleteAction(action: DeleteBatchAction) {
-    this.deleteActions.push(action);
+  appendActions(...newActions: BatchAction[]) {
+    this.actions = [...this.actions, ...newActions];
   }
 
   executeActions(): Observable<void> {
-    this.attachSetAction();
-    this.attachUpdateAction();
-    this.attachDeleteAction();
+    this.resolveActionTypes();
     return from(this.batch.commit());
   }
 
-  private attachSetAction() {
-    this.setActions.forEach(action => this.batch.set(action.documentReference, action.data, action.options));
+  private resolveActionTypes() {
+    this.actions.forEach(action => {
+      if (action instanceof SetBatchAction) {
+        this.batch.set(action.documentReference, action.data, action.options);
+      } else if (action instanceof UpdateBatchAction) {
+        this.batch.update(action.documentReference, action.data);
+      } else if (action instanceof DeleteBatchAction) {
+        this.batch.delete(action.documentReference);
+      } else {
+        console.error('Action is not of any BatchAction class type', action);
+        throw new Error('Action is not of any BatchAction class type');
+      }
+    });
   }
-
-  private attachUpdateAction() {
-    this.updateActions.forEach(action => this.batch.update(action.documentReference, action.data));
-  }
-
-  private attachDeleteAction() {
-    this.deleteActions.forEach(action => this.batch.delete(action.documentReference));
-  }
-
 }

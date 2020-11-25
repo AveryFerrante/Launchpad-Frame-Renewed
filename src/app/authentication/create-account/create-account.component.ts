@@ -1,11 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
-import { Observable, pipe, timer } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
-import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
+import { Observable, timer } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { NewUserRequest } from 'src/app/shared/models/view-models/NewUserRequest';
 import { UsernameService } from 'src/app/shared/services/username/username.service';
 import { RootSelectors, RootState } from '../../root-store';
+import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';
 
 const USERNAME_MIN_LENGTH = 3;
 const PASSWORD_MIN_LENGTH = 8;
@@ -31,7 +32,9 @@ export class CreateAccountComponent implements OnInit {
   passwordView: 'password' | 'text' = 'password';
   @Output() createAccount = new EventEmitter<NewUserRequest>();
   createAccountLoading$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationIsLoading));
-  createAccountError$ = this.store$.pipe(this.filterNullErrorMessages());
+  createAccountError$ = this.store$.pipe(select(RootSelectors.SelectRegistrationErrorMessage));
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
   constructor(private store$: Store<RootState>, private usernameService: UsernameService) { }
 
   ngOnInit() { }
@@ -74,13 +77,6 @@ export class CreateAccountComponent implements OnInit {
       switchMap(() => this.usernameService.usernameExists(control.value as string)),
       tap(() => this.checkingUsernameLoading = false),
       map(exists => exists ? { [UNIQUE_USERNAME_ERROR]: true } : null)
-    );
-  }
-
-  private filterNullErrorMessages() {
-    return pipe(
-      select(RootSelectors.SelectAuthenticationErrorMessage),
-      filter((e: string) => e !== null)
     );
   }
 }

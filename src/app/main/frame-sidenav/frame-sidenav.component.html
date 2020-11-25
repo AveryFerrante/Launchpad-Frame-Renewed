@@ -1,0 +1,43 @@
+<!-- Mobile SideNav -->
+<app-sidenav *ngIf="showSidenav$ | async" class="mobile-sidenav">
+  <div class="layout">
+    <div class="title-section">
+      <span>Select a Frame</span>
+      <span class="close-button clickable" (click)="closeSidenav()"><fa-icon [icon]="faTimes"></fa-icon></span>
+    </div>
+
+    <div class="content-section">
+      <div *ngFor="let frame of userFrames" [ngClass]="{'sidenav-item-selected': selectedFrameId === frame.frameId}"
+        class="clickable sidenav-item" (click)="onFrameSelect(frame)">
+        <span>{{ frame.name }}</span>
+      </div>
+    </div>
+
+    <div class="actions-section">
+      <div class="clickable create" (click)="onOpenCreateFrame()"><fa-icon [icon]="faPlusSquare"></fa-icon>Create</div>
+      <div class="clickable join" (click)="onOpenJoinFrame()"><fa-icon [icon]="faPlusSquare"></fa-icon>Join</div>
+    </div>
+  </div>
+</app-sidenav>
+
+<!-- Fixed SideNav -->
+<app-sidenav class="fixed-sidenav">
+  <div class="layout">
+    <div class="title-section">
+      <span>Select a Frame</span>
+    </div>
+
+    <div class="content-section">
+      <div *ngFor="let frame of userFrames" [ngClass]="{'sidenav-item-selected': selectedFrameId === frame.frameId}"
+        class="clickable sidenav-item" (click)="onFrameSelect(frame)">
+        <span>{{ frame.name }}</span>
+      </div>
+    </div>
+
+    <div class="actions-section">
+      <div class="clickable create" (click)="onOpenCreateFrame()"><fa-icon [icon]="faPlusSquare"></fa-icon>Create</div>
+      <div class="clickable join" (click)="onOpenJoinFrame()"><fa-icon [icon]="faPlusSquare"></fa-icon>Join</div>
+    </div>
+  </div>
+</app-sidenav>
+

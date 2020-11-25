@@ -1,14 +1,17 @@
+import { FramePermissions } from '../constants/framePermissions';
+
 export interface User {
     id: string;
     email: string;
     username: string;
-    frames: FrameMetadataForUser[];
-    imageUploadCount: number;
+    frames: UserFrameMetadata[];
+    imageIds: string[];
 }
 
-interface FrameMetadataForUser {
-  id: string;
-  permissions: string[];
+export interface UserFrameMetadata {
+  frameId: string;
+  name: string;
+  permissions: FramePermissions[];
 }
 
 export function createDefaultUser(email: string, username: string, id: string): User {
@@ -16,7 +19,7 @@ export function createDefaultUser(email: string, username: string, id: string): 
     id,
     username,
     email,
-    imageUploadCount: 0,
+    imageIds: [],
     frames: []
   };
 }
@@ -28,7 +31,7 @@ export function createUserFromDocument(doc: firebase.firestore.DocumentSnapshot<
     email: documentData.email,
     username: documentData.username,
     frames: documentData.frames,
-    imageUploadCount: documentData.imageUploadCount
+    imageIds: documentData.imageIds
   };
 }
 

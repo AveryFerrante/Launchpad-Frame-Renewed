@@ -1,0 +1,13 @@
+<app-modal [title]="'Create a Frame'" (closeModal)="onCloseModal()">
+
+  <div class="body">
+    <span class="input-label">Name:</span>
+    <input type="text" #frameName>
+    <span class="error">{{ errorText }}</span>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" (click)="onCreateFrame(frameName.value)">CREATE</button>
+  </div>
+
+</app-modal>
+

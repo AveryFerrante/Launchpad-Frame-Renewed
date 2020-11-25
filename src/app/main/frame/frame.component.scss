@@ -1,0 +1,104 @@
+@import '../../../variables.scss';
+
+.layout {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+
+  padding-bottom: .5rem;
+  display: flex;
+  justify-content: space-between;
+
+  .frame-name {
+    text-decoration: underline;
+    font-size: 1.5rem;
+  }
+
+  .live-view {
+    align-self: center;
+  }
+}
+
+.subtitle {
+  display: flex;
+
+  .access-code {
+    padding-left: .75rem;
+  }
+}
+
+.group-image-display-section {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem;
+
+  .group-title {
+    font-weight: bold;
+    padding-bottom: .5rem;
+  }
+
+  .image-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .image-container {
+      padding-bottom: .3rem;
+    }
+
+    .image {
+      width: 100%;
+      height: 100%;
+    }
+
+  }
+}
+
+.image-upload-zone {
+  display: flex;
+  opacity: .75;
+  height: 100px;
+}
+
+.image-upload-camera {
+  display: none;
+}
+
+@include media($less-than-desktop) {
+  .image-upload-zone {
+    display: none;
+  }
+
+  .image-upload-camera {
+    display: block;
+  }
+}
+
+.fab-image-capture {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  z-index: 10;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+  background-color: $tetradic-brown;
+  color: $light;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  border: none;
+  font-size: 1.5rem;
+}
+
+.upload-progress {
+  background-color: $success;
+  height: 10px;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  z-index: 2000;
+}
+

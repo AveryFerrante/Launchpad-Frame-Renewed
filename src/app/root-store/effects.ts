@@ -2,25 +2,28 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';
 import * as AuthenticationActions from './actions';
-import { map, catchError, exhaustMap, switchMap, mapTo, mergeMap } from 'rxjs/operators';
+import { map, catchError, exhaustMap, mapTo, mergeMap, filter, tap } from 'rxjs/operators';
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { of, pipe, OperatorFunction, Observable } from 'rxjs';
 import { UsernameService } from '../shared/services/username/username.service';
-import { NewUserRequest } from '../shared/models/requests/NewUserRequest';
+import { NewUserRequest } from '../shared/models/view-models/NewUserRequest';
 import { BatchActionOrchestrator } from '../shared/models/batchActionOrchestrator';
-import { SignInRequest } from '../shared/models/requests/signInRequest';
+import { SignInRequest } from '../shared/models/view-models/signInRequest';
+import { Router } from '@angular/router';
+import { URL_PATHS } from '../shared/models/constants/urlPathConstants';
 
+// TODO: MOVE ALL CATCHERRORS TO INNER OBSERVABLES SO OUTER WILL STILL WORK!
 @Injectable()
 export class RootEffects {
   constructor(private actions$: Actions,
               private authenticationService: AuthenticationService,
-              private usernameService: UsernameService) { }
+              private usernameService: UsernameService,
+              private router: Router) { }
 
   signInWithEmail$ = createEffect(() => this.actions$.pipe(
     ofType(AuthenticationActions.SignInWithEmail.Request),
     map((action) => action.request),
-    this.signInUser(),
-    this.handleSignInUserOutcomes()
+    this.signInUser()
   ));
 
   createEmailUser$ = createEffect(() => this.actions$.pipe(
@@ -30,12 +33,22 @@ export class RootEffects {
     this.handleNewEmailUserFlowOutcomes()
   ));
 
-  getUserAfterAuthentication$ = createEffect(() => this.actions$.pipe(
-    ofType(AuthenticationActions.GetUserAfterAuthentication.Request),
-    map((action) => action.request),
-    this.fetchUser(),
-    this.handleFetchUserOutcomes()
+  getUserData$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthenticationActions.GetUserDataFromSignedInUser.Request),
+    this.fetchUserDataFromSignedInUser(),
+    this.handleFetchUserDataOutcomes()
   ));
+
+  signOutUser$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthenticationActions.SignOutUser),
+    mergeMap(() => this.authenticationService.signOutUser()),
+    tap(() => this.router.navigateByUrl(URL_PATHS.authentication))
+  ), { dispatch: false });
+
+  navigateAfterAuthenticationComplete$ = createEffect(() => this.actions$.pipe(
+    ofType(AuthenticationActions.CreateEmailUser.RequestSuccess, AuthenticationActions.SignInWithEmail.RequestSuccess),
+    tap(() => this.router.navigateByUrl(URL_PATHS.home))
+  ), { dispatch: false });
 
   private handleNewEmailUserFlowOutcomes() {
     return pipe(
@@ -57,15 +70,17 @@ export class RootEffects {
 
   private initializeNewUserRecords(): OperatorFunction<User, User> {
     return mergeMap((user: User) => {
-      const userRecordsCreation$ = this.orchestrateCreationOfNewUserRecords(user).pipe(mapTo(user));
+      const userRecordsCreation$ = this.orchestrateCreationOfNewUserRecords(user);
       return this.mapObservableTo<User>(userRecordsCreation$, user);
     });
   }
 
   private orchestrateCreationOfNewUserRecords(user: User) {
     const batchOrchestrator = new BatchActionOrchestrator();
-    batchOrchestrator.appendSetAction(this.authenticationService.getUserDocumentSetBatchAction(user));
-    batchOrchestrator.appendSetAction(this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username));
+    batchOrchestrator.appendActions(
+      this.authenticationService.getUserDocumentSetBatchAction(user),
+      this.usernameService.getUsernameDocumentSetBatchAction(user.id, user.username)
+    );
     return batchOrchestrator.executeActions();
   }
 
@@ -74,26 +89,31 @@ export class RootEffects {
   }
 
   private signInUser() {
-    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request));
+    return exhaustMap((request: SignInRequest) => this.authenticationService.signInWithEmail(request).pipe(
+      this.handleSignInUserOutcomes()
+    ));
   }
 
   private handleSignInUserOutcomes() {
     return pipe(
-      map((userCredential: firebase.auth.UserCredential) =>
-        AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: userCredential })),
-      catchError((error: Error) => of(AuthenticationActions.SignInWithEmail.RequestFailure({ failureResponse: error.message })))
+      map(() =>
+        AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: null })),
+        catchError((error: Error) => of(AuthenticationActions.SignInWithEmail.RequestFailure({ failureResponse: error.message })))
     );
   }
 
-  private fetchUser() {
-    return mergeMap((userCredential: firebase.auth.UserCredential) =>
-        this.authenticationService.getUserDocumentById(userCredential.user.uid));
+  private fetchUserDataFromSignedInUser() {
+    return pipe(
+      mergeMap(() => this.authenticationService.getCurrentSignedInUser()),
+      mergeMap((signedInUser: firebase.User) =>
+        this.authenticationService.getUserDocumentById(signedInUser.uid))
+    );
   }
 
-  private handleFetchUserOutcomes() {
+  private handleFetchUserDataOutcomes() {
     return pipe(
-      map((user: User) => AuthenticationActions.GetUserAfterAuthentication.RequestSuccess({ successResponse: user })),
-      catchError((error: Error) => of(AuthenticationActions.GetUserAfterAuthentication.RequestFailure({ failureResponse: error.message })))
+      map((user: User) => AuthenticationActions.GetUserDataFromSignedInUser.RequestSuccess({ successResponse: user })),
+      catchError((error: Error) => of(AuthenticationActions.GetUserDataFromSignedInUser.RequestFailure({ failureResponse: error.message })))
     );
   }
 }

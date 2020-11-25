@@ -1,0 +1,8 @@
+<div class="alert" *ngIf="alerts$ | async as alert"
+  [ngClass]="{'success': alert.type === 'success', 'error': alert.type === 'error', 'clickable': alert.closable, 'inform': alert.type === 'inform'}"
+  (click)="onClose(alert)">
+  <div class="message">
+    <span>{{ alert.message }}</span>
+    <div *ngIf="alert.closable" class="close"></div>
+  </div>
+</div>

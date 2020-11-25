@@ -1,0 +1,27 @@
+<form [formGroup]="loginFormGroup">
+
+  <div class="form-control-section">
+    <span>Email:</span>
+    <input formControlName="email" />
+    <span class="error" *ngIf="email.touched && email.invalid">{{ getEmailError() }}</span>
+  </div>
+
+
+  <div class="form-control-section">
+    <div class="inline-label">
+      <span>Password:</span>
+      <span class="clickable password-view" (click)="togglePasswordView()">
+        <span *ngIf="passwordView === 'password'"><fa-icon [icon]="faEye"></fa-icon> View</span>
+        <span *ngIf="passwordView === 'text'"><fa-icon [icon]="faEyeSlash"></fa-icon> Hide</span>
+      </span>
+    </div>
+    <input [type]="passwordView" formControlName="password" />
+    <span class="error" *ngIf="password.touched && password.invalid">{{ getPasswordError() }}</span>
+  </div>
+
+  <div class="form-footer">
+    <span class="error" *ngIf="loginError$ | async; let message">ERROR: {{ message }}</span>
+    <button class="btn btn-primary" [disabled]="!loginFormGroup.valid || !loginFormGroup.touched"
+      (click)="onLogin()">LOGIN</button>
+  </div>
+</form>

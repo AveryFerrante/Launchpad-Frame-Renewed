@@ -1,0 +1,30 @@
+@import '../../../variables.scss';
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .component-layout {
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+
+    .frame-space {
+      flex: 7;
+      overflow: auto;
+    }
+  }
+}
+
+@include media($phone-size) {
+  .sidenav-space {
+    flex: 0;
+  }
+}
+
+@include media($tablet-or-larger) {
+  .sidenav-space {
+    flex: 3
+  }
+}

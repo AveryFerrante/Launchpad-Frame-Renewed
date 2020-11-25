@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RootState, RootActions } from '../../root-store';
-import { NewUserRequest } from 'src/app/shared/models/requests/NewUserRequest';
+import { NewUserRequest } from 'src/app/shared/models/view-models/NewUserRequest';
+import { SignInRequest } from 'src/app/shared/models/view-models/signInRequest';
+import { tap } from 'rxjs/operators';
 
 type ModeType = ('login' | 'register');
 
@@ -14,11 +16,14 @@ export class EntryComponent implements OnInit {
   mode: ModeType = 'login';
   constructor(private store$: Store<RootState>) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   onCreateAccount(request: NewUserRequest) {
     this.store$.dispatch(RootActions.CreateEmailUser.Request({ request }));
+  }
+
+  onLogin(request: SignInRequest) {
+    this.store$.dispatch(RootActions.SignInWithEmail.Request({ request }));
   }
 
   setMode(mode: ModeType) {

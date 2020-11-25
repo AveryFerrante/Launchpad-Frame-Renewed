@@ -4,11 +4,17 @@
 $font-stack: 'Ubuntu', sans-serif;
 $primary: #2B4162;
 $secondary: #385F71;
+$tetradic-green: #2b624c;
+$tetradic-green-light: #6A9181;
+$tetradic-brown: #624c2b;
+$success: #649742;
 $light: #F5F0F6;
 $error: #D8000C;
 
 
 // Screen Sizing
 $phone-size: '<tablet';
-$tablet-size: '>=tablet', '<desktop';
+$tablet-size: '>=tablet';
+$less-than-desktop: '<desktop';
 $desktop-size: '>=desktop';
+$tablet-or-larger: '>=tablet';
