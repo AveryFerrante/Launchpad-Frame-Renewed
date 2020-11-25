@@ -29,6 +29,11 @@ jobs:
         with:
           ref: master
 
+      - name: Setup Node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '10'
+
       - name: Cache node modules
         uses: actions/cache@v2
         env:
