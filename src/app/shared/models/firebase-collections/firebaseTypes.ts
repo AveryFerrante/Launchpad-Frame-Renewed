@@ -1,9 +1,9 @@
-import * as firebase from 'firebase/app';
+import * as firebase from 'firebase';
 
 export type DocumentSnapshot<T = firebase.default.firestore.DocumentData> = firebase.default.firestore.DocumentSnapshot<T>;
 
 export const FieldValue = firebase.default.firestore.FieldValue;
-export type FieldValue = firebase.default.firestore.FieldPath;
+export type FieldValue = firebase.default.firestore.FieldValue;
 
 export type WriteBatch = firebase.default.firestore.WriteBatch;
 export const batch = () => firebase.default.firestore().batch();
