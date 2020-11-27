@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore, DocumentSnapshot, DocumentData } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { from, Observable, OperatorFunction } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { SetBatchAction, UpdateBatchAction } from '../../models/batchAction';
-import { createDefaultUser, createUserFromDocument, UserFrameMetadata, User } from '../../models/firebase-collections/user';
+import { createDefaultUser, UserFrameMetadata, User } from '../../models/firebase-collections/user';
 import { NewUserRequest } from '../../models/view-models/NewUserRequest';
 import { SignInRequest } from '../../models/view-models/signInRequest';
-import * as firebase from 'firebase/app';
+import { FieldValue, FirebaseUserCredential, DocumentSnapshot, FirebaseUser } from '../../models/firebase-collections/firebaseTypes';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class AuthenticationService {
     );
   }
 
-  signInWithEmail(request: SignInRequest): Observable<firebase.default.auth.UserCredential> {
+  signInWithEmail(request: SignInRequest): Observable<FirebaseUserCredential> {
     return from(this.afAuth.signInWithEmailAndPassword(request.email, request.password));
   }
 
@@ -39,11 +39,11 @@ export class AuthenticationService {
 
   userIsSignedIn(): Observable<boolean> {
     return this.getCurrentSignedInUser().pipe(
-      map((user: firebase.default.User) => user !== null)
+      map((user: FirebaseUser) => user !== null)
     );
   }
 
-  getCurrentSignedInUser(): Observable<firebase.default.User> {
+  getCurrentSignedInUser(): Observable<FirebaseUser> {
     return this.afAuth.user.pipe(take(1));
   }
 
@@ -54,7 +54,7 @@ export class AuthenticationService {
   addFrameToUserUpdateBatchAction(frame: UserFrameMetadata, userId: string): UpdateBatchAction<User> {
     return new UpdateBatchAction<User>(
       this.getUserDocumentReference(userId).ref,
-      { frames: firebase.default.firestore.FieldValue.arrayUnion(frame) }
+      { frames: FieldValue.arrayUnion(frame) }
     );
   }
 
@@ -63,12 +63,12 @@ export class AuthenticationService {
   }
 
   private createUserFromNewUserRequest(request: NewUserRequest) {
-    return map((credentials: firebase.default.auth.UserCredential) =>
+    return map((credentials: FirebaseUserCredential) =>
       createDefaultUser(request.email, request.username, credentials.user.uid));
   }
 
-  private mapDocumentToUser(): OperatorFunction<firebase.default.firestore.DocumentSnapshot<User>, User> {
-    return map((userDocument: firebase.default.firestore.DocumentSnapshot<User>) => {
+  private mapDocumentToUser(): OperatorFunction<DocumentSnapshot<User>, User> {
+    return map((userDocument: DocumentSnapshot<User>) => {
       if (userDocument.exists) {
         return userDocument.data();
       } else {

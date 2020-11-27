@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentSnapshot, QueryDocumentSnapshot } from '@angular/fire/firestore';
+import { AngularFirestore, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { FrameCollection, FrameImageSubCollection } from '../firebase-collections/frameCollection';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../requests/FrameRequests';
 import { FrameImageModel, FrameModel } from '../view-models/frameModel';
+import { DocumentSnapshot } from '../firebase-collections/firebaseTypes';
 
 @Injectable()
 export class FrameTranslator {
@@ -49,15 +50,11 @@ export class FrameTranslator {
   }
 
   CreateImageModels(imagesCollection: QueryDocumentSnapshot<FrameImageSubCollection>[]) {
-    return imagesCollection.reduce(ReduceToImageModel, []);
+    return imagesCollection.map((doc: QueryDocumentSnapshot<FrameImageSubCollection>) => 
+      ({
+        id: doc.id,
+        ...doc.data()
+      }));
   }
 }
-
-const ReduceToImageModel = (acc: FrameImageModel[], current: QueryDocumentSnapshot<FrameImageSubCollection>) => {
-  const frameImage: FrameImageModel = {
-    id: current.id,
-    ...current.data()
-  };
-  return [...acc, frameImage];
-};
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentSnapshotExists } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { forkJoin, from, fromEvent, Observable } from 'rxjs';
 import { map, mergeMap, skip, take } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/reques
 import { FrameTranslator } from '../../models/translators/frameTranslator';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
-import * as firebase from 'firebase/app';
+import { FieldValue } from '../../models/firebase-collections/firebaseTypes';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,7 @@ export class FrameService {
     const frameImages$ = this.getFrameImageCollectionReference(id).get();
     return forkJoin(frameDocument$, frameImages$).pipe(
       map(([frameDocument, frameImages]) => {
-        return this.frameTranslator.CreateFrameModel(frameDocument as DocumentSnapshotExists<FrameCollection>, frameImages.docs);
+        return this.frameTranslator.CreateFrameModel(frameDocument, frameImages.docs);
       })
     );
   }
@@ -101,7 +101,7 @@ export class FrameService {
     };
     return new UpdateBatchAction<FrameCollection>(
       this.getFrameDocumentReference(frameId).ref,
-      { participants: firebase.default.firestore.FieldValue.arrayUnion(frameParticipant) }
+      { participants: FieldValue.arrayUnion(frameParticipant) }
     );
   }
 
@@ -141,7 +141,7 @@ export class FrameService {
     };
   }
 
-  private getFrameCollectionReference() {
+  private getFrameCollectionReference(): AngularFirestoreCollection<FrameCollection> {
     return this.afStore.collection<FrameCollection>(environment.firebaseCollections.frames.name);
   }
 

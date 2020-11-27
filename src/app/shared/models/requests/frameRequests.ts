@@ -6,7 +6,7 @@ export interface CreateFrameImageRequest extends BaseRequest<FrameImageSubCollec
   frameId: string;
 }
 
-interface BaseRequest<T> {
+interface BaseRequest<T = object> {
   id: string;
   data: T;
 }
