@@ -6,7 +6,7 @@ export const FieldValue = firebase.default.firestore.FieldValue;
 export type FieldValue = firebase.default.firestore.FieldValue;
 
 export type WriteBatch = firebase.default.firestore.WriteBatch;
-export const batch = () => firebase.default.firestore().batch();
+export const firestore = firebase.default.firestore();
 
 export type FirebaseUserCredential = firebase.default.auth.UserCredential;
 export type FirebaseUser = firebase.default.User;
