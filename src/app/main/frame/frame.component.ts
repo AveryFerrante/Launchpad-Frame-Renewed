@@ -68,7 +68,7 @@ export class FrameComponent implements OnInit, AfterViewInit {
             groupedImages.push({ displayKey: image.username, images: [{ image, displayDimensions: image.dimensions }] });
           }
         });
-        return this.resolveBestDimensions(groupedImages, width);
+        return groupedImages.length > 0 ? this.resolveBestDimensions(groupedImages, width) : groupedImages;
       })
     );
   }
