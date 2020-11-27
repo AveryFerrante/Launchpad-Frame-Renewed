@@ -105,7 +105,7 @@ export class RootEffects {
   private fetchUserDataFromSignedInUser() {
     return pipe(
       mergeMap(() => this.authenticationService.getCurrentSignedInUser()),
-      mergeMap((signedInUser: firebase.User) =>
+      mergeMap((signedInUser: firebase.default.User) =>
         this.authenticationService.getUserDocumentById(signedInUser.uid))
     );
   }

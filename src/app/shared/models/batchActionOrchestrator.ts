@@ -1,15 +1,15 @@
-import { firestore } from 'firebase';
+import * as firebase from 'firebase/app';
 import { Observable, from } from 'rxjs';
 import { DeleteBatchAction, SetBatchAction, UpdateBatchAction } from './batchAction';
 
 type BatchAction = DeleteBatchAction | SetBatchAction<any> | UpdateBatchAction<any>;
 export class BatchActionOrchestrator {
-  private batch: firebase.firestore.WriteBatch;
+  private batch: firebase.default.firestore.WriteBatch;
   private actions: BatchAction[] = [];
 
 
   constructor() {
-    this.batch = firestore().batch();
+    this.batch = firebase.default.firestore().batch();
   }
 
   appendActions(...newActions: BatchAction[]) {

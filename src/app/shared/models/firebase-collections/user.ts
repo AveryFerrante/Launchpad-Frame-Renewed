@@ -1,4 +1,5 @@
 import { FramePermissions } from '../constants/framePermissions';
+import { DocumentSnapshot, DocumentData } from '@angular/fire/firestore';
 
 export interface User {
     id: string;
@@ -24,7 +25,7 @@ export function createDefaultUser(email: string, username: string, id: string): 
   };
 }
 
-export function createUserFromDocument(doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>): User {
+export function createUserFromDocument(doc: DocumentSnapshot<User>): User {
   const documentData = doc.data();
   return {
     id: doc.id,

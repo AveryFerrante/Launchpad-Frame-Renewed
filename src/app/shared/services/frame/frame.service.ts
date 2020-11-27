@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentSnapshotExists } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
-import { firestore } from 'firebase';
 import { forkJoin, from, fromEvent, Observable } from 'rxjs';
 import { map, mergeMap, skip, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -13,6 +12,7 @@ import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/reques
 import { FrameTranslator } from '../../models/translators/frameTranslator';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
+import * as firebase from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,7 @@ export class FrameService {
     const frameImages$ = this.getFrameImageCollectionReference(id).get();
     return forkJoin(frameDocument$, frameImages$).pipe(
       map(([frameDocument, frameImages]) => {
-        return this.frameTranslator.CreateFrameModel(frameDocument, frameImages.docs);
+        return this.frameTranslator.CreateFrameModel(frameDocument as DocumentSnapshotExists<FrameCollection>, frameImages.docs);
       })
     );
   }
@@ -109,7 +109,7 @@ export class FrameService {
     };
     return new UpdateBatchAction<FrameCollection>(
       this.getFrameDocumentReference(frameId).ref,
-      { participants: firestore.FieldValue.arrayUnion(frameParticipant) }
+      { participants: firebase.default.firestore.FieldValue.arrayUnion(frameParticipant) }
     );
   }
 
@@ -150,11 +150,11 @@ export class FrameService {
   }
 
   private getFrameCollectionReference() {
-    return this.afStore.collection(environment.firebaseCollections.frames.name);
+    return this.afStore.collection<FrameCollection>(environment.firebaseCollections.frames.name);
   }
 
   private getFrameDocumentReference(id: string) {
-    return this.getFrameCollectionReference().doc<FrameCollection>(id);
+    return this.getFrameCollectionReference().doc(id);
   }
 
   private getFrameImageDocumentReference(frameId: string, frameImageId: string = null) {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentSnapshot, QueryDocumentSnapshot } from '@angular/fire/firestore';
 import { FrameCollection, FrameImageSubCollection } from '../firebase-collections/frameCollection';
 import { CreateFrameImageRequest, CreateFrameRequest } from '../requests/FrameRequests';
 import { FrameImageModel, FrameModel } from '../view-models/frameModel';
@@ -39,34 +39,24 @@ export class FrameTranslator {
     };
   }
 
-  CreateFrameModel(frameDoc: firebase.firestore.DocumentSnapshot<DocumentData>,
-                   imagesCollection: firebase.firestore.QueryDocumentSnapshot<DocumentData>[]): FrameModel {
-    const frameDocData = frameDoc.data();
-
+  CreateFrameModel(frameDoc: DocumentSnapshot<FrameCollection>,
+                   imagesCollection: QueryDocumentSnapshot<FrameImageSubCollection>[]): FrameModel {
     return {
+      ...frameDoc.data(),
       id: frameDoc.id,
-      name: frameDocData.name,
-      creator: frameDocData.creator,
-      participants: frameDocData.participants,
-      images: this.CreateImageModels(imagesCollection),
-      accessToken: frameDocData.accessToken
+      images: this.CreateImageModels(imagesCollection)
     };
   }
 
-  CreateImageModels(imagesCollection: firebase.firestore.QueryDocumentSnapshot<DocumentData>[]) {
+  CreateImageModels(imagesCollection: QueryDocumentSnapshot<FrameImageSubCollection>[]) {
     return imagesCollection.reduce(ReduceToImageModel, []);
   }
 }
 
-const ReduceToImageModel = (acc: FrameImageModel[], current: firebase.firestore.DocumentData) => {
-  const docData = current.data();
+const ReduceToImageModel = (acc: FrameImageModel[], current: QueryDocumentSnapshot<FrameImageSubCollection>) => {
   const frameImage: FrameImageModel = {
     id: current.id,
-    userId: docData.userId,
-    username: docData.username,
-    downloadUrl: docData.downloadUrl,
-    storagePath: docData.storagePath,
-    dimensions: docData.dimensions
+    ...current.data()
   };
   return [...acc, frameImage];
 };

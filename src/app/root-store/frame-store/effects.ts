@@ -18,6 +18,7 @@ import { UserTranslator } from 'src/app/shared/models/translators/userTranslator
 import { User } from 'src/app/shared/models/firebase-collections/user';
 import { AlertService } from 'src/app/shared/services/alert/alert.service';
 import { ImageDeminsions } from 'src/app/shared/models/imageDeminsions';
+import { QueryDocumentSnapshot, DocumentData } from '@angular/fire/firestore';
 
 
 @Injectable()
@@ -184,7 +185,7 @@ export class FrameStoreEffects {
       );
     }
 
-    private orchestrateJoiningFrame(frameDoc: firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>, user: User) {
+    private orchestrateJoiningFrame(frameDoc: QueryDocumentSnapshot<DocumentData>, user: User) {
       const orchestrator = new BatchActionOrchestrator();
       const userFrame = this.userTranslator.CreateUserFrameMetadataForJoiningFrame(frameDoc);
       orchestrator.appendActions(
