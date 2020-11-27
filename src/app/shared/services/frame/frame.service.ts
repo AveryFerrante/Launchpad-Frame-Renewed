@@ -46,14 +46,6 @@ export class FrameService {
       );
     });
     return forkJoin(imageUploads);
-    // images.forEach(image => {
-    //   this.getImageDeminsions(image).subscribe();
-    //   const path = userId + '/' + new Date().toUTCString() + '-' + image.name;
-    //   const ref = this.afStorage.ref(path);
-    //   const task = this.afStorage.upload(path, image, { cacheControl: headers });
-    //   imageUploads.push({ imageReference: ref, uploadTask: task, storagePath: path });
-    // });
-    // return imageUploads;
   }
 
   getLiveImageListener(frameId: string) {
@@ -162,6 +154,7 @@ export class FrameService {
   }
 
   private getFrameImageCollectionReference(frameId: string) {
-    return this.getFrameDocumentReference(frameId).collection<FrameImageSubCollection>(environment.firebaseCollections.frames.images.name);
+    const collectionName = environment.firebaseCollections.frames.images.name;
+    return this.getFrameDocumentReference(frameId).collection<FrameImageSubCollection>(collectionName);
   }
 }
