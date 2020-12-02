@@ -15,7 +15,7 @@ export class UsernameService {
 
   getUsernameDocumentSetBatchAction(userId: string, username: string): SetBatchAction<Username> {
     const documentData = this.initializeUsernameDocumentData(userId, username);
-    return new SetBatchAction<Username>(this.getNewUsernameDocumentReference(), documentData);
+    return new SetBatchAction<Username>(this.getUsernameDocumentReference().ref, documentData);
   }
 
   usernameExists(username: string): Observable<boolean> {
@@ -35,10 +35,12 @@ export class UsernameService {
     };
   }
 
-  private getNewUsernameDocumentReference() {
-    return this.afStore.firestore
-      .collection(environment.firebaseCollections.usernames.name)
-      .doc();
+  private getUsernameCollectionReference() {
+    return this.afStore.collection<Username>(environment.firebaseCollections.usernames.name);
+  }
+
+  private getUsernameDocumentReference() {
+    return this.getUsernameCollectionReference().doc();
   }
 
   private trimUsername(username: string): string {

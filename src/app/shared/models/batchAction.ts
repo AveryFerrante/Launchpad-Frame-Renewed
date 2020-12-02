@@ -1,30 +1,31 @@
-import { firestore } from 'firebase';
+import { DocumentReference, DocumentData, SetOptions } from '@angular/fire/firestore';
+import { FieldValue } from './firebase-collections/firebaseTypes';
 
-abstract class BaseAction {
-  constructor(public documentReference: firebase.firestore.DocumentReference) {  }
+abstract class BaseAction<T> {
+  constructor(public documentReference: DocumentReference<T>) {  }
 }
 
-export class DeleteBatchAction extends BaseAction {
-  constructor(documentReference: firestore.DocumentReference<firestore.DocumentData>) {
-    super( documentReference);
+export class DeleteBatchAction<T> extends BaseAction<T> {
+  constructor(documentReference: DocumentReference<T>) {
+    super(documentReference);
   }
 }
 
 type SetData<T> = {
   [P in keyof T]: T[P];
 };
-export class SetBatchAction<T> extends BaseAction {
-  constructor(documentReference: firebase.firestore.DocumentReference,
-              public data: SetData<T>, public options?: firebase.firestore.SetOptions) {
+export class SetBatchAction<T> extends BaseAction<T> {
+  constructor(documentReference: DocumentReference<T>,
+              public data: SetData<T>, public options?: SetOptions) {
     super(documentReference);
   }
 }
 
 type UpdateData<T> = {
-  [P in keyof T]?: (firebase.firestore.DocumentData | firestore.FieldValue)
+  [P in keyof T]?: (DocumentData| FieldValue)
 };
-export class UpdateBatchAction<T> extends BaseAction {
-  constructor(documentReference: firebase.firestore.DocumentReference, public data: UpdateData<T>) {
+export class UpdateBatchAction<T> extends BaseAction<T> {
+  constructor(documentReference: DocumentReference<T>, public data: UpdateData<T>) {
     super(documentReference);
   }
 }
