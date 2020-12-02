@@ -24,12 +24,8 @@
 
   <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
     <span class="group-title">{{ grouping.displayKey }}'s Images</span>
-    <div class="image-section">
-      <div class="image-container" *ngFor="let image of grouping.images"
-        [style.height]="image.displayDimensions.height + 'px'"
-        [style.width]="image.displayDimensions.width + 'px'">
-        <img class="image" [mainImageLazyLoad]="image.image.downloadUrl">
-      </div>
+    <div class="masonry">
+      <img *ngFor="let image of grouping.images" [mainImageLazyLoad]="image" class="image">
     </div>
   </div>
 

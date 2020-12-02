@@ -40,21 +40,33 @@
     padding-bottom: .5rem;
   }
 
-  .image-section {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  .masonry {
+    column-count: 3;
+    column-gap: 8px;
 
-    .image-container {
-      padding-bottom: .3rem;
-    }
+     .image {
+       width: 100%;
+       height: auto;
+     }
+   }
 
-    .image {
-      width: 100%;
-      height: 100%;
-    }
+   @include media($phone-size) {
+     .masonry {
+       column-count: 1;
+     }
+   }
+    
+   @include media($tablet-size) {
+     .masonry {
+       column-count: 2;
+     }
+   }
 
-  }
+   @include media($desktop-size) {
+     .masonry {
+       column-count: 3;
+     }
+   }
 }
 
 .image-upload-zone {
