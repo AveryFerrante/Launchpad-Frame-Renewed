@@ -8,7 +8,8 @@ import { SetBatchAction, UpdateBatchAction } from '../../models/batchAction';
 import { createDefaultUser, UserFrameMetadata, User } from '../../models/firebase-collections/user';
 import { NewUserRequest } from '../../models/view-models/NewUserRequest';
 import { SignInRequest } from '../../models/view-models/signInRequest';
-import { FieldValue, FirebaseUserCredential, DocumentSnapshot, FirebaseUser } from '../../models/firebase-collections/firebaseTypes';
+import { FirebaseUserCredential, DocumentSnapshot, FirebaseUser } from '../../models/firebase-collections/firebaseTypes';
+import * as firebase from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +55,7 @@ export class AuthenticationService {
   addFrameToUserUpdateBatchAction(frame: UserFrameMetadata, userId: string): UpdateBatchAction<User> {
     return new UpdateBatchAction<User>(
       this.getUserDocumentReference(userId).ref,
-      { frames: FieldValue.arrayUnion(frame) }
+      { frames: firebase.default.firestore.FieldValue.arrayUnion(frame) }
     );
   }
 

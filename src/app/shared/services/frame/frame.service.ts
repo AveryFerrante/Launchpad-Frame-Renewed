@@ -12,7 +12,7 @@ import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/reques
 import { FrameTranslator } from '../../models/translators/frameTranslator';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
-import { FieldValue } from '../../models/firebase-collections/firebaseTypes';
+import * as firebase from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
@@ -101,7 +101,7 @@ export class FrameService {
     };
     return new UpdateBatchAction<FrameCollection>(
       this.getFrameDocumentReference(frameId).ref,
-      { participants: FieldValue.arrayUnion(frameParticipant) }
+      { participants: firebase.default.firestore.FieldValue.arrayUnion(frameParticipant) }
     );
   }
 

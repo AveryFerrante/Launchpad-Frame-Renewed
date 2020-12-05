@@ -1,12 +1,10 @@
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
 
-export type DocumentSnapshot<T = firebase.default.firestore.DocumentData> = firebase.default.firestore.DocumentSnapshot<T>;
+export type DocumentSnapshot<T = firebase.firestore.DocumentData> = firebase.firestore.DocumentSnapshot<T>;
 
-export const FieldValue = firebase.default.firestore.FieldValue;
-export type FieldValue = firebase.default.firestore.FieldValue;
+export type FieldValue = firebase.firestore.FieldValue;
 
-export type WriteBatch = firebase.default.firestore.WriteBatch;
-export const firestore = firebase.default.firestore();
+export type WriteBatch = firebase.firestore.WriteBatch;
 
-export type FirebaseUserCredential = firebase.default.auth.UserCredential;
-export type FirebaseUser = firebase.default.User;
+export type FirebaseUserCredential = firebase.auth.UserCredential;
+export type FirebaseUser = firebase.User;

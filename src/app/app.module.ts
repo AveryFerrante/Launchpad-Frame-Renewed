@@ -20,15 +20,14 @@ import { SharedModule } from './shared/shared-module/shared.module';
     AppComponent
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
     AngularFireModule.initializeApp(FirebaseConfig),
     AngularFireStorageModule,
+    BrowserModule,
+    BrowserAnimationsModule,
     RootStoreModule,
     AppRoutingModule,
     SharedModule
   ],
-  providers: [AuthenticationService, AngularFirestore, AngularFireAuth],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
