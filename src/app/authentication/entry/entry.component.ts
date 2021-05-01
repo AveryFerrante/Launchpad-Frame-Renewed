@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { RootState, RootActions } from '../../root-store';
-import { NewUserRequest } from 'src/app/shared/models/view-models/NewUserRequest';
+import { NewUserRequest } from 'src/app/shared/models/view-models/newUserRequest';
 import { SignInRequest } from 'src/app/shared/models/view-models/signInRequest';
 import { tap } from 'rxjs/operators';
 

@@ -1,6 +1,6 @@
 import { createAction } from '@ngrx/store';
 import { User } from 'src/app/shared/models/firebase-collections/user';
-import { NewUserRequest } from '../shared/models/view-models/NewUserRequest';
+import { NewUserRequest } from '../shared/models/view-models/newUserRequest';
 import { SignInRequest } from '../shared/models/view-models/signInRequest';
 import { createDefaultRequestActions } from './shared/actionFactory';
 
