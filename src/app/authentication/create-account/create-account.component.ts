@@ -3,7 +3,7 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators }
 import { select, Store } from '@ngrx/store';
 import { Observable, timer } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { NewUserRequest } from 'src/app/shared/models/view-models/NewUserRequest';
+import { NewUserRequest } from 'src/app/shared/models/view-models/newUserRequest';
 import { UsernameService } from 'src/app/shared/services/username/username.service';
 import { RootSelectors, RootState } from '../../root-store';
 import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons';

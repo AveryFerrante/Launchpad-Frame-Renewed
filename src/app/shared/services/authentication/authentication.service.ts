@@ -6,7 +6,7 @@ import { map, take } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { SetBatchAction, UpdateBatchAction } from '../../models/batchAction';
 import { createDefaultUser, UserFrameMetadata, User } from '../../models/firebase-collections/user';
-import { NewUserRequest } from '../../models/view-models/NewUserRequest';
+import { NewUserRequest } from '../../models/view-models/newUserRequest';
 import { SignInRequest } from '../../models/view-models/signInRequest';
 import { FirebaseUserCredential, DocumentSnapshot, FirebaseUser } from '../../models/firebase-collections/firebaseTypes';
 import * as firebase from 'firebase/app';

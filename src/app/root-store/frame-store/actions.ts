@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { UserFrameMetadata } from 'src/app/shared/models/firebase-collections/user';
-import { CreateFrameImageRequest } from 'src/app/shared/models/requests/FrameRequests';
+import { CreateFrameImageRequest } from 'src/app/shared/models/requests/frameRequests';
 import { FrameImageModel, FrameModel } from 'src/app/shared/models/view-models/frameModel';
 import { createDefaultRequestActions } from '../shared/actionFactory';
 

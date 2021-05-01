@@ -8,7 +8,7 @@ import { SetBatchAction, UpdateBatchAction } from '../../models/batchAction';
 import { FrameAccessToken, FrameCollection, FrameImageSubCollection, FrameUser } from '../../models/firebase-collections/frameCollection';
 import { User } from '../../models/firebase-collections/user';
 import { ImageDeminsions } from '../../models/imageDeminsions';
-import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/requests/FrameRequests';
+import { CreateFrameImageRequest, CreateFrameRequest } from '../../models/requests/frameRequests';
 import { FrameTranslator } from '../../models/translators/frameTranslator';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
