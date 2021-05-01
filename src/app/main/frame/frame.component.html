@@ -1,5 +1,5 @@
 
-<div class="layout" id="test" *ngIf="selectedFrame$ | async as frame; else noFrame">
+<div class="layout" id="test" *ngIf="selectedFrame$ | async as frame">
   <div class="title">
     <span class="frame-name">{{ frame.name }}</span>
     <span class="live-view clickable" (click)="onShowLiveView()">Live Mode</span>
@@ -33,7 +33,4 @@
 </div>
 
 <div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage"></div>
-<ng-template #noFrame>
-  NO FRAME SELECTED!
-</ng-template>
 

@@ -1,3 +1,5 @@
+@import '../../../variables.scss';
+
 .layout {
   width: 100vw;
   height: 100vh;
@@ -36,4 +38,19 @@ img {
   padding: .5rem;
   background-color: black;
   opacity: .75;
+}
+
+#mobile-exit-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+}
+
+@include media($tablet-or-larger) {
+  #mobile-exit-overlay {
+    display: none;
+  }
 }
