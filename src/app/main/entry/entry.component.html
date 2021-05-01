@@ -7,8 +7,21 @@
       [selectedFrameId]="selectedFrameId$ | async"
       (openCreateFrame)="openCreateFrame()"
       (openJoinFrame)="openJoinFrame()"
-      (frameSelect)="onFrameSelect($event)"></main-frame-sidenav>
-    <main-frame class="frame-space"></main-frame>
+      (frameSelect)="onFrameSelect($event)">
+    </main-frame-sidenav>
+    <main-frame class="frame-space" *ngIf="!frameDisplayState.noFrames && !frameDisplayState.badFrameId"></main-frame>
+
+    <div *ngIf="frameDisplayState.noFrames && !frameDisplayState.badFrameId" class="no-frame-space">
+      <div class="message">
+        You're not part of a frame!
+        <span class="link" (click)="openCreateFrame()">Create a new one</span> or
+        <span class="link" (click)="openJoinFrame()">join an existing one</span> to get started!
+      </div>
+    </div>
+
+    <div *ngIf="!frameDisplayState.noFrames && frameDisplayState.badFrameId" class="no-frame-space">
+      <span class="message">Invalid frame URL. Please select an existing frame or create a new one</span>
+    </div>
   </div>
 </div>
 

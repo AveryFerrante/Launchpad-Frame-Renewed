@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { URL_PATHS } from 'src/app/shared/models/constants/urlPathConstants';
 import { AuthenticationService } from 'src/app/shared/services/authentication/authentication.service';

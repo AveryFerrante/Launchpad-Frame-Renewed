@@ -11,8 +11,24 @@
     overflow: hidden;
 
     .frame-space {
-      flex: 7;
       overflow: auto;
+    }
+
+    .no-frame-space {
+      display: flex;
+      justify-content: center;
+
+      .message {
+        font-size: 1.5rem;
+        margin-top: 4rem;
+        text-align: center;
+
+        .link {
+          cursor: pointer;
+          text-decoration: underline;
+          color: $primary-light;
+        }
+      }
     }
   }
 }
@@ -21,10 +37,22 @@
   .sidenav-space {
     flex: 0;
   }
+
+  .message {
+    width: 75%;
+  }
 }
 
 @include media($tablet-or-larger) {
   .sidenav-space {
     flex: 3
+  }
+
+  .frame-space {
+    flex: 7;
+  }
+
+  .message {
+    width: 50%;
   }
 }

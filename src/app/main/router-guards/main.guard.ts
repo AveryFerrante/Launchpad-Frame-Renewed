@@ -27,7 +27,7 @@ export class MainGuard implements CanActivate {
   private ensureUserDataIsInStore() {
     const storedUser$ = this.store$.pipe(select(RootSelectors.SelectAuthenticationUser));
     const loginError$ = this.store$.pipe(select(RootSelectors.SelectLoginErrorMessage));
-    return combineLatest(storedUser$, loginError$).pipe(
+    return combineLatest([storedUser$, loginError$]).pipe(
       this.fetchUserIfNull(),
       first(([user, errorMessage]: [User, string]) => (user !== null || errorMessage !== '')),
       mapTo(true)

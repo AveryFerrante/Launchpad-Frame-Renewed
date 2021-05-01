@@ -7,7 +7,7 @@ import { FrameImageSubCollection } from 'src/app/shared/models/firebase-collecti
 export class ImageLazyLoadDirective implements OnInit {
   @Input('mainImageLazyLoad') imageData: FrameImageSubCollection;
   private _intersectionObserver: IntersectionObserver;
-  get imgElement() { return this.imageElement.nativeElement as HTMLImageElement }  
+  get imgElement() { return this.imageElement.nativeElement as HTMLImageElement; }
   constructor(private imageElement: ElementRef) { }
 
   ngOnInit(): void {

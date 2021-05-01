@@ -5,6 +5,7 @@ import { EntryComponent } from './entry/entry.component';
 import { MainGuard } from './router-guards/main.guard';
 
 const routes: Routes = [
+  { path: ':frameId', component: EntryComponent, canActivate: [MainGuard] },
   { path: '', component: EntryComponent, canActivate: [MainGuard] }
 ];
 
