@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FramePermissions } from '../constants/framePermissions';
 import { UserFrameMetadata } from '../firebase-collections/user';
-import { CreateFrameRequest } from '../requests/FrameRequests';
+import { CreateFrameRequest } from '../requests/frameRequests';
 import { QueryDocumentSnapshot, DocumentData } from '@angular/fire/firestore/interfaces';
 
 
