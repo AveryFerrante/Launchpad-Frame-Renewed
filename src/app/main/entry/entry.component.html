@@ -25,8 +25,10 @@
   </div>
 </div>
 
-<main-create-frame *ngIf="showCreateFrameModal" (closeModal)="onCloseModal()" (createFrame)="onCreateFrame($event)"></main-create-frame>
-<main-join-frame *ngIf="showJoinFrameModal" (closeModal)="onCloseModal()" (joinFrame)="onJoinFrame($event)"></main-join-frame>
+<main-create-frame [@fadeSlideInOut] *ngIf="showCreateFrameModal"(closeModal)="onCloseModal()"
+  (createFrame)="onCreateFrame($event)"></main-create-frame>
+<main-join-frame [@fadeSlideInOut] *ngIf="showJoinFrameModal" (closeModal)="onCloseModal()"
+  (joinFrame)="onJoinFrame($event)"></main-join-frame>
 
 
 

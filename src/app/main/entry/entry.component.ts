@@ -1,3 +1,4 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -11,7 +12,28 @@ import { UserFrameMetadata, User } from 'src/app/shared/models/firebase-collecti
 @Component({
   selector: 'app-entry',
   templateUrl: './entry.component.html',
-  styleUrls: ['./entry.component.scss']
+  styleUrls: ['./entry.component.scss'],
+  animations: [
+    trigger(
+      'fadeSlideInOut',
+      [
+        transition(
+          ':enter',
+          [
+            style({ transform: 'translateX(-15%)', opacity: 0 }),
+            animate('100ms ease-in', style({ transform: 'translateX(0%)', opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave',
+          [
+            style({ transform: 'translateX(0%)', opacity: 1 }),
+            animate('100ms ease-in', style({ transform: 'translateX(-15%)', opacity: 0 }))
+          ]
+        )
+      ]
+    )
+  ]
 })
 export class EntryComponent implements OnInit {
   user$: Observable<User> = this.store$.select(RootSelectors.SelectAuthenticationUser);
@@ -61,7 +83,6 @@ export class EntryComponent implements OnInit {
   }
 
   openCreateFrame() {
-    this.closeSideNav();
     this.showCreateFrameModal = true;
   }
 
@@ -73,16 +94,17 @@ export class EntryComponent implements OnInit {
   onCreateFrame(frameName: string) {
     this.store$.dispatch(FrameStoreActions.NewFrame.Request({ request: frameName }));
     this.onCloseModal();
+    this.closeSideNav();
   }
 
   openJoinFrame() {
-    this.closeSideNav();
     this.showJoinFrameModal = true;
   }
 
   onJoinFrame(accessKey: string) {
     this.store$.dispatch(FrameStoreActions.JoinFrame.Request({ request: accessKey }));
     this.onCloseModal();
+    this.closeSideNav();
   }
 
   private selectInitialFrameIfAvailable() {
