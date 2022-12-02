@@ -1,0 +1,12 @@
+@import '../../../styles.scss';
+
+.backdrop-overlay {
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
+.image-canvas {
+    margin-top: 1rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

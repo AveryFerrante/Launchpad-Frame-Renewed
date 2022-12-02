@@ -30,6 +30,7 @@
   </div>
 
   <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()" [accessCode]="frame.accessToken.token"></main-live-view>
+  <main-image-editor *ngIf="showImageEditor" [imageData]="imageData"></main-image-editor>
 </div>
 
 <div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage"></div>

@@ -19,13 +19,17 @@ export class FrameComponent implements OnInit {
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
   faCamera = faCamera;
+  showImageEditor = false;
+  imageData: File;
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
   }
 
   onFilesAdded(files: File[]) {
-    this.store$.dispatch(FrameStoreActions.UploadImagesRequest({ Images: files }));
+    this.imageData = files[0];
+    this.showImageEditor = true;
+    // this.store$.dispatch(FrameStoreActions.UploadImagesRequest({ Images: files }));
   }
 
   onFilesAddedMobile(files: FileList) {
