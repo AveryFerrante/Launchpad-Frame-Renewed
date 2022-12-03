@@ -40,22 +40,23 @@ export class FrameComponent implements OnInit {
   }
 
   onFabClick() {
-    this.fabOptionsAvailable = true;
+    // this.fabOptionsAvailable = true;
 
-    fromEvent(this.fabImageOptionsUseCamera.nativeElement, 'click').pipe(
-      tap(() => { this.imageFromCamera.nativeElement.click(); this.fabOptionsCork$.next(true); }),
-      takeUntil(this.fabOptionsCork$)
-    ).subscribe();
+    // fromEvent(this.fabImageOptionsUseCamera.nativeElement, 'click').pipe(
+    //   tap(() => { this.imageFromCamera.nativeElement.click(); this.fabOptionsCork$.next(true); }),
+    //   takeUntil(this.fabOptionsCork$)
+    // ).subscribe();
 
-    fromEvent(this.fabImageOptionsUploadImage.nativeElement, 'click').pipe(
-      tap(() => { this.fabOptionsCork$.next(true); }),
-      takeUntil(this.fabOptionsCork$)
-    ).subscribe();
+    // fromEvent(this.fabImageOptionsUploadImage.nativeElement, 'click').pipe(
+    //   tap(() => { this.fabOptionsCork$.next(true); }),
+    //   takeUntil(this.fabOptionsCork$)
+    // ).subscribe();
 
-    fromEvent(this.fabImageOptionsBackdrop.nativeElement, 'click').pipe(
-      tap(() => { this.fabOptionsCork$.next(true); }),
-      takeUntil(this.fabOptionsCork$)
-    ).subscribe({ complete: () => { this.fabOptionsAvailable = false; } });
+    // fromEvent(this.fabImageOptionsBackdrop.nativeElement, 'click').pipe(
+    //   tap(() => { this.fabOptionsCork$.next(true); }),
+    //   takeUntil(this.fabOptionsCork$)
+    // ).subscribe({ complete: () => { this.fabOptionsAvailable = false; } });
+    document.getElementById('mobileUpload').click();
   }
 
   onShowLiveView() {

@@ -15,18 +15,18 @@
     </ngx-dropzone>
 
     <div class="image-upload-camera">
-      <input type="file" accept="image/*" capture="camera"
-      (change)="onFilesAddedMobile($event.target.files)" [hidden]="true" #imageFromCamera>
+      <input type="file" accept="image/*"
+      (change)="onFilesAddedMobile($event.target.files)" [hidden]="true" id="mobileUpload" #imageFromCamera>
       <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="faCamera"></fa-icon></button>
     </div>
-    <div class="fab-image-options-backdrop" [hidden]="!fabOptionsAvailable" #fabImageOptionsBackdrop>
+    <!-- <div class="fab-image-options-backdrop" [hidden]="!fabOptionsAvailable" #fabImageOptionsBackdrop>
       <div class="fab-image-option fab-image-option-use-camera">
         <span #fabImageOptionsUseCamera>Use Camera</span>
       </div>
       <div class="fab-image-option fab-image-option-upload-image">
         <span #fabImageOptionsUploadImage>Upload Image</span>
       </div>
-    </div>
+    </div> -->
 
   </div>
 
