@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { fromEvent, Observable, Subject } from 'rxjs';
+import { map, take, takeUntil, tap } from 'rxjs/operators';
 import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
@@ -19,6 +19,7 @@ export class FrameComponent implements OnInit {
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
   faCamera = faCamera;
+  @ViewChild('fabImageUploadButton') fabImageUploadButton: ElementRef<HTMLInputElement>;
   constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
@@ -33,7 +34,7 @@ export class FrameComponent implements OnInit {
   }
 
   onFabClick() {
-    document.getElementById('mobileUpload').click();
+    this.fabImageUploadButton.nativeElement.click();
   }
 
   onShowLiveView() {
@@ -49,7 +50,7 @@ export class FrameComponent implements OnInit {
       map((frame: FrameModel) => {
         const groupedImages: GroupedImages[] = [];
 
-        const imgs = [...frame.images].map((image) => {
+        const imgs = [...frame.images].map(image => {
           const newImg = { ...image };
           newImg.dimensions = newImg.dimensions !== undefined ? newImg.dimensions : { width: 500, height: 500 };
           return newImg;

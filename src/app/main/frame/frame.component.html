@@ -15,11 +15,10 @@
     </ngx-dropzone>
 
     <div class="image-upload-camera">
-      <input id="mobileUpload" type="file" accept="image/*" capture="camera"
-      (change)="onFilesAddedMobile($event.target.files)" [hidden]="true">
+      <input type="file" accept="image/*"
+      (change)="onFilesAddedMobile($event.target.files)" [hidden]="true" #fabImageUploadButton />
       <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="faCamera"></fa-icon></button>
     </div>
-
   </div>
 
   <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
