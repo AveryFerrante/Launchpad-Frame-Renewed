@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
-import { fromEvent } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnInit, Type, ViewChild } from '@angular/core';
+import { combineLatest, forkJoin, from, fromEvent, merge, Observable, of, pipe } from 'rxjs';
+import { concatMap, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { ImageManipulatorService } from 'src/app/shared/services/image-manipulator/image-manipulator.service';
+import { CanvasDrawingOrchestrator } from './canvas-drawing-orchestrator';
 
 @Component({
   selector: 'main-image-editor',
@@ -12,61 +13,53 @@ export class ImageEditorComponent implements OnInit, AfterViewInit {
 
   @Input() imageData: File;
   @ViewChild('imageCanvas') imageCanvas: ElementRef<HTMLCanvasElement>;
-  renderingContext: CanvasRenderingContext2D;
+  canvasDrawingOrchestrator: CanvasDrawingOrchestrator;
   constructor(private imageManipulatorService: ImageManipulatorService) { }
 
   ngAfterViewInit(): void {
-    this.renderingContext = this.imageCanvas.nativeElement.getContext('2d');
     this.imageManipulatorService.getHTMLImageElementFromFile(this.imageData).pipe(
       tap((image: HTMLImageElement) => {
-        let windowWidth = window.innerWidth;
-        let windowHeight = window.innerHeight;
-        let aspectRatioOfImage = image.naturalWidth / image.naturalHeight;
-        let imageDisplayWidth = image.naturalWidth;
-        let imageDisplayHeight = image.naturalHeight;
-        while (imageDisplayWidth > windowWidth || imageDisplayHeight > windowHeight) {
-          if (aspectRatioOfImage > 1) {
-            imageDisplayWidth = imageDisplayWidth / aspectRatioOfImage;
-            imageDisplayHeight = imageDisplayHeight / aspectRatioOfImage;
-          }
-          else {
-            imageDisplayWidth = imageDisplayWidth * aspectRatioOfImage;
-            imageDisplayHeight = imageDisplayHeight * aspectRatioOfImage;
-          }
-        }
-        this.imageCanvas.nativeElement.width = imageDisplayWidth;
-        this.imageCanvas.nativeElement.height = imageDisplayHeight;
-        this.renderingContext.drawImage(image, 0, 0, imageDisplayWidth, imageDisplayHeight);
+        this.displayImageOnCanvas(image, window);
+        this.canvasDrawingOrchestrator = new CanvasDrawingOrchestrator(this.imageCanvas.nativeElement);
+        this.canvasDrawingOrchestrator.enableImageDrawing();
       })
     ).subscribe();
 
-    window.onresize = (event) => {
+    window.onresize = (event: UIEvent) => {
       this.imageManipulatorService.getHTMLImageElementFromFile(this.imageData).pipe(
         tap((image: HTMLImageElement) => {
-          let windowWidth = event.target.innerWidth;
-          let windowHeight = event.target.innerHeight;
-          let aspectRatioOfImage = image.naturalWidth / image.naturalHeight;
-          let imageDisplayWidth = image.naturalWidth;
-          let imageDisplayHeight = image.naturalHeight;
-          while (imageDisplayWidth > windowWidth || imageDisplayHeight > windowHeight) {
-            if (aspectRatioOfImage > 1) {
-              imageDisplayWidth = imageDisplayWidth / aspectRatioOfImage;
-              imageDisplayHeight = imageDisplayHeight / aspectRatioOfImage;
-            }
-            else {
-              imageDisplayWidth = imageDisplayWidth * aspectRatioOfImage;
-              imageDisplayHeight = imageDisplayHeight * aspectRatioOfImage;
-            }
-          }
-          this.imageCanvas.nativeElement.width = imageDisplayWidth;
-          this.imageCanvas.nativeElement.height = imageDisplayHeight;
-          this.renderingContext.drawImage(image, 0, 0, imageDisplayWidth, imageDisplayHeight);
+          let oldCanvasWidth = this.imageCanvas.nativeElement.width;
+          let oldCanvasHeight = this.imageCanvas.nativeElement.height;
+          this.displayImageOnCanvas(image, event.target as Window);
+          this.canvasDrawingOrchestrator.redrawLines(oldCanvasWidth, oldCanvasHeight);
         })
       ).subscribe();
     };
+  }
+
+  private displayImageOnCanvas(image: HTMLImageElement, window: Window) {
+    let isVerticalDisplay = window.innerWidth < window.innerHeight;
+
+    if (isVerticalDisplay) {
+      this.imageCanvas.nativeElement.width = window.innerWidth;
+      this.imageCanvas.nativeElement.height = window.innerHeight;
+    }
+    else {
+      this.imageCanvas.nativeElement.width = window.innerWidth;
+      this.imageCanvas.nativeElement.height = window.innerHeight;
+    }
+    let hRatio = this.imageCanvas.nativeElement.width / image.naturalWidth;
+    let vRatior = this.imageCanvas.nativeElement.height / image.naturalHeight;
+    let ratio = Math.min(hRatio, vRatior);
+    this.imageCanvas.nativeElement.width = image.naturalWidth * ratio;
+    this.imageCanvas.nativeElement.height = image.naturalHeight * ratio;
+    let renderingContext = this.imageCanvas.nativeElement.getContext('2d');
+    renderingContext.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, image.naturalWidth * ratio, image.naturalHeight * ratio);
   }
 
   ngOnInit(): void {
   }
 
 }
+
+
