@@ -14,9 +14,9 @@
       <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
     </ngx-dropzone>
 
-    <div class="image-upload-camera">
+    <div class="image-upload-camera" *ngIf="!showImageEditor">
       <input id="mobileUpload" type="file" accept="image/*" capture="camera"
-      (change)="onFilesAddedMobile($event.target.files)" [hidden]="true">
+      (change)="onFilesAddedMobile($event.target.files)">
       <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="faCamera"></fa-icon></button>
     </div>
 
