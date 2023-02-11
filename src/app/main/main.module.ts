@@ -13,6 +13,7 @@ import { FrameSidenavComponent } from './frame-sidenav/frame-sidenav.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
 import { ImageEditorComponent } from './image-editor/image-editor.component';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 
 
@@ -32,7 +33,8 @@ import { ImageEditorComponent } from './image-editor/image-editor.component';
     MainRoutingModule,
     NgxDropzoneModule,
     SharedModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    ColorPickerModule
   ],
   providers: [FrameTranslator]
 })

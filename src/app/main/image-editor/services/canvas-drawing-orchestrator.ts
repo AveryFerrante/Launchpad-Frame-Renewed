@@ -11,21 +11,21 @@ class CanvasDrawingOrchestrator {
     private drawnLinesTracker: LineDrawAction[] = [];
     private currentLineStyle: LineStyle;
 
-    private drawingListener: Subscription;
-    private windwResizeListener: Subscription;
+    private drawingListenerSubscription: Subscription;
+    private windwResizeListenerSubscription: Subscription;
     constructor(canvasElement: HTMLCanvasElement, image: HTMLImageElement) {
         this.canvasElement = canvasElement;
         this.renderingContext = canvasElement.getContext('2d');
         this.image = image;
-        this.drawingListener = this.initializeDrawingListener().subscribe();
-        this.windwResizeListener = this.initializeWindowResizeListener().subscribe();
+        this.drawingListenerSubscription = this.initializeDrawingListener().subscribe();
+        this.windwResizeListenerSubscription = this.initializeWindowResizeListener().subscribe();
         this.displayImageOnCanvas();
         this.currentLineStyle = { color: '#ADD8E6', size: 8 };
     }
 
     deactivate() {
-        this.drawingListener.unsubscribe();
-        this.windwResizeListener.unsubscribe();
+        this.drawingListenerSubscription.unsubscribe();
+        this.windwResizeListenerSubscription.unsubscribe();
     }
 
     private initializeDrawingListener(): Observable<Coordinate> {
@@ -74,7 +74,7 @@ class CanvasDrawingOrchestrator {
 
     private initializeLineStart(lineDrawAction: LineDrawAction) {
         this.renderingContext.beginPath();
-        this.renderingContext.fillStyle = lineDrawAction.getLineStyle().color;
+        this.renderingContext.strokeStyle = lineDrawAction.getLineStyle().color;
         this.renderingContext.lineCap = 'round';
         this.renderingContext.lineWidth = lineDrawAction.getLineStyle().size;
         let coordinates = lineDrawAction.getLineStartForResolution({ width: this.canvasElement.width, height: this.canvasElement.height });
