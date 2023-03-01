@@ -11,6 +11,7 @@ import { BatchActionOrchestrator } from '../shared/models/batchActionOrchestrato
 import { SignInRequest } from '../shared/models/view-models/signInRequest';
 import { Router } from '@angular/router';
 import { URL_PATHS } from '../shared/models/constants/urlPathConstants';
+import { FirebaseUser } from '../shared/models/firebase-collections/firebaseTypes';
 
 // TODO: MOVE ALL CATCHERRORS TO INNER OBSERVABLES SO OUTER WILL STILL WORK!
 @Injectable()
@@ -96,16 +97,15 @@ export class RootEffects {
 
   private handleSignInUserOutcomes() {
     return pipe(
-      map(() =>
-        AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: null })),
-        catchError((error: Error) => of(AuthenticationActions.SignInWithEmail.RequestFailure({ failureResponse: error.message })))
+      map(() => AuthenticationActions.SignInWithEmail.RequestSuccess({ successResponse: null })),
+      catchError((error: Error) => of(AuthenticationActions.SignInWithEmail.RequestFailure({ failureResponse: error.message })))
     );
   }
 
   private fetchUserDataFromSignedInUser() {
     return pipe(
       mergeMap(() => this.authenticationService.getCurrentSignedInUser()),
-      mergeMap((signedInUser: firebase.default.User) =>
+      mergeMap((signedInUser: FirebaseUser) =>
         this.authenticationService.getUserDocumentById(signedInUser.uid))
     );
   }

@@ -4,7 +4,7 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
-import { reducer, clearStateOnSignOut } from './reducer';
+import { reducer as authenticationReducer, clearStateOnSignOut } from './reducer';
 import { RootEffects } from './effects';
 import { authenticationPropertyKey } from './state';
 import { FrameStoreModule } from './frame-store';
@@ -14,7 +14,7 @@ import { FrameStoreModule } from './frame-store';
   declarations: [],
   imports: [
     CommonModule,
-    StoreModule.forRoot({ authentication: reducer }, {
+    StoreModule.forRoot({ authentication: authenticationReducer }, {
       metaReducers: [clearStateOnSignOut],
       runtimeChecks: {
         strictStateImmutability: true,
