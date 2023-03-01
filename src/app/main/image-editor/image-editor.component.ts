@@ -32,9 +32,12 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.canvasDrawingOrchestrator.deactivate();
   }
 
-  colorChange(event) {
+  colorChange(event: string) {
     console.log(event);
-    console.log(typeof(event));
+  }
+
+  undoClick(event) {
+    console.log('undoClicked', event);
   }
 
 }

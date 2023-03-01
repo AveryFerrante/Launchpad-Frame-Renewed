@@ -1,4 +1,8 @@
 <div class="backdrop-overlay">
     <canvas class="image-canvas" #imageCanvas></canvas>
-    <div class="editor-options" [colorPicker]="color" (colorPickerChange)="colorChange($event)" [cpOutputFormat]="'rgba'"></div>
+    <div class="editor-options" [colorPicker]="color" (colorPickerChange)="colorChange($event)" [cpOutputFormat]="'rgba'" [cpExtraTemplate]="testTemplate"></div>
 </div>
+
+<ng-template #testTemplate>
+    <div class="test"><span (click)="undoClick($event)">undo</span></div>
+</ng-template>
