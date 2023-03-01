@@ -5,27 +5,25 @@ import { Coordinate, LineDrawAction, LineStyle, Resolution } from './line-draw-a
 
 
 class CanvasDrawingOrchestrator {
-    private canvasElement: HTMLCanvasElement;
     private image: HTMLImageElement;
     private renderingContext: CanvasRenderingContext2D;
     private drawnLinesTracker: LineDrawAction[] = [];
     private currentLineStyle: LineStyle;
 
     private drawingListenerSubscription: Subscription;
-    private windwResizeListenerSubscription: Subscription;
-    constructor(canvasElement: HTMLCanvasElement, image: HTMLImageElement) {
-        this.canvasElement = canvasElement;
+    private windowResizeListenerSubscription: Subscription;
+    constructor(private canvasElement: HTMLCanvasElement, image: HTMLImageElement) {
         this.renderingContext = canvasElement.getContext('2d');
         this.image = image;
         this.drawingListenerSubscription = this.initializeDrawingListener().subscribe();
-        this.windwResizeListenerSubscription = this.initializeWindowResizeListener().subscribe();
+        this.windowResizeListenerSubscription = this.initializeWindowResizeListener().subscribe();
         this.displayImageOnCanvas();
-        this.currentLineStyle = { color: '#ADD8E6', size: 8 };
+        this.currentLineStyle = { color: 'rgba(100, 100, 100, 0.5)', size: 8 };
     }
 
     deactivate() {
         this.drawingListenerSubscription.unsubscribe();
-        this.windwResizeListenerSubscription.unsubscribe();
+        this.windowResizeListenerSubscription.unsubscribe();
     }
 
     private initializeDrawingListener(): Observable<Coordinate> {
@@ -34,14 +32,14 @@ class CanvasDrawingOrchestrator {
         const drawEnd$ = this.configureEventListenersFor(['mouseup', 'touchend']);
 
         return drawStart$.pipe(
-            tap((drawStartCoordinates) => {
+            tap((drawStartCoordinates: Coordinate) => {
                 let resolution: Resolution = { width: this.canvasElement.width, height: this.canvasElement.height };
                 let drawAction = new LineDrawAction(drawStartCoordinates, resolution, this.currentLineStyle);
                 this.initializeLineStart(drawAction);
                 this.drawnLinesTracker.push(drawAction);
             }),
             concatMap(() => drawMove$.pipe(takeUntil(drawEnd$))),
-            tap((drawLineEvent) => {
+            tap((drawLineEvent: Coordinate) => {
                 this.drawnLinesTracker[this.drawnLinesTracker.length - 1].addLineSegment(drawLineEvent);
                 this.drawLine(drawLineEvent);
             })

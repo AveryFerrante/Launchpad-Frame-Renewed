@@ -1,4 +1,4 @@
 <div class="backdrop-overlay">
     <canvas class="image-canvas" #imageCanvas></canvas>
-    <div class="editor-options"></div>
+    <div class="editor-options" [colorPicker]="color" (colorPickerChange)="colorChange($event)" [cpOutputFormat]="'rgba'"></div>
 </div>

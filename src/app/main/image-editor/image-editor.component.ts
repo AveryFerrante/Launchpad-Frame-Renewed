@@ -13,7 +13,8 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() imageData: File;
   @ViewChild('imageCanvas') imageCanvas: ElementRef<HTMLCanvasElement>;
-  canvasDrawingOrchestrator: CanvasDrawingOrchestrator;
+  color: 'blue';
+  private canvasDrawingOrchestrator: CanvasDrawingOrchestrator;
   constructor(private imageManipulatorService: ImageManipulatorService) { }
 
   ngAfterViewInit(): void {
@@ -29,6 +30,11 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.canvasDrawingOrchestrator.deactivate();
+  }
+
+  colorChange(event) {
+    console.log(event);
+    console.log(typeof(event));
   }
 
 }
