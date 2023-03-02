@@ -26,27 +26,36 @@ class LineDrawAction {
         this.lineSegments = [];
     }
 
+    hasLineSegments(): boolean {
+        return this.lineSegments.length > 0;
+    }
+
     addLineSegment(lineSegment: Coordinate) {
         this.lineSegments.push(lineSegment);
     }
 
     getLineStartForResolution(resolution: Resolution): Coordinate {
-        return {
-            x: resolution.width * (this.lineStart.x / this.originalResolution.width),
-            y: resolution.height * (this.lineStart.y / this.originalResolution.height)
-        };
+        return this.scaleLineCoordinatesForResolution(resolution, this.lineStart);
     }
 
     getLineSegmentsForResolution(resolution: Resolution): Coordinate[] {
-        return this.lineSegments.map(lineSegment => {
-            return {
-                x: resolution.width * (lineSegment.x / this.originalResolution.width),
-                y: resolution.height * (lineSegment.y / this.originalResolution.height) 
-            };
-        });
+        return this.lineSegments.map(lineSegment => this.scaleLineCoordinatesForResolution(resolution, lineSegment));
     }
 
-    getLineStyle(): LineStyle { return this.lineStyle; }
+    private scaleLineCoordinatesForResolution(newResolution: Resolution, lineCoordinates: Coordinate): Coordinate {
+        return {
+            x: Math.floor(newResolution.width * (lineCoordinates.x / this.originalResolution.width)),
+            y: Math.floor(newResolution.height * (lineCoordinates.y / this.originalResolution.height))
+        }
+    }
+
+    getLineStyleForResolution(resolution: Resolution): LineStyle {
+        const ratioChange = (resolution.width * resolution.height) / (this.originalResolution.width * this.originalResolution.height);
+        return {
+            color: this.lineStyle.color,
+            size: this.lineStyle.size * ratioChange
+        };
+    }
 };
 
 export { Coordinate, Resolution, LineStyle, LineDrawAction };

@@ -82,3 +82,12 @@ form {
   height: 100%; /* Full height */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
+
+// override 3rd party color picker UI elements
+div.rgba-text {
+  display: none !important;
+}
+
+div.type-policy {
+  display: none !important;
+}

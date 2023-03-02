@@ -1,8 +1,25 @@
 <div class="backdrop-overlay">
     <canvas class="image-canvas" #imageCanvas></canvas>
-    <div class="editor-options" [colorPicker]="color" (colorPickerChange)="colorChange($event)" [cpOutputFormat]="'rgba'" [cpExtraTemplate]="testTemplate"></div>
+    <div class="editor-options" [colorPicker]="lineStyle.color" (colorPickerChange)="colorChange($event)" [cpPresetColors]="colorPresets"
+        [cpOutputFormat]="'rgba'" [cpWidth]="'280px'" [cpAlphaChannel]="'disabled'" [cpExtraTemplate]="colorPickerActions"></div>
 </div>
 
-<ng-template #testTemplate>
-    <div class="test"><span (click)="undoClick($event)">undo</span></div>
+<ng-template #colorPickerActions>
+    <div class="line-size-container">
+        <hr />
+        <div class="line-size-label">Brush size</div>
+        <div class="brush-size-selection-container">
+            <input class="brush-size-slider" type="range" step="3" min="3" max="30" [value]="lineStyle.size" (input)="brushSizeChange($event.target.value)" />
+            <span>{{ lineStyle.size }}</span>
+        </div>
+    </div>
+
+    <div class="draw-actions-container">
+        <div class="draw-action-container-item" (click)="undoLastDrawAction()">
+            undo
+        </div>
+        <div class="draw-action-container-item" (click)="redoLastDrawAction()">
+            redo
+        </div>
+    </div>
 </ng-template>

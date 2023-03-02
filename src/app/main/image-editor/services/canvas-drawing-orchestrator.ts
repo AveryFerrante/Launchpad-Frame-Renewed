@@ -1,29 +1,44 @@
 import { fromEvent, merge, Observable, of, Subscription } from 'rxjs';
 import { concatMap, delay, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { DrawnLinesManager } from './drawn-lines-manager';
 import { Coordinate, LineDrawAction, LineStyle, Resolution } from './line-draw-action';
 
 
 
 class CanvasDrawingOrchestrator {
-    private image: HTMLImageElement;
     private renderingContext: CanvasRenderingContext2D;
-    private drawnLinesTracker: LineDrawAction[] = [];
     private currentLineStyle: LineStyle;
+    private drawnLinesManager: DrawnLinesManager = new DrawnLinesManager();
 
     private drawingListenerSubscription: Subscription;
     private windowResizeListenerSubscription: Subscription;
-    constructor(private canvasElement: HTMLCanvasElement, image: HTMLImageElement) {
-        this.renderingContext = canvasElement.getContext('2d');
-        this.image = image;
+    constructor(private canvasElement: HTMLCanvasElement, private image: HTMLImageElement, initialLineStyle: LineStyle) {
+        this.renderingContext = canvasElement.getContext('2d', { alpha: false });
         this.drawingListenerSubscription = this.initializeDrawingListener().subscribe();
         this.windowResizeListenerSubscription = this.initializeWindowResizeListener().subscribe();
+        this.currentLineStyle = { ...initialLineStyle };
         this.displayImageOnCanvas();
-        this.currentLineStyle = { color: 'rgba(100, 100, 100, 0.5)', size: 8 };
     }
 
     deactivate() {
         this.drawingListenerSubscription.unsubscribe();
         this.windowResizeListenerSubscription.unsubscribe();
+    }
+
+    setLineStyle(lineStyle: LineStyle) {
+        this.currentLineStyle = lineStyle;
+    }
+
+    undoLastDrawAction() {
+        if (this.drawnLinesManager.undo()) {
+            this.displayImageOnCanvas();
+        }
+    }
+
+    redoLastDrawAction() {
+        if (this.drawnLinesManager.redo()) {
+            this.displayImageOnCanvas();
+        }
     }
 
     private initializeDrawingListener(): Observable<Coordinate> {
@@ -34,13 +49,12 @@ class CanvasDrawingOrchestrator {
         return drawStart$.pipe(
             tap((drawStartCoordinates: Coordinate) => {
                 let resolution: Resolution = { width: this.canvasElement.width, height: this.canvasElement.height };
-                let drawAction = new LineDrawAction(drawStartCoordinates, resolution, this.currentLineStyle);
-                this.initializeLineStart(drawAction);
-                this.drawnLinesTracker.push(drawAction);
+                this.drawnLinesManager.startNewLine(drawStartCoordinates, resolution, { ...this.currentLineStyle });
+                this.initializeLineStart(this.drawnLinesManager.getActiveLine());
             }),
-            concatMap(() => drawMove$.pipe(takeUntil(drawEnd$))),
+            concatMap(() => drawMove$.pipe(takeUntil(drawEnd$), finalize(() => this.drawnLinesManager.commitActiveLine()))),
             tap((drawLineEvent: Coordinate) => {
-                this.drawnLinesTracker[this.drawnLinesTracker.length - 1].addLineSegment(drawLineEvent);
+                this.drawnLinesManager.addLineSegmentToActiveLine(drawLineEvent);
                 this.drawLine(drawLineEvent);
             })
         );
@@ -59,7 +73,7 @@ class CanvasDrawingOrchestrator {
 
     private drawLinesToScale() {
         let resolution: Resolution = { width: this.canvasElement.width, height: this.canvasElement.height };
-        this.drawnLinesTracker.forEach(drawnLine => {
+        this.drawnLinesManager.getDrawnLines().forEach(drawnLine => {
             this.initializeLineStart(drawnLine);
             drawnLine.getLineSegmentsForResolution(resolution).forEach(lineSegment => this.drawLine(lineSegment));
         });
@@ -71,12 +85,16 @@ class CanvasDrawingOrchestrator {
     }
 
     private initializeLineStart(lineDrawAction: LineDrawAction) {
+        this.setRenderingContextLineStyle(lineDrawAction.getLineStyleForResolution({ width: this.canvasElement.width, height: this.canvasElement.height }));
         this.renderingContext.beginPath();
-        this.renderingContext.strokeStyle = lineDrawAction.getLineStyle().color;
-        this.renderingContext.lineCap = 'round';
-        this.renderingContext.lineWidth = lineDrawAction.getLineStyle().size;
         let coordinates = lineDrawAction.getLineStartForResolution({ width: this.canvasElement.width, height: this.canvasElement.height });
         this.renderingContext.moveTo(coordinates.x, coordinates.y);
+    }
+
+    private setRenderingContextLineStyle(lineStyle: LineStyle) {
+        this.renderingContext.strokeStyle = lineStyle.color;
+        this.renderingContext.lineWidth = lineStyle.size;
+        this.renderingContext.lineCap = 'round';
     }
 
     private configureEventListenersFor(eventNames: string[]): Observable<Coordinate> {

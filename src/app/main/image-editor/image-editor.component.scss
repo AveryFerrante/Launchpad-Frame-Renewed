@@ -20,6 +20,39 @@
     border-radius: 50%;
 }
 
-.test {
-    font-size: 48px;
+.line-size-container {
+    padding: 4px 15px;
+}
+
+.line-size-label {
+    color: #555;
+    padding: 4px;
+}
+
+.brush-size-selection-container {
+    display: flex;
+    align-items: center;
+}
+
+.brush-size-slider {
+    width: 70%;
+    margin-right: .5rem;
+}
+
+.draw-actions-container {
+    margin-top: 1.5rem;
+    display: flex;
+    
+    :last-child {
+        border-right: none;
+    }
+}
+
+.draw-action-container-item {
+    flex: 1;
+    padding: .5rem;
+    font-size: 1rem;
+    text-align: center;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
 }
