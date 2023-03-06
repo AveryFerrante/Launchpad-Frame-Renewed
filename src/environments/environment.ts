@@ -20,6 +20,12 @@ export const environment = {
   },
   imageUploadProperties: {
     cacheControlValues: ['public', 'max-age=604800', 'immutable']
+  },
+  imageEditingProperties: {
+    maxBrushSize: 30,
+    minBrushSize: 3,
+    brushSizeStep: 3,
+    initialBrushSize: 9
   }
 };
 

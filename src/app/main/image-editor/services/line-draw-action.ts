@@ -1,3 +1,5 @@
+import { environment } from "src/environments/environment";
+
 interface Coordinate {
     x: number,
     y: number
@@ -53,8 +55,12 @@ class LineDrawAction {
         const ratioChange = (resolution.width * resolution.height) / (this.originalResolution.width * this.originalResolution.height);
         return {
             color: this.lineStyle.color,
-            size: this.lineStyle.size * ratioChange
+            size: this.clampWithinConfiguredBrushSizeRange(this.lineStyle.size * ratioChange)
         };
+    }
+
+    private clampWithinConfiguredBrushSizeRange(value: number): number {
+        return Math.min(Math.max(value, environment.imageEditingProperties.minBrushSize), environment.imageEditingProperties.maxBrushSize);
     }
 };
 

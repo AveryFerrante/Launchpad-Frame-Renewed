@@ -1,25 +1,28 @@
 <div class="backdrop-overlay">
     <canvas class="image-canvas" #imageCanvas></canvas>
-    <div class="editor-options" [colorPicker]="lineStyle.color" (colorPickerChange)="colorChange($event)" [cpPresetColors]="colorPresets"
-        [cpOutputFormat]="'rgba'" [cpWidth]="'280px'" [cpAlphaChannel]="'disabled'" [cpExtraTemplate]="colorPickerActions"></div>
+
+
+
+    <div class="editing-options-container">
+        <fa-icon [icon]="icons.pencil" [colorPicker]="lineStyle.color" (colorPickerChange)="colorChange($event)"
+            [cpPresetColors]="colorPresets" [cpOutputFormat]="'rgba'" [cpWidth]="'280px'" [cpHeight]="'360px'" [cpAlphaChannel]="'disabled'"
+            [cpExtraTemplate]="colorPickerExtras" [cpPosition]="'top-right'" [cpPresetLabel]="''"></fa-icon>
+    
+        <fa-icon [icon]="icons.save" (click)="saveImage()"></fa-icon>
+        <fa-icon [icon]="icons.undo" (click)="undoLastDrawAction()"></fa-icon>
+        <fa-icon [icon]="icons.redo" (click)="redoLastDrawAction()"></fa-icon>
+        <fa-icon [icon]="icons.trash"></fa-icon>
+    </div>
 </div>
 
-<ng-template #colorPickerActions>
-    <div class="line-size-container">
+<ng-template #colorPickerExtras>
+    <div class="brush-size-container">
         <hr />
-        <div class="line-size-label">Brush size</div>
+        <div class="brush-size-label">Brush size</div>
         <div class="brush-size-selection-container">
-            <input class="brush-size-slider" type="range" step="3" min="3" max="30" [value]="lineStyle.size" (input)="brushSizeChange($event.target.value)" />
-            <span>{{ lineStyle.size }}</span>
-        </div>
-    </div>
-
-    <div class="draw-actions-container">
-        <div class="draw-action-container-item" (click)="undoLastDrawAction()">
-            undo
-        </div>
-        <div class="draw-action-container-item" (click)="redoLastDrawAction()">
-            redo
+            <input class="brush-size-slider" type="range" [step]="brushConfig.step" [min]="brushConfig.minSize"
+                [max]="brushConfig.maxSize" [value]="lineStyle.size" (input)="brushSizeChange($event.target.value)" />
+            <span class="brush-size-text">{{ lineStyle.size }}</span>
         </div>
     </div>
 </ng-template>

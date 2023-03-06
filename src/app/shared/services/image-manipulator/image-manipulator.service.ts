@@ -16,7 +16,7 @@ export class ImageManipulatorService {
       take(1),
       mergeMap(() => {
         const dataUrl: string = fr.result as string;
-        const imageObj = new Image(100, 100);
+        const imageObj = new Image();
         imageObj.src = dataUrl;
         return fromEvent(imageObj, 'load').pipe(
           take(1),

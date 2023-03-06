@@ -10,21 +10,32 @@
     margin-right: auto;
 }
 
-.editor-options {
+.editing-options-container {
     position: fixed;
-    top: 10px;
     left: 10px;
-    width: 50px;
-    height: 50px;
-    background-color: firebrick;
-    border-radius: 50%;
+    bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: .25rem;
+
+    & > fa-icon {
+        color: $primary-light;
+        margin-right: 1.5rem;
+    }
+
+    :last-child {
+        margin-right: 0;
+    }
 }
 
-.line-size-container {
+.brush-size-container {
     padding: 4px 15px;
 }
 
-.line-size-label {
+.brush-size-label {
     color: #555;
     padding: 4px;
 }
@@ -35,24 +46,11 @@
 }
 
 .brush-size-slider {
-    width: 70%;
+    flex: 1;
     margin-right: .5rem;
 }
 
-.draw-actions-container {
-    margin-top: 1.5rem;
-    display: flex;
-    
-    :last-child {
-        border-right: none;
-    }
-}
-
-.draw-action-container-item {
-    flex: 1;
-    padding: .5rem;
+.brush-size-text {
     font-size: 1rem;
-    text-align: center;
-    border-top: 1px solid black;
-    border-right: 1px solid black;
+    font-weight: bold;
 }

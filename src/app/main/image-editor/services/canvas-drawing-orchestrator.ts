@@ -1,5 +1,5 @@
-import { fromEvent, merge, Observable, of, Subscription } from 'rxjs';
-import { concatMap, delay, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { from, fromEvent, merge, Observable, of, Subscription } from 'rxjs';
+import { concatMap, delay, finalize, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { DrawnLinesManager } from './drawn-lines-manager';
 import { Coordinate, LineDrawAction, LineStyle, Resolution } from './line-draw-action';
 
@@ -41,6 +41,23 @@ class CanvasDrawingOrchestrator {
         }
     }
 
+    saveImage(): Observable<File> {
+        const tempCanvas: HTMLCanvasElement = document.createElement('canvas');
+        const tempRenderingContext = tempCanvas.getContext('2d');
+
+        tempCanvas.width = this.image.naturalWidth;
+        tempCanvas.height = this.image.naturalHeight;
+        tempRenderingContext.drawImage(this.image, 0, 0);
+        this.drawLinesToScale(tempCanvas, tempRenderingContext);
+
+
+        return from(fetch(tempCanvas.toDataURL('image/png'))).pipe(
+            mergeMap((response: Response) => response.arrayBuffer()),
+            take(1),
+            map((arrayBuffer: ArrayBuffer) => new File([arrayBuffer], 'edited-image', { type: 'image/png' }))
+        );
+    }
+
     private initializeDrawingListener(): Observable<Coordinate> {
         const drawStart$ = this.configureEventListenersFor(['mousedown', 'touchstart']);
         const drawMove$ = this.configureEventListenersFor(['mousemove', 'touchmove']);
@@ -50,12 +67,12 @@ class CanvasDrawingOrchestrator {
             tap((drawStartCoordinates: Coordinate) => {
                 let resolution: Resolution = { width: this.canvasElement.width, height: this.canvasElement.height };
                 this.drawnLinesManager.startNewLine(drawStartCoordinates, resolution, { ...this.currentLineStyle });
-                this.initializeLineStart(this.drawnLinesManager.getActiveLine());
+                this.initializeLineStart(this.canvasElement, this.renderingContext, this.drawnLinesManager.getActiveLine());
             }),
             concatMap(() => drawMove$.pipe(takeUntil(drawEnd$), finalize(() => this.drawnLinesManager.commitActiveLine()))),
             tap((drawLineEvent: Coordinate) => {
                 this.drawnLinesManager.addLineSegmentToActiveLine(drawLineEvent);
-                this.drawLine(drawLineEvent);
+                this.drawLine(this.renderingContext, drawLineEvent);
             })
         );
     }
@@ -71,30 +88,31 @@ class CanvasDrawingOrchestrator {
         return switchMap((event: UIEvent) => of(event).pipe(delay(100)));
     }
 
-    private drawLinesToScale() {
-        let resolution: Resolution = { width: this.canvasElement.width, height: this.canvasElement.height };
+    private drawLinesToScale(canvasElement: HTMLCanvasElement, renderingContext: CanvasRenderingContext2D) {
+        let resolution: Resolution = { width: canvasElement.width, height: canvasElement.height };
         this.drawnLinesManager.getDrawnLines().forEach(drawnLine => {
-            this.initializeLineStart(drawnLine);
-            drawnLine.getLineSegmentsForResolution(resolution).forEach(lineSegment => this.drawLine(lineSegment));
+            this.initializeLineStart(canvasElement, renderingContext, drawnLine);
+            drawnLine.getLineSegmentsForResolution(resolution).forEach(lineSegment => this.drawLine(renderingContext, lineSegment));
         });
     }
 
-    private drawLine(coordinates: Coordinate) {
-        this.renderingContext.lineTo(coordinates.x, coordinates.y);
-        this.renderingContext.stroke();
+    private drawLine(renderingContext: CanvasRenderingContext2D, coordinates: Coordinate) {
+        renderingContext.lineTo(coordinates.x, coordinates.y);
+        renderingContext.stroke();
     }
 
-    private initializeLineStart(lineDrawAction: LineDrawAction) {
-        this.setRenderingContextLineStyle(lineDrawAction.getLineStyleForResolution({ width: this.canvasElement.width, height: this.canvasElement.height }));
-        this.renderingContext.beginPath();
-        let coordinates = lineDrawAction.getLineStartForResolution({ width: this.canvasElement.width, height: this.canvasElement.height });
-        this.renderingContext.moveTo(coordinates.x, coordinates.y);
+    private initializeLineStart(canvasElement: HTMLCanvasElement, renderingContext: CanvasRenderingContext2D, lineDrawAction: LineDrawAction) {
+        const lineStyle = lineDrawAction.getLineStyleForResolution({ width: canvasElement.width, height: canvasElement.height });
+        this.setRenderingContextLineStyle(renderingContext, lineStyle);
+        renderingContext.beginPath();
+        let coordinates = lineDrawAction.getLineStartForResolution({ width: canvasElement.width, height: canvasElement.height });
+        renderingContext.moveTo(coordinates.x, coordinates.y);
     }
 
-    private setRenderingContextLineStyle(lineStyle: LineStyle) {
-        this.renderingContext.strokeStyle = lineStyle.color;
-        this.renderingContext.lineWidth = lineStyle.size;
-        this.renderingContext.lineCap = 'round';
+    private setRenderingContextLineStyle(renderingContext: CanvasRenderingContext2D, lineStyle: LineStyle) {
+        renderingContext.strokeStyle = lineStyle.color;
+        renderingContext.lineWidth = lineStyle.size;
+        renderingContext.lineCap = 'round';
     }
 
     private configureEventListenersFor(eventNames: string[]): Observable<Coordinate> {
@@ -114,7 +132,7 @@ class CanvasDrawingOrchestrator {
         this.renderingContext.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
         this.resizeCanvas();
         this.renderingContext.drawImage(this.image, 0, 0, this.image.naturalWidth, this.image.naturalHeight, 0, 0, this.canvasElement.width, this.canvasElement.height);
-        this.drawLinesToScale();
+        this.drawLinesToScale(this.canvasElement, this.renderingContext);
     }
 
     private resizeCanvas() {
