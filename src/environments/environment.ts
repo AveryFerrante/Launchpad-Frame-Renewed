@@ -23,9 +23,9 @@ export const environment = {
   },
   imageEditingProperties: {
     maxBrushSize: 30,
-    minBrushSize: 3,
-    brushSizeStep: 3,
-    initialBrushSize: 9
+    minBrushSize: 1,
+    brushSizeStep: 1,
+    initialBrushSize: 5
   }
 };
 

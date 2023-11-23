@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { fromEvent, Observable, Subject } from 'rxjs';
-import { map, take, takeUntil, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
@@ -28,13 +28,12 @@ export class FrameComponent implements OnInit {
   }
 
   onFilesAdded(files: File[]) {
-    this.imageData = files[0];
-    this.showImageEditor = true;
-    // this.store$.dispatch(FrameStoreActions.UploadImagesRequest({ Images: files }));
+    this.store$.dispatch(FrameStoreActions.UploadImagesRequest({ Images: files }));
   }
 
   onFilesAddedMobile(files: FileList) {
-    this.onFilesAdded(Array.from(files));
+    this.imageData = files[0];
+    this.showImageEditor = true;
   }
 
   onFabClick() {
@@ -47,6 +46,15 @@ export class FrameComponent implements OnInit {
 
   onExitLiveView() {
     this.showLiveView = false;
+  }
+
+  onSaveEditedImage(imageFile: File) {
+    this.onImageEditorExit();
+    this.onFilesAdded([imageFile]);
+  }
+
+  onImageEditorExit() {
+    this.showImageEditor = false;
   }
 
   private setGroupedImagesSelector() {

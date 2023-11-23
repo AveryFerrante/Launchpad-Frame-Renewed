@@ -40,6 +40,11 @@ input {
   color: $light;
 }
 
+.btn-error {
+  background-color: $error;
+  color: $light
+}
+
 form {
   height: 100%;
   display: flex;

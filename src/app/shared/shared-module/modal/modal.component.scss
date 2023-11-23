@@ -27,25 +27,6 @@ hr.header-seperator {
   border-left: none;
 }
 
-.body {
-  display: flex;
-  flex-direction: column;
-}
-
-.footer {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: .75rem;
-}
-
-.input-label {
-  padding-bottom: .25rem;
-}
-
-.error {
-  color: $error;
-}
-
 @include media($phone-size) {
   .modal-content {
     width: 80%;

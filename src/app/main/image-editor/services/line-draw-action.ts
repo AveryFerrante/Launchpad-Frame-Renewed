@@ -52,6 +52,7 @@ class LineDrawAction {
     }
 
     getLineStyleForResolution(resolution: Resolution): LineStyle {
+        // TODO: Maybe base the size change only on the width ratio change? (i.e. picture gets thicker so line gets thicker, but height doesnt matter?)
         const ratioChange = (resolution.width * resolution.height) / (this.originalResolution.width * this.originalResolution.height);
         return {
             color: this.lineStyle.color,

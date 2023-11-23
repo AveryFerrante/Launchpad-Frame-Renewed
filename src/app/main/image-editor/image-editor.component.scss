@@ -1,13 +1,20 @@
 @import '../../../styles.scss';
 
-.backdrop-overlay{
-    background-color: rgba(0, 0, 0, 0.95);
+.backdrop-overlay {
+    background-color: rgba(0, 0, 0, 1);
 }
 
-.image-canvas {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+.canvas-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .image-canvas {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 .editing-options-container {
@@ -54,3 +61,13 @@
     font-size: 1rem;
     font-weight: bold;
 }
+
+.delete-confirmation-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: .75rem;
+
+    :first-child {
+        margin-right: 1rem;
+    }
+  }

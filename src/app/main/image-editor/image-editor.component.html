@@ -1,17 +1,20 @@
 <div class="backdrop-overlay">
-    <canvas class="image-canvas" #imageCanvas></canvas>
+    <div class="canvas-container">
+        <canvas class="image-canvas" #imageCanvas></canvas>
+    </div>
 
 
 
     <div class="editing-options-container">
         <fa-icon [icon]="icons.pencil" [colorPicker]="lineStyle.color" (colorPickerChange)="colorChange($event)"
-            [cpPresetColors]="colorPresets" [cpOutputFormat]="'rgba'" [cpWidth]="'280px'" [cpHeight]="'360px'" [cpAlphaChannel]="'disabled'"
-            [cpExtraTemplate]="colorPickerExtras" [cpPosition]="'top-right'" [cpPresetLabel]="''"></fa-icon>
-    
+            [cpPresetColors]="colorPresets" [cpOutputFormat]="'rgba'" [cpWidth]="'280px'" [cpHeight]="'360px'"
+            [cpAlphaChannel]="'disabled'" [cpExtraTemplate]="colorPickerExtras" [cpPosition]="'top-right'"
+            [cpPresetLabel]="''"></fa-icon>
+
         <fa-icon [icon]="icons.save" (click)="saveImage()"></fa-icon>
         <fa-icon [icon]="icons.undo" (click)="undoLastDrawAction()"></fa-icon>
         <fa-icon [icon]="icons.redo" (click)="redoLastDrawAction()"></fa-icon>
-        <fa-icon [icon]="icons.trash"></fa-icon>
+        <fa-icon [icon]="icons.trash" (click)="closeImageEditor()"></fa-icon>
     </div>
 </div>
 
@@ -26,3 +29,13 @@
         </div>
     </div>
 </ng-template>
+
+<app-modal [title]="'Delete Image?'" (closeModal)="closeDeleteConfirmation()" *ngIf="showDeleteConfirmation">
+    <div>
+        This will not upload the image to the frame and all edits will be lost.
+    </div>
+    <div class="delete-confirmation-modal-footer">
+        <button class="btn btn-primary" (click)="closeDeleteConfirmation()">CANCEL</button>
+        <button class="btn btn-error" (click)="confirmDeleteImage()">DELETE</button>
+    </div>
+</app-modal>

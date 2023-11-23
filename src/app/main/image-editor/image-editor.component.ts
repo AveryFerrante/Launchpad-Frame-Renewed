@@ -1,12 +1,9 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, Type, ViewChild } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { take, tap } from 'rxjs/operators';
 import { ImageManipulatorService } from 'src/app/shared/services/image-manipulator/image-manipulator.service';
 import { CanvasDrawingOrchestrator } from './services/canvas-drawing-orchestrator';
 import { LineStyle } from './services/line-draw-action';
-import { faUndoAlt, faRedoAlt, faFileUpload, faPencilAlt, faTrash } from'@fortawesome/free-solid-svg-icons';
-import { Store } from '@ngrx/store';
-import { RootState } from 'src/app/root-store';
-import { FrameStoreActions } from 'src/app/root-store/frame-store';
+import { faUndoAlt, faRedoAlt, faCheck, faPencilAlt, faTrash } from'@fortawesome/free-solid-svg-icons';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -17,13 +14,16 @@ import { environment } from 'src/environments/environment';
 export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() imageData: File;
+  @Output() exit: EventEmitter<null> = new EventEmitter();
+  @Output() save: EventEmitter<File> = new EventEmitter();
   @ViewChild('imageCanvas') imageCanvas: ElementRef<HTMLCanvasElement>;
+  showDeleteConfirmation = false;
   colorPresets = ['#FFFFFF', '#808080', '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF', '#8B4513'];
   lineStyle: LineStyle = { color: this.colorPresets[2], size: environment.imageEditingProperties.initialBrushSize };
   icons = {
     undo: faUndoAlt,
     redo: faRedoAlt,
-    save: faFileUpload,
+    save: faCheck,
     pencil: faPencilAlt,
     trash: faTrash
   };
@@ -33,7 +33,7 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     step: environment.imageEditingProperties.brushSizeStep
   };
   private canvasDrawingOrchestrator: CanvasDrawingOrchestrator;
-  constructor(private imageManipulatorService: ImageManipulatorService, private store$: Store<RootState>) { }
+  constructor(private imageManipulatorService: ImageManipulatorService) { }
 
   ngAfterViewInit(): void {
     // TODO: Could I move this to ng-if on parent DIV element and use async pipe?
@@ -71,8 +71,21 @@ export class ImageEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   saveImage() {
     this.canvasDrawingOrchestrator.saveImage().pipe(
-      tap((blob: File) => this.store$.dispatch(FrameStoreActions.UploadImagesRequest({ Images: [blob] })))
+      tap((blob: File) => this.save.emit(blob)),
+      take(1)
     ).subscribe();
+  }
+
+  closeImageEditor() {
+    this.showDeleteConfirmation = true;
+  }
+
+  closeDeleteConfirmation() {
+    this.showDeleteConfirmation = false;
+  }
+
+  confirmDeleteImage() {
+    this.exit.emit();
   }
 
 }
