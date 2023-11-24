@@ -12,6 +12,8 @@ import { JoinFrameComponent } from './join-frame/join-frame.component';
 import { FrameSidenavComponent } from './frame-sidenav/frame-sidenav.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
+import { ImageEditorComponent } from './image-editor/image-editor.component';
+import { ColorPickerModule } from 'ngx-color-picker';
 import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.component';
 
 
@@ -25,6 +27,7 @@ import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.co
     JoinFrameComponent,
     FrameSidenavComponent,
     ImageLazyLoadDirective,
+    ImageEditorComponent,
     FullscreenImageComponent
   ],
   imports: [
@@ -32,7 +35,8 @@ import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.co
     MainRoutingModule,
     NgxDropzoneModule,
     SharedModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    ColorPickerModule
   ],
   providers: [FrameTranslator]
 })

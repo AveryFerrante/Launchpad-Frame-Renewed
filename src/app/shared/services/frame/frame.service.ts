@@ -13,13 +13,15 @@ import { FrameTranslator } from '../../models/translators/frameTranslator';
 import { UploadImageResponse } from '../../models/uploadImageResponse';
 import { FrameModel } from '../../models/view-models/frameModel';
 import * as firebase from 'firebase/app';
+import { ImageManipulatorService } from '../image-manipulator/image-manipulator.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FrameService {
 
-  constructor(private afStore: AngularFirestore, private frameTranslator: FrameTranslator, private afStorage: AngularFireStorage) { }
+  constructor(private afStore: AngularFirestore, private frameTranslator: FrameTranslator,
+    private afStorage: AngularFireStorage, private imageManipulatorService: ImageManipulatorService) { }
 
   loadFrame(id: string): Observable<FrameModel> {
     const frameDocument$ = this.getFrameDocumentReference(id).get();
@@ -106,30 +108,9 @@ export class FrameService {
   }
 
   private getImageDeminsions(image: File): Observable<ImageDeminsions> {
-    const fr = new FileReader();
-    fr.readAsArrayBuffer(image);
-    return fromEvent(fr, 'load').pipe(
-      take(1),
-      mergeMap(() => {
-        const arrayBuffer: ArrayBuffer = fr.result as ArrayBuffer;
-        const base64Data = this.toBase64(arrayBuffer);
-        const imageObj = new Image(100, 100);
-        imageObj.src = `data:${image.type};base64,${base64Data}`;
-        return fromEvent(imageObj, 'load').pipe(
-          take(1),
-          map(() => {
-            return { width: imageObj.naturalWidth, height: imageObj.naturalHeight };
-          })
-        );
-      })
+    return this.imageManipulatorService.getHTMLImageElementFromFile(image).pipe(
+      map((image: HTMLImageElement) => { return { width: image.naturalWidth, height: image.naturalHeight } })
     );
-  }
-
-  private toBase64(arrayBuffer: ArrayBuffer) {
-    let binary = '';
-    const bytes = new Uint8Array(arrayBuffer);
-    bytes.forEach(b => binary += String.fromCharCode(b));
-    return window.btoa(binary);
   }
 
   private getFrameAccessToken(): FrameAccessToken {

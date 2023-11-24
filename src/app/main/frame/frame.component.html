@@ -14,7 +14,7 @@
       <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
     </ngx-dropzone>
 
-    <div class="image-upload-camera">
+    <div class="image-upload-camera" *ngIf="!showImageEditor">
       <input type="file" accept="image/*"
       (change)="onFilesAddedMobile($event.target.files)" [hidden]="true" #fabImageUploadButton />
       <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="faCamera"></fa-icon></button>
@@ -29,6 +29,7 @@
   </div>
 
   <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()" [accessCode]="frame.accessToken.token"></main-live-view>
+  <main-image-editor *ngIf="showImageEditor" [imageData]="imageData" (exit)="onImageEditorExit()" (save)="onSaveEditedImage($event)"></main-image-editor>
 </div>
 
 <main-fullscreen-image *ngIf="selectedImageSrc !== null" [imgSrc]="selectedImageSrc"></main-fullscreen-image>
