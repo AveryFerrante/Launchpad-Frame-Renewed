@@ -12,6 +12,7 @@ import { JoinFrameComponent } from './join-frame/join-frame.component';
 import { FrameSidenavComponent } from './frame-sidenav/frame-sidenav.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
+import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.component';
 
 
 
@@ -23,7 +24,8 @@ import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
     LiveViewComponent,
     JoinFrameComponent,
     FrameSidenavComponent,
-    ImageLazyLoadDirective
+    ImageLazyLoadDirective,
+    FullscreenImageComponent
   ],
   imports: [
     CommonModule,

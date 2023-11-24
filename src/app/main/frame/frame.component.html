@@ -24,12 +24,13 @@
   <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
     <span class="group-title">{{ grouping.displayKey }}'s Images</span>
     <div class="masonry">
-      <img *ngFor="let image of grouping.images" [mainImageLazyLoad]="image" class="image">
+      <img *ngFor="let image of grouping.images" [mainImageLazyLoad]="image" class="image" (click)="onSelectImage(image.downloadUrl)">
     </div>
   </div>
 
   <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()" [accessCode]="frame.accessToken.token"></main-live-view>
 </div>
 
+<main-fullscreen-image *ngIf="selectedImageSrc !== null" [imgSrc]="selectedImageSrc"></main-fullscreen-image>
 <div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage"></div>
 

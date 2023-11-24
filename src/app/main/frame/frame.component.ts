@@ -19,6 +19,7 @@ export class FrameComponent implements OnInit {
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
   faCamera = faCamera;
+  selectedImageSrc: string | null = null;
   @ViewChild('fabImageUploadButton') fabImageUploadButton: ElementRef<HTMLInputElement>;
   constructor(private store$: Store<RootState>) { }
 
@@ -43,6 +44,10 @@ export class FrameComponent implements OnInit {
 
   onExitLiveView() {
     this.showLiveView = false;
+  }
+
+  onSelectImage(imageSrc: string) {
+    this.selectedImageSrc = imageSrc;
   }
 
   private setGroupedImagesSelector() {
