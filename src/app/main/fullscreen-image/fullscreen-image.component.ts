@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'main-fullscreen-image',
@@ -7,6 +7,10 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class FullscreenImageComponent implements OnInit {
   @Input() imgSrc: string;
+  @Output() onEscapeKeyPress = new EventEmitter<null>();
+  @HostListener('document:keydown.escape', ['$event']) onEscapeHandler(event: KeyboardEvent) {
+    this.onEscapeKeyPress.emit();
+  }
   constructor() { }
 
   ngOnInit(): void {

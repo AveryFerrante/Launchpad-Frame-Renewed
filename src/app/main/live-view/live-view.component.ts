@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { from, fromEvent, interval, Observable, Subscription, timer, zip } from 'rxjs';
-import { concatMap, map, repeat, scan, skip, startWith, take, tap, withLatestFrom } from 'rxjs/operators';
+import { fromEvent, interval } from 'rxjs';
+import { map, scan, startWith, take, withLatestFrom } from 'rxjs/operators';
 import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { FrameImageModel } from 'src/app/shared/models/view-models/frameModel';
@@ -19,10 +19,7 @@ export class LiveViewComponent implements OnInit, OnDestroy, AfterViewInit {
   liveImage$ = this.setLiveImageGenerator();
   images: FrameImageModel[] = [];
   @Input() accessCode: string;
-  @Output() exit = new EventEmitter<boolean>();
-  @HostListener('document:keydown.escape', ['$event']) onEscapeHandler(event: KeyboardEvent) {
-    this.exit.emit(true);
-  }
+  @Output() exit = new EventEmitter<null>();
   constructor(private store$: Store<RootState>, private alertService: AlertService) { }
 
   ngOnInit() {
@@ -41,6 +38,10 @@ export class LiveViewComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.alertService.alert({ message: 'Press escape to exit', type: 'inform' });
     }
+  }
+
+  closeLiveView() {
+    this.exit.emit();
   }
 
   private setCurrentImagesListener() {
@@ -72,7 +73,6 @@ export class LiveViewComponent implements OnInit, OnDestroy, AfterViewInit {
     this.alertService.alert({ message: 'Tap anywhere on the screen to exit', type: 'inform' });
     fromEvent(clickElement, 'click').pipe(
       take(1)
-    ).subscribe(() => this.exit.emit(true));
+    ).subscribe(() => this.closeLiveView());
   }
-
 }
