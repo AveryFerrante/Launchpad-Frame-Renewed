@@ -12,6 +12,8 @@ import { JoinFrameComponent } from './join-frame/join-frame.component';
 import { FrameSidenavComponent } from './frame-sidenav/frame-sidenav.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
+import { ImageEditorComponent } from './image-editor/image-editor.component';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 
 
@@ -23,14 +25,16 @@ import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
     LiveViewComponent,
     JoinFrameComponent,
     FrameSidenavComponent,
-    ImageLazyLoadDirective
+    ImageLazyLoadDirective,
+    ImageEditorComponent
   ],
   imports: [
     CommonModule,
     MainRoutingModule,
     NgxDropzoneModule,
     SharedModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    ColorPickerModule
   ],
   providers: [FrameTranslator]
 })

@@ -1,0 +1,73 @@
+@import '../../../styles.scss';
+
+.backdrop-overlay {
+    background-color: rgba(0, 0, 0, 1);
+}
+
+.canvas-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .image-canvas {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.editing-options-container {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: .25rem;
+
+    & > fa-icon {
+        color: $primary-light;
+        margin-right: 1.5rem;
+    }
+
+    :last-child {
+        margin-right: 0;
+    }
+}
+
+.brush-size-container {
+    padding: 4px 15px;
+}
+
+.brush-size-label {
+    color: #555;
+    padding: 4px;
+}
+
+.brush-size-selection-container {
+    display: flex;
+    align-items: center;
+}
+
+.brush-size-slider {
+    flex: 1;
+    margin-right: .5rem;
+}
+
+.brush-size-text {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.delete-confirmation-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: .75rem;
+
+    :first-child {
+        margin-right: 1rem;
+    }
+  }

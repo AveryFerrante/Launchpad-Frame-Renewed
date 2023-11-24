@@ -40,6 +40,11 @@ input {
   color: $light;
 }
 
+.btn-error {
+  background-color: $error;
+  color: $light
+}
+
 form {
   height: 100%;
   display: flex;
@@ -72,4 +77,27 @@ form {
       margin-left: auto;
     }
   }
+}
+
+.backdrop-overlay {
+  position: fixed; /* Stay in place */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+// override 3rd party color picker UI elements
+div.rgba-text {
+  display: none !important;
+}
+
+div.type-policy {
+  display: none !important;
+}
+
+.global-image-editor-icon-sizing svg {
+  font-size: 1.5rem !important;
+  color: black;
 }
