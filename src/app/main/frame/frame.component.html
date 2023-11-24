@@ -1,4 +1,3 @@
-
 <div class="layout" id="test" *ngIf="selectedFrame$ | async as frame">
   <div class="title">
     <span class="frame-name">{{ frame.name }}</span>
@@ -15,22 +14,30 @@
     </ngx-dropzone>
 
     <div class="image-upload-camera" *ngIf="!showImageEditor">
-      <input type="file" accept="image/*"
-      (change)="onFilesAddedMobile($event.target.files)" [hidden]="true" #fabImageUploadButton />
-      <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="faCamera"></fa-icon></button>
+      <input type="file" accept="image/*" (change)="onFilesAddedMobile($event.target.files)" [hidden]="true"
+        #fabImageUploadButton />
+      <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="icons.camera"></fa-icon></button>
     </div>
   </div>
 
   <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
     <span class="group-title">{{ grouping.displayKey }}'s Images</span>
     <div class="masonry">
-      <img *ngFor="let image of grouping.images" [mainImageLazyLoad]="image" class="image">
+      <img *ngFor="let image of grouping.images" [mainImageLazyLoad]="image" class="image clickable"
+        (click)="onSelectImage(image.downloadUrl)">
     </div>
   </div>
 
-  <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()" [accessCode]="frame.accessToken.token"></main-live-view>
-  <main-image-editor *ngIf="showImageEditor" [imageData]="imageData" (exit)="onImageEditorExit()" (save)="onSaveEditedImage($event)"></main-image-editor>
+  <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()"
+    [accessCode]="frame.accessToken.token"></main-live-view>
+  <main-image-editor *ngIf="showImageEditor" [imageData]="imageData" (exit)="onImageEditorExit()"
+    (save)="onSaveEditedImage($event)"></main-image-editor>
 </div>
 
-<div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage"></div>
+<main-fullscreen-image *ngIf="selectedImageSrc !== null" [imgSrc]="selectedImageSrc" (onEscapeKeyPress)="onCloseSelectedImage()">
+  <div class="close-fullscreen-image" (click)="onCloseSelectedImage()"><fa-icon [icon]="icons.close"
+      class="clickable"></fa-icon></div>
+</main-fullscreen-image>
 
+<div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage">
+</div>

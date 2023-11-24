@@ -47,6 +47,12 @@
        width: 100%;
        height: auto;
      }
+
+     .image:hover {
+      box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 10;
+     }
    }
 
    @include media($phone-size) {
@@ -116,3 +122,11 @@
   z-index: 2000;
 }
 
+.close-fullscreen-image {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-size: 1.5rem;
+  opacity: .75;
+}

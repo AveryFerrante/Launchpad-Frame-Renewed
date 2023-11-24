@@ -14,6 +14,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
 import { ImageEditorComponent } from './image-editor/image-editor.component';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.component';
 
 
 
@@ -26,7 +27,8 @@ import { ColorPickerModule } from 'ngx-color-picker';
     JoinFrameComponent,
     FrameSidenavComponent,
     ImageLazyLoadDirective,
-    ImageEditorComponent
+    ImageEditorComponent,
+    FullscreenImageComponent
   ],
   imports: [
     CommonModule,

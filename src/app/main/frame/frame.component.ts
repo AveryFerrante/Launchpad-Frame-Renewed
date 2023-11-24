@@ -6,7 +6,7 @@ import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faBackspace } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'main-frame',
@@ -18,7 +18,11 @@ export class FrameComponent implements OnInit {
   uploadPercentage$: Observable<number> = this.store$.select(FrameStoreSelectors.SelectUploadPercentage);
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
-  faCamera = faCamera;
+  icons = {
+    camera: faCamera,
+    close: faBackspace
+  }
+  selectedImageSrc: string | null = null;
   @ViewChild('fabImageUploadButton') fabImageUploadButton: ElementRef<HTMLInputElement>;
   showImageEditor = false;
   imageData: File;
@@ -55,6 +59,14 @@ export class FrameComponent implements OnInit {
 
   onImageEditorExit() {
     this.showImageEditor = false;
+  }
+
+  onSelectImage(imageSrc: string) {
+    this.selectedImageSrc = imageSrc;
+  }
+
+  onCloseSelectedImage() {
+    this.selectedImageSrc = null;
   }
 
   private setGroupedImagesSelector() {
