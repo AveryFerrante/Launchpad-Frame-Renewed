@@ -25,13 +25,10 @@ export class MobileImageUploadFabComponent implements OnInit {
     this.showSourceSelector = true;
   }
 
-  selectFromCamera() {
-    this.fabImageUploadButton.nativeElement.setAttribute('capture', 'environment');
-    this.initiateInputClick();
-  }
-
-  selectFromSaved() {
-    this.fabImageUploadButton.nativeElement.removeAttribute('capture');;
+  selectSource(isCamera: boolean) {
+    if (isCamera) this.fabImageUploadButton.nativeElement.setAttribute('capture', 'environment');
+    else this.fabImageUploadButton.nativeElement.removeAttribute('capture');
+    this.hideSourceSelection();
     this.initiateInputClick();
   }
 

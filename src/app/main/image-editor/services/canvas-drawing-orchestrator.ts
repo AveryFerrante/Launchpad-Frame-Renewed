@@ -116,7 +116,13 @@ class CanvasDrawingOrchestrator {
     }
 
     private configureEventListenersFor(eventNames: string[]): Observable<Coordinate> {
-        let toCanvasCoordinates$ = eventNames.map(eventName => fromEvent(this.canvasElement, eventName).pipe(map(this.eventToCanvasCoordinate)));
+        let toCanvasCoordinates$ = eventNames.map(eventName => fromEvent(this.canvasElement, eventName).pipe(
+            tap((event: Event) => {
+                event.stopPropagation();
+                event.preventDefault();
+            }),
+            map(this.eventToCanvasCoordinate)
+        ));
         return merge(...toCanvasCoordinates$)
     }
 

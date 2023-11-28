@@ -12,7 +12,7 @@
     <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
   </ngx-dropzone>
 
-  <div class="image-upload-camera" *ngIf="!showImageEditor">
+  <div class="image-upload-camera" *ngIf="!showImageEditor && selectedImageSrc === null && !showLiveView">
     <main-mobile-image-upload-fab (filesAdded)="onFilesAddedMobile($event)"></main-mobile-image-upload-fab>
   </div>
 

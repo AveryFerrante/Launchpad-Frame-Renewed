@@ -4,13 +4,14 @@ $fabBottomOffset: 50px;
 $fabRightOffset: 50px;
 $fabWidth: 60px;
 $fabHeight: 60px;
+$boxShadow: 0 3px 6px rgba(0, 0, 0, 0.5);
 
 .fab-image-capture {
     position: fixed;
     bottom: $fabBottomOffset;
     right: $fabRightOffset;
     z-index: 101;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: $boxShadow;
     background-color: $tetradic-brown;
     color: $light;
     width: $fabWidth;
@@ -29,10 +30,10 @@ $fabHeight: 60px;
     right: calc(#{$fabRightOffset} + #{$fabWidth});
     background-color: $light;
     border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: $boxShadow;
 
     .upload-option {
-        padding: 1rem 1.5rem;
+        padding: 1rem 2.5rem;
         text-align: center;
     }
 
