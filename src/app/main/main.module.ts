@@ -16,6 +16,7 @@ import { ImageEditorComponent } from './image-editor/image-editor.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.component';
 import { MobileImageUploadFabComponent } from './mobile-image-upload-fab/mobile-image-upload-fab.component';
+import { ImageTransitionDirective } from './directives/image-transition.directive';
 
 
 
@@ -30,7 +31,8 @@ import { MobileImageUploadFabComponent } from './mobile-image-upload-fab/mobile-
     ImageLazyLoadDirective,
     ImageEditorComponent,
     FullscreenImageComponent,
-    MobileImageUploadFabComponent
+    MobileImageUploadFabComponent,
+    ImageTransitionDirective
   ],
   imports: [
     CommonModule,
