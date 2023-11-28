@@ -1,0 +1,42 @@
+@import '../../../variables.scss';
+
+$fabBottomOffset: 50px;
+$fabRightOffset: 50px;
+$fabWidth: 60px;
+$fabHeight: 60px;
+
+.fab-image-capture {
+    position: fixed;
+    bottom: $fabBottomOffset;
+    right: $fabRightOffset;
+    z-index: 101;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    background-color: $tetradic-brown;
+    color: $light;
+    width: $fabWidth;
+    height: $fabHeight;
+    border-radius: 100%;
+    border: none;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-upload-source-selector {
+    position: fixed;
+    bottom: calc(#{$fabBottomOffset} + (#{$fabHeight} / 2));
+    right: calc(#{$fabRightOffset} + #{$fabWidth});
+    background-color: $light;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+
+    .upload-option {
+        padding: 1rem 1.5rem;
+        text-align: center;
+    }
+
+    :not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.5);;
+    }
+}

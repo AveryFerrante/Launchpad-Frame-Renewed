@@ -94,24 +94,6 @@
   }
 }
 
-.fab-image-capture {
-  position: fixed;
-  bottom: 50px;
-  right: 50px;
-  z-index: 10;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.5);
-  background-color: $tetradic-brown;
-  color: $light;
-  width: 60px;
-  height: 60px;
-  border-radius: 100%;
-  border: none;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .upload-progress {
   background-color: $success;
   height: 10px;

@@ -15,6 +15,7 @@ import { ImageLazyLoadDirective } from './directives/image-lazy-load.directive';
 import { ImageEditorComponent } from './image-editor/image-editor.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.component';
+import { MobileImageUploadFabComponent } from './mobile-image-upload-fab/mobile-image-upload-fab.component';
 
 
 
@@ -28,7 +29,8 @@ import { FullscreenImageComponent } from './fullscreen-image/fullscreen-image.co
     FrameSidenavComponent,
     ImageLazyLoadDirective,
     ImageEditorComponent,
-    FullscreenImageComponent
+    FullscreenImageComponent,
+    MobileImageUploadFabComponent
   ],
   imports: [
     CommonModule,
