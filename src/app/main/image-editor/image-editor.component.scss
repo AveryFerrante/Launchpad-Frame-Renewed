@@ -24,17 +24,31 @@
 
     display: flex;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 2rem;
     background-color: rgba(0, 0, 0, 0.5);
     padding: .25rem;
+    transition: transform 0.2s linear;
 
     & > fa-icon {
-        color: $primary-light;
-        margin-right: 1.5rem;
+        color: $light;
+        padding-right: 2.25rem;
     }
 
-    :last-child {
-        margin-right: 0;
+    :nth-last-child(2), :last-child {
+        padding-right: 1rem;
+    }
+
+    &.hide-transition {
+        transform: translateX(-335px);
+
+        .expand-button {
+            display: block;
+            padding-left: 1rem;
+        }
+    }
+
+    .expand-button {
+        display: none;
     }
 }
 
