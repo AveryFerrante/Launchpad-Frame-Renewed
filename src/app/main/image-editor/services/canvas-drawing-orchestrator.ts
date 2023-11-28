@@ -1,4 +1,4 @@
-import { from, fromEvent, merge, Observable, of, Subscription } from 'rxjs';
+import { from, fromEvent, merge, Observable, of, Subject, Subscription } from 'rxjs';
 import { concatMap, delay, finalize, map, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { DrawnLinesManager } from './drawn-lines-manager';
 import { Coordinate, LineDrawAction, LineStyle, Resolution } from './line-draw-action';
@@ -9,10 +9,13 @@ class CanvasDrawingOrchestrator {
     private renderingContext: CanvasRenderingContext2D;
     private currentLineStyle: LineStyle;
     private drawnLinesManager: DrawnLinesManager = new DrawnLinesManager();
-
     private drawingListenerSubscription: Subscription;
     private windowResizeListenerSubscription: Subscription;
+    private isCurrentlyDrawingSubject$: Subject<boolean>;
+    isCurrentlyDrawing$: Observable<boolean>;
     constructor(private canvasElement: HTMLCanvasElement, private image: HTMLImageElement, initialLineStyle: LineStyle) {
+        this.isCurrentlyDrawingSubject$ = new Subject<boolean>();
+        this.isCurrentlyDrawing$ = this.isCurrentlyDrawingSubject$.asObservable();
         this.renderingContext = canvasElement.getContext('2d', { alpha: false });
         this.drawingListenerSubscription = this.initializeDrawingListener().subscribe();
         this.windowResizeListenerSubscription = this.initializeWindowResizeListener().subscribe();
@@ -65,16 +68,22 @@ class CanvasDrawingOrchestrator {
 
         return drawStart$.pipe(
             tap((drawStartCoordinates: Coordinate) => {
+                this.isCurrentlyDrawingSubject$.next(true);
                 let resolution: Resolution = { width: this.canvasElement.width, height: this.canvasElement.height };
                 this.drawnLinesManager.startNewLine(drawStartCoordinates, resolution, { ...this.currentLineStyle });
                 this.initializeLineStart(this.canvasElement, this.renderingContext, this.drawnLinesManager.getActiveLine());
             }),
-            concatMap(() => drawMove$.pipe(takeUntil(drawEnd$), finalize(() => this.drawnLinesManager.commitActiveLine()))),
+            concatMap(() => drawMove$.pipe(takeUntil(drawEnd$), finalize(this.finalizeDrawEnd.bind(this)))),
             tap((drawLineEvent: Coordinate) => {
                 this.drawnLinesManager.addLineSegmentToActiveLine(drawLineEvent);
                 this.drawLine(this.renderingContext, drawLineEvent);
             })
         );
+    }
+
+    private finalizeDrawEnd() {
+        this.isCurrentlyDrawingSubject$.next(false);
+        this.drawnLinesManager.commitActiveLine();
     }
 
     private initializeWindowResizeListener(): Observable<UIEvent> {

@@ -5,16 +5,17 @@
 
 
 
-    <div class="editing-options-container">
+    <div class="editing-options-container" #imageEditingOptionsContainer>
         <fa-icon [icon]="icons.pencil" [colorPicker]="lineStyle.color" (colorPickerChange)="colorChange($event)"
             [cpPresetColors]="colorPresets" [cpOutputFormat]="'rgba'" [cpWidth]="'280px'" [cpHeight]="'360px'"
             [cpAlphaChannel]="'disabled'" [cpExtraTemplate]="colorPickerExtras" [cpPosition]="'top-right'"
-            [cpPresetLabel]="''"></fa-icon>
+            [cpPresetLabel]="''" [(cpToggle)]="colorPickerVisibile"></fa-icon>
 
         <fa-icon [icon]="icons.save" (click)="saveImage()"></fa-icon>
         <fa-icon [icon]="icons.undo" (click)="undoLastDrawAction()"></fa-icon>
         <fa-icon [icon]="icons.redo" (click)="redoLastDrawAction()"></fa-icon>
         <fa-icon [icon]="icons.trash" (click)="closeImageEditor()"></fa-icon>
+        <fa-icon class="expand-button" [icon]="icons.expand" (click)="expandOptions()"></fa-icon>
     </div>
 </div>
 
