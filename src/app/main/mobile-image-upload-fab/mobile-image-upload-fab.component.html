@@ -1,0 +1,9 @@
+<input type="file" accept="image/*" (change)="onFilesAdded($event.target.files)" [hidden]="true"
+    #fabImageUploadButton />
+<button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="cameraIcon"></fa-icon></button>
+
+<div class="image-upload-source-selector" *ngIf="showSourceSelector">
+    <div class="upload-option" (click)="selectFromCamera()">From Camera</div>
+    <div class="upload-option" (click)="selectFromSaved()">From Saved</div>
+    <div class="upload-option" (click)="cancelSelection()">Cancel</div>
+</div>

@@ -8,16 +8,12 @@
     <span class="access-code">- Access Code: {{ frame.accessToken.token }}</span>
   </div>
 
-  <div class="image-upload-section">
-    <ngx-dropzone (change)="onFilesAdded($event.addedFiles)" class="image-upload-zone">
-      <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
-    </ngx-dropzone>
+  <ngx-dropzone (change)="onFilesAdded($event.addedFiles)" class="image-upload-zone">
+    <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
+  </ngx-dropzone>
 
-    <div class="image-upload-camera" *ngIf="!showImageEditor">
-      <input type="file" accept="image/*" (change)="onFilesAddedMobile($event.target.files)" [hidden]="true"
-        #fabImageUploadButton />
-      <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="icons.camera"></fa-icon></button>
-    </div>
+  <div class="image-upload-camera" *ngIf="!showImageEditor">
+    <main-mobile-image-upload-fab (filesAdded)="onFilesAddedMobile($event)"></main-mobile-image-upload-fab>
   </div>
 
   <div *ngFor="let grouping of groupedImages$ | async" class="group-image-display-section">
@@ -30,11 +26,14 @@
 
   <main-live-view *ngIf="showLiveView" (exit)="onExitLiveView()"
     [accessCode]="frame.accessToken.token"></main-live-view>
-  <main-image-editor *ngIf="showImageEditor" [imageData]="imageData" (exit)="onImageEditorExit()"
-    (save)="onSaveEditedImage($event)"></main-image-editor>
 </div>
 
-<main-fullscreen-image *ngIf="selectedImageSrc !== null" [imgSrc]="selectedImageSrc" (onEscapeKeyPress)="onCloseSelectedImage()">
+
+<main-image-editor *ngIf="showImageEditor" [imageData]="imageData" (exit)="onImageEditorExit()"
+  (save)="onSaveEditedImage($event)"></main-image-editor>
+
+<main-fullscreen-image *ngIf="selectedImageSrc !== null" [imgSrc]="selectedImageSrc"
+  (onEscapeKeyPress)="onCloseSelectedImage()">
   <div class="close-fullscreen-image" (click)="onCloseSelectedImage()"><fa-icon [icon]="icons.close"
       class="clickable"></fa-icon></div>
 </main-fullscreen-image>

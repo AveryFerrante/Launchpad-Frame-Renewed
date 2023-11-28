@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -6,7 +6,7 @@ import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
-import { faCamera, faBackspace } from '@fortawesome/free-solid-svg-icons';
+import { faBackspace } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'main-frame',
@@ -19,11 +19,9 @@ export class FrameComponent implements OnInit {
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
   icons = {
-    camera: faCamera,
     close: faBackspace
   }
   selectedImageSrc: string | null = null;
-  @ViewChild('fabImageUploadButton') fabImageUploadButton: ElementRef<HTMLInputElement>;
   showImageEditor = false;
   imageData: File;
   constructor(private store$: Store<RootState>) { }
@@ -38,10 +36,6 @@ export class FrameComponent implements OnInit {
   onFilesAddedMobile(files: FileList) {
     this.imageData = files[0];
     this.showImageEditor = true;
-  }
-
-  onFabClick() {
-    this.fabImageUploadButton.nativeElement.click();
   }
 
   onShowLiveView() {
