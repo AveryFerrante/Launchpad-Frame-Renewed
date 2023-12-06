@@ -12,7 +12,7 @@
     <ngx-dropzone-label>Drag Files or Click to Browse</ngx-dropzone-label>
   </ngx-dropzone>
 
-  <div class="image-upload-camera" *ngIf="!showImageEditor && selectedImageSrc === null && !showLiveView">
+  <div class="image-upload-camera" *ngIf="!showImageEditor && selectedImageId === null && !showLiveView">
     <main-mobile-image-upload-fab (filesAdded)="onFilesAddedMobile($event)"></main-mobile-image-upload-fab>
   </div>
 
@@ -20,7 +20,7 @@
     <span class="group-title">{{ grouping.displayKey }}'s Images</span>
     <div class="masonry">
       <img *ngFor="let image of grouping.images" [mainImageLazyLoad]="image" class="image clickable"
-        (click)="onSelectImage(image.downloadUrl)">
+        (click)="onSelectImage(image.id)">
     </div>
   </div>
 
@@ -32,11 +32,8 @@
 <main-image-editor *ngIf="showImageEditor" [imageData]="imageData" (exit)="onImageEditorExit()"
   (save)="onSaveEditedImage($event)"></main-image-editor>
 
-<main-fullscreen-image *ngIf="selectedImageSrc !== null" [imgSrc]="selectedImageSrc"
-  (onEscapeKeyPress)="onCloseSelectedImage()">
-  <div class="close-fullscreen-image" (click)="onCloseSelectedImage()"><fa-icon [icon]="icons.close"
-      class="clickable"></fa-icon></div>
-</main-fullscreen-image>
+<main-image-gallery *ngIf="selectedImageId !== null" [images]="(selectedFrame$ | async).images"
+  [startId]="selectedImageId" (closeGallery)="onCloseSelectedImage()"></main-image-gallery>
 
 <div class="upload-progress" *ngIf="uploadPercentage$ | async as uploadPercentage" [style.width.%]="uploadPercentage">
 </div>

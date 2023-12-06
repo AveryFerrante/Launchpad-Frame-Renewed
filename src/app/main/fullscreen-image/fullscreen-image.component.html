@@ -1,4 +1,5 @@
 <div class="layout">
-    <img [mainImageTransition]="imgSrc" [mainImageTransitionOptions]="transitionOptions" />
+    <img *ngIf="transitionsEnabled" [mainImageTransition]="imgSrc" [mainImageTransitionOptions]="transitionOptions" #imgElement />
+    <img *ngIf="!transitionsEnabled" [src]="imgSrc" #imgElement />
     <ng-content></ng-content>
 </div>

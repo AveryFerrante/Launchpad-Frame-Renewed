@@ -6,7 +6,6 @@ import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
-import { faBackspace } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'main-frame',
@@ -18,10 +17,7 @@ export class FrameComponent implements OnInit {
   uploadPercentage$: Observable<number> = this.store$.select(FrameStoreSelectors.SelectUploadPercentage);
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
-  icons = {
-    close: faBackspace
-  }
-  selectedImageSrc: string | null = null;
+  selectedImageId: string | null = null;
   showImageEditor = false;
   imageData: File;
   constructor(private store$: Store<RootState>) { }
@@ -55,12 +51,12 @@ export class FrameComponent implements OnInit {
     this.showImageEditor = false;
   }
 
-  onSelectImage(imageSrc: string) {
-    this.selectedImageSrc = imageSrc;
+  onSelectImage(imageId: string) {
+    this.selectedImageId = imageId;
   }
 
   onCloseSelectedImage() {
-    this.selectedImageSrc = null;
+    this.selectedImageId = null;
   }
 
   private setGroupedImagesSelector() {

@@ -1,0 +1,7 @@
+<div class="gesture-overlay" #imageContainer>
+    <main-fullscreen-image [imgSrc]="currentImageSource" (onEscapeKeyPress)="onExit()" [transitionsEnabled]="false"
+        #image>
+        <div class="close-fullscreen-image" (click)="onExit()"><fa-icon [icon]="exitIcon" class="clickable"></fa-icon>
+        </div>
+    </main-fullscreen-image>
+</div>

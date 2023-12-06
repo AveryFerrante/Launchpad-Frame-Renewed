@@ -7,10 +7,11 @@ import { TransitionPresets } from './transition-presets';
   styleUrls: ['./fullscreen-image.component.scss']
 })
 export class FullscreenImageComponent implements OnInit {
-  transitionOptions = TransitionPresets[5];// this.setRandomTransitionOptions();
+  transitionOptions = this.getRandomTransitionOptions();
   private imageSource: string;
+  @Input() transitionsEnabled: boolean = true;
   @Input('imgSrc')
-  set imgSrc(value: string) { this.imageSource = value; this.transitionOptions = this.setRandomTransitionOptions(); }
+  set imgSrc(value: string) { this.imageSource = value; this.transitionOptions = this.getRandomTransitionOptions(); }
   get imgSrc() { return this.imageSource; }
   @ViewChild('imgElement') imgElement: ElementRef<HTMLImageElement>;
   @Output() onEscapeKeyPress = new EventEmitter<null>();
@@ -22,7 +23,7 @@ export class FullscreenImageComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  private setRandomTransitionOptions() {
+  private getRandomTransitionOptions() {
     return TransitionPresets[Math.floor(Math.random() * TransitionPresets.length)];
   }
 
