@@ -45,6 +45,8 @@ const r = createReducer(
   on(Actions.UpdateSideNavVisibility, (state: FrameState, { visible }) =>
     ({ ...state, showSideNav: visible })),
 
+  on(Actions.UpdateActiveModal, (state: FrameState, { activeModal }) => ({ ...state, activeModal, showSideNav: false })),
+
   on(Actions.LiveImageListenerNewImages, (state: FrameState, { newImages }) =>
     addImagesToFrame(state, newImages))
 );

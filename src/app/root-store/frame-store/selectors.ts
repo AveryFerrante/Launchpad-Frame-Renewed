@@ -30,3 +30,8 @@ export const SelectFrameImages = createSelector(
   (f: FrameModel) => f.images
 );
 
+export const SelectActiveModal = createSelector(
+  SelectFrameState,
+  (s: FrameState) => s.activeModal
+)
+

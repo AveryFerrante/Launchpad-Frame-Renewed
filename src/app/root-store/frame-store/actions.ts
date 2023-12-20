@@ -3,6 +3,7 @@ import { UserFrameMetadata } from 'src/app/shared/models/firebase-collections/us
 import { CreateFrameImageRequest } from 'src/app/shared/models/requests/frameRequests';
 import { FrameImageModel, FrameModel } from 'src/app/shared/models/view-models/frameModel';
 import { createDefaultRequestActions } from '../shared/actionFactory';
+import { ModalTypes } from './state';
 
 
 export const NewFrame =
@@ -18,8 +19,6 @@ export const JoinFrame =
 export const JoinFrameNoOp =
   createAction('[Frame] Join Frame NoOp');
 
-export const UpdateSideNavVisibility =
-  createAction('[Frame] Update SideNav Visibility', props<{ visible: boolean }>());
 export const UploadImagesRequest =
   createAction('[Frame] Upload Images', props<{ Images: File[] }>());
 export const UpdateUploadPercentageRequest =
@@ -32,5 +31,10 @@ export const LiveImageListenerNewImages =
 export const LiveImageListenerStopRequest =
   createAction('[Frame] Live Image Listener Stop Request');
 
+
+export const UpdateSideNavVisibility =
+  createAction('[Frame] Update SideNav Visibility', props<{ visible: boolean }>());
+export const UpdateActiveModal =
+  createAction('[Frame] Update Active Modal', props<{ activeModal: ModalTypes }>())
 
 
