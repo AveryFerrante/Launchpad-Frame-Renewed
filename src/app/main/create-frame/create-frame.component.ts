@@ -1,6 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
 import { RootState } from 'src/app/root-store';
+import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
+import { ModalTypes } from 'src/app/root-store/frame-store/state';
 
 
 @Component({
@@ -9,23 +12,23 @@ import { RootState } from 'src/app/root-store';
   styleUrls: ['./create-frame.component.scss']
 })
 export class CreateFrameComponent implements OnInit {
-  @Output() closeModal = new EventEmitter<boolean>();
-  @Output() createFrame = new EventEmitter<string>();
+  shouldDisplay$ = this.store$.select(FrameStoreSelectors.SelectActiveModal).pipe(map(m => m === ModalTypes.CreateFrameModal))
   errorText = '';
-  constructor() { }
+  constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
   }
 
   onCloseModal() {
-    this.closeModal.emit(true);
+    this.store$.dispatch(FrameStoreActions.UpdateActiveModal({ activeModal: ModalTypes.None }));
   }
 
   onCreateFrame(frameName: string) {
     if (!frameName || frameName === '') {
       this.errorText = 'Must enter a name.';
     } else {
-      this.createFrame.emit(frameName);
+      this.store$.dispatch(FrameStoreActions.NewFrame.Request({ request: frameName }));
+      this.onCloseModal();
     }
   }
 

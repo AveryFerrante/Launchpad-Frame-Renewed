@@ -1,12 +1,14 @@
-<app-modal [title]="'Join a Frame'" (closeModal)="onCloseModal()">
+<ng-container *ngIf="shouldDisplay$ | async">
+  <app-modal [title]="'Join a Frame'" (closeModal)="onCloseModal()">
 
-  <div class="body">
-    <span class="input-label">Access Key:</span>
-    <input type="text" #accessKey>
-    <span class="error">{{ errorText }}</span>
-  </div>
-  <div class="footer">
-    <button class="btn btn-primary" (click)="onCreateFrame(accessKey.value)">JOIN</button>
-  </div>
+    <div class="body">
+      <span class="input-label">Access Key:</span>
+      <input type="text" #accessKey>
+      <span class="error">{{ errorText }}</span>
+    </div>
+    <div class="footer">
+      <button class="btn btn-primary" (click)="onCreateFrame(accessKey.value)">JOIN</button>
+    </div>
 
-</app-modal>
+  </app-modal>
+</ng-container>

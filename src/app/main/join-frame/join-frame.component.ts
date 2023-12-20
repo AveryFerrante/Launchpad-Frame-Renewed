@@ -1,4 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
+import { RootState } from 'src/app/root-store';
+import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
+import { ModalTypes } from 'src/app/root-store/frame-store/state';
 
 @Component({
   selector: 'main-join-frame',
@@ -7,16 +12,15 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class JoinFrameComponent implements OnInit {
   // TODO: USER CAN JOIN FRAME THEY ARE IN BY REPEATEDLY ENTERING ACCESS CODE. RESTRICT
-  @Output() closeModal = new EventEmitter<boolean>();
-  @Output() joinFrame = new EventEmitter<string>();
+  shouldDisplay$ = this.store$.select(FrameStoreSelectors.SelectActiveModal).pipe(map(m => m === ModalTypes.JoinFrameModal));
   errorText = '';
-  constructor() { }
+  constructor(private store$: Store<RootState>) { }
 
   ngOnInit() {
   }
 
   onCloseModal() {
-    this.closeModal.emit(true);
+    this.store$.dispatch(FrameStoreActions.UpdateActiveModal({ activeModal: ModalTypes.None }));
   }
 
   onCreateFrame(accessKey: string) {
@@ -25,7 +29,7 @@ export class JoinFrameComponent implements OnInit {
     } else if (accessKey.length !== 6) {
       this.errorText = 'Value must have 6 characters/numbers.';
     } else {
-      this.joinFrame.emit(accessKey);
+      this.store$.dispatch(FrameStoreActions.JoinFrame.Request({ request: accessKey }));
     }
   }
 

@@ -1,80 +1,11 @@
 @import '../../../variables.scss';
 
-
-.layout {
-  display: flex;
-  flex-direction: column;
+.sidenav {
   height: 100%;
-}
-
-.title-section {
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.5rem;
-  padding: 1rem;
-  border-bottom: 1px solid $light;
-}
-
-.content-section {
-  flex-grow: 1;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  font-size: 1.25rem;
-}
-
-.sidenav-item {
-  padding: .5rem;
-}
-
-.sidenav-item-selected {
-  font-weight: bold;
-  background-color: $tetradic-green-light;
-  position: relative;
-
-  ::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-left-style: solid;
-    border-left-width: 0;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-right: 10px solid $tetradic-green;
-  }
-}
-
-.actions-section {
-  display: flex;
-  border-top: 1px solid $light;
-
-  .create {
-    border-right: 1px solid $light;
-    padding: .5rem;
-    text-align: center;
-    flex: 1;
-    transition: background-color 0.25s linear;
-  }
-
-  .join {
-    padding: .5rem;
-    text-align: center;
-    flex: 1;
-    transition: background-color 0.25s linear;
-  }
-
-  .create:hover, .join:hover {
-    background-color: $tetradic-green-dark;
-  }
-
-  fa-icon {
-    padding-right: .5rem;
-  }
+  z-index: 10;
+  background-color: $tetradic-green;
+  color: $light;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
 @include media($phone-size) {
@@ -84,6 +15,13 @@
 
   .fixed-sidenav {
     display: none;
+  }
+
+  .sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 95%;
   }
 }
 

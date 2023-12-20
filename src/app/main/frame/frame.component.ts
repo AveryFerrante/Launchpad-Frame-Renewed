@@ -6,7 +6,7 @@ import { RootState } from 'src/app/root-store';
 import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame-store';
 import { GroupedImages } from 'src/app/shared/models/groupedImages';
 import { FrameModel } from 'src/app/shared/models/view-models/frameModel';
-import { faBackspace } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'main-frame',
@@ -19,7 +19,7 @@ export class FrameComponent implements OnInit {
   groupedImages$ = this.setGroupedImagesSelector();
   showLiveView = false;
   icons = {
-    close: faBackspace
+    close: faTimes
   }
   selectedImageSrc: string | null = null;
   showImageEditor = false;

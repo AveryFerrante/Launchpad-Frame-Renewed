@@ -2,13 +2,7 @@
 <div class="layout">
   <app-navbar></app-navbar>
   <div class="component-layout">
-    <main-frame-sidenav class="sidenav-space"
-      [userFrames]="(user$ | async).frames"
-      [selectedFrameId]="selectedFrameId$ | async"
-      (openCreateFrame)="openCreateFrame()"
-      (openJoinFrame)="openJoinFrame()"
-      (frameSelect)="onFrameSelect($event)">
-    </main-frame-sidenav>
+    <main-frame-sidenav></main-frame-sidenav>
     <main-frame class="frame-space" *ngIf="!frameDisplayState.noFrames && !frameDisplayState.badFrameId"></main-frame>
 
     <div *ngIf="frameDisplayState.noFrames && !frameDisplayState.badFrameId" class="no-frame-space">
@@ -25,8 +19,8 @@
   </div>
 </div>
 
-<main-create-frame *ngIf="showCreateFrameModal" (closeModal)="onCloseModal()" (createFrame)="onCreateFrame($event)"></main-create-frame>
-<main-join-frame *ngIf="showJoinFrameModal" (closeModal)="onCloseModal()" (joinFrame)="onJoinFrame($event)"></main-join-frame>
+<main-create-frame></main-create-frame>
+<main-join-frame></main-join-frame>
 
 
 
