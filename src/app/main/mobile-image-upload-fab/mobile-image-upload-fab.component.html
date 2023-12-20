@@ -2,7 +2,7 @@
     #fabImageUploadButton />
 <button class="fab-image-capture" (click)="onFabClick()"><fa-icon [icon]="cameraIcon"></fa-icon></button>
 
-<div class="image-upload-source-selector" *ngIf="showSourceSelector">
+<div class="image-upload-source-selector" *ngIf="showSourceSelector" @slideInOut>
     <div class="upload-option" (click)="selectSource(true)">From Camera</div>
     <div class="upload-option" (click)="selectSource(false)">From Saved</div>
     <div class="upload-option" (click)="cancelSelection()">Cancel</div>

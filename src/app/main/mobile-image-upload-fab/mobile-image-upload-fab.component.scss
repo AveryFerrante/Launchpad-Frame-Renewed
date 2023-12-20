@@ -10,7 +10,7 @@ $boxShadow: 0 3px 6px rgba(0, 0, 0, 0.5);
     position: fixed;
     bottom: $fabBottomOffset;
     right: $fabRightOffset;
-    z-index: 101;
+    z-index: 5;
     box-shadow: $boxShadow;
     background-color: $tetradic-brown;
     color: $light;

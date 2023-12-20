@@ -1,5 +1,5 @@
 <!-- Mobile SideNav -->
-<app-sidenav *ngIf="showSidenav$ | async" class="mobile-sidenav">
+<div class="sidenav mobile-sidenav" *ngIf="showSidenav$ | async" @slideInOut>
   <div class="layout">
     <div class="title-section">
       <span>Select a Frame</span>
@@ -18,10 +18,10 @@
       <div class="clickable join" (click)="onOpenJoinFrame()"><fa-icon [icon]="faPlusSquare"></fa-icon>Join</div>
     </div>
   </div>
-</app-sidenav>
+</div>
 
 <!-- Fixed SideNav -->
-<app-sidenav class="fixed-sidenav">
+<div class="sidenav fixed-sidenav">
   <div class="layout">
     <div class="title-section">
       <span>Select a Frame</span>
@@ -39,5 +39,5 @@
       <div class="clickable join" (click)="onOpenJoinFrame()"><fa-icon [icon]="faPlusSquare"></fa-icon>Join</div>
     </div>
   </div>
-</app-sidenav>
+</div>
 

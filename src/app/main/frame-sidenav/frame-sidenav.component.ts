@@ -5,11 +5,24 @@ import { FrameStoreActions, FrameStoreSelectors } from 'src/app/root-store/frame
 import { UserFrameMetadata } from 'src/app/shared/models/firebase-collections/user';
 import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'main-frame-sidenav',
   templateUrl: './frame-sidenav.component.html',
-  styleUrls: ['./frame-sidenav.component.scss']
+  styleUrls: ['./frame-sidenav.component.scss'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('0.2s ease-out', style({ transform: 'translateX(0%)' }))
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0%)' }),
+        animate('0.2s ease-out', style({ transform: 'translateX(-100%)' }))
+      ]),
+    ])
+  ]
 })
 export class FrameSidenavComponent implements OnInit {
   @Input() userFrames: UserFrameMetadata[];

@@ -1,5 +1,12 @@
 @import '../../../variables.scss';
 
+.sidenav {
+  height: 100%;
+  z-index: 10;
+  background-color: $tetradic-green;
+  color: $light;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
 
 .layout {
   display: flex;
@@ -84,6 +91,13 @@
 
   .fixed-sidenav {
     display: none;
+  }
+
+  .sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 95%;
   }
 }
 
